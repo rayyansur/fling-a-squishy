@@ -14,6 +14,7 @@ local Plots = require(script.Parent.Plots)
 local Economy = require(script.Parent.Economy)
 local Tutorial = require(script.Parent.Tutorial)
 local Analytics = require(script.Parent.Analytics)
+local Progress = require(script.Parent.Progress)
 
 local S, G, E = Config.Squishies, Config.Game, Config.Economy
 local RARITY_INDEX = {}
@@ -108,6 +109,7 @@ local function announceMerge(player: Player, m: any)
 	local sp = S.ById[m.s]
 	Net.fire(player, "Merged", m.uid, m.s, m.z, m.g)
 	Tutorial.onMerge(player)
+	Progress.emit(player, "merge", m.z)
 	Analytics.custom(player, "MergeSize", m.z)
 	if m.z == 3 and sp and RARITY_INDEX[sp.rarity] >= 5 then
 		Net.fireAll("Announce", ("⭐ %s merged a MEGA %s!"):format(player.DisplayName, sp.name), sp.rarity)
@@ -252,6 +254,11 @@ function Shelf.arrive(player: Player, s: string, g: boolean)
 		d.dex[s].n += 1
 		d.stats.caught += 1
 	end)
+	local caught = 0
+	for _ in data.dex do
+		caught += 1
+	end
+	Progress.emit(player, "dex", caught)
 	local entry = { uid = newUid(player)(), s = s, z = 1, g = g }
 	local slots = E.slotCount(data.slotUpgrades)
 	Tutorial.onArrive(player)
@@ -298,6 +305,7 @@ function Shelf.squeeze(player: Player): (number, number)
 		d.stats.squeezes += 1
 	end)
 	Tutorial.onSqueeze(player)
+	Progress.emit(player, "squeeze", 1)
 	Net.fire(player, "Squeezed", uids, total, now + G.SqueezeCooldown)
 	Shelf.send(player)
 	return total, count

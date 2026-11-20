@@ -11,6 +11,7 @@ local Economy = require(script.Parent.Economy)
 local Plots = require(script.Parent.Plots)
 local Tutorial = require(script.Parent.Tutorial)
 local Shelf = require(script.Parent.Shelf)
+local Progress = require(script.Parent.Progress)
 
 local E = Config.Economy
 local Upgrades = {}
@@ -49,6 +50,9 @@ function Upgrades.buy(player: Player, kind: string, tier: number): boolean
 	Net.fire(player, "BuyResult", kind, tier, true)
 	if kind == "slots" or kind == "shelf" then
 		Shelf.send(player)
+	end
+	if kind == "slots" then
+		Progress.emit(player, "slots", E.slotCount(tier))
 	end
 	Economy.refresh(player)
 	Plots.publishShelf(player)

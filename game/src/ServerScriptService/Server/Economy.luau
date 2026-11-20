@@ -9,6 +9,7 @@ local Config = require(ReplicatedStorage.Shared.Config)
 local Income = require(ReplicatedStorage.Shared.Util.Income)
 local Format = require(ReplicatedStorage.Shared.Util.Format)
 local Products = require(ReplicatedStorage.Kit.Products)
+local Net = require(ReplicatedStorage.Kit.Net)
 local Data = require(ServerScriptService.Kit.Data)
 local State = require(script.Parent.State)
 local Plots = require(script.Parent.Plots)
@@ -119,8 +120,31 @@ function Economy.spend(player: Player, amount: number, sink: string): boolean
 	return true
 end
 
+-- offline income (DESIGN 4.11): 50% of the income at logout, for up to 6 h; paid on join
+function Economy.offline(player: Player, data: any, now: number): (number, number)
+	local O = Config.Progress.Offline
+	if (data.lastOnline or 0) <= 0 or (data.lastIncomePerSec or 0) <= 0 then
+		return 0, 0
+	end
+	local away = now - data.lastOnline
+	if away < O.MinSeconds then
+		return 0, 0
+	end
+	local secs = math.min(away, O.CapSeconds)
+	return math.floor(secs * data.lastIncomePerSec * O.Rate), secs
+end
+
 function Economy.start()
+	Net.declare({ "WelcomeBack" })
 	Data.onLoaded(function(player)
+		local data = Data.get(player)
+		if data then
+			local amount, secs = Economy.offline(player, data, os.time())
+			if amount >= 1 then
+				Economy.add(player, amount, "Offline")
+				Net.fire(player, "WelcomeBack", amount, secs)
+			end
+		end
 		Economy.refresh(player)
 		Data.update(player, function(d)
 			d.lastOnline = os.time()

@@ -14,6 +14,7 @@ export type PlayerState = {
 	flingsThisSession: number,
 	chargeStart: number?, -- os.clock() of the last ChargeBegin
 	incomeAcc: number, -- fractional coins carried between income ticks
+	epoch: number, -- bumped by Re-Squish: squishies still hopping from before it are dropped
 }
 
 local State = {}
@@ -32,6 +33,7 @@ function State.get(player: Player): PlayerState
 			flingsThisSession = 0,
 			chargeStart = nil,
 			incomeAcc = 0,
+			epoch = 0,
 		}
 		states[player] = s
 	end

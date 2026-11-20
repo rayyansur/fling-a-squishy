@@ -12,6 +12,7 @@ Config.Monetization = require(script.Monetization)
 Config.Audio = require(script.Audio)
 Config.UI = require(script.UI)
 Config.Badges = require(script.Badges)
+Config.Progress = require(script.Progress)
 
 -- Kit.Data: the save (DESIGN 6.4). Purchase receipts live in the kit's own record.
 Config.Data = {
