@@ -25,7 +25,7 @@ function ZoneSigns.start()
 			local bb = Instance.new("BillboardGui")
 			bb.Name = "Zone" .. i
 			bb.Adornee = anchor
-			bb.Size = UDim2.fromOffset(520, 110)
+			bb.Size = UDim2.fromScale(46, 9.5) -- studs: shrinks with distance like a real sign
 			bb.MaxDistance = 1100
 			bb.LightInfluence = 0
 			bb.AlwaysOnTop = false
@@ -33,15 +33,15 @@ function ZoneSigns.start()
 			bb.Active = true
 			bb.Parent = holder
 			local color = if i == 6 then Color3.fromHex("#FF4FA3") else Color3.fromHex(zone.color)
-			local pill = Candy.pill(bb, UDim2.new(1, -8, 1, -8), color, { Position = UDim2.fromOffset(4, 4) })
-			local l = Candy.label(pill, zone.sign, { Font = Enum.Font.FredokaOne, TextColor3 = Color3.new(1, 1, 1), Size = UDim2.new(1, -120, 1, -20), Position = UDim2.fromOffset(16, 10) })
+			local pill = Candy.pill(bb, UDim2.fromScale(0.98, 0.94), color, { Position = UDim2.fromScale(0.01, 0.03) })
+			local l = Candy.label(pill, zone.sign, { Font = Enum.Font.FredokaOne, TextColor3 = Color3.new(1, 1, 1), Size = UDim2.fromScale(0.78, 0.8), Position = UDim2.fromScale(0.03, 0.1) })
 			Candy.textStroke(l, 3)
-			Candy.button(pill, "i", "grape", UDim2.fromOffset(80, 80), function()
+			Candy.button(pill, "i", "grape", UDim2.fromScale(0.14, 0.76), function()
 				local open = Hud.panels.Odds
 				if open then
 					open(tostring(i))
 				end
-			end, { AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -12, 0.5, 0) })
+			end, { AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.fromScale(0.98, 0.5) })
 		end
 	end
 end

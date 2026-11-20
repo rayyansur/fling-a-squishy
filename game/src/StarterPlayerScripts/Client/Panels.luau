@@ -38,10 +38,12 @@ function Panels.thumb(parent: Instance, s: string, size: number?, glitter: boole
 	m:PivotTo(CFrame.new())
 	m.Parent = vp
 	local cam = Instance.new("Camera")
-	local _, box = m:GetBoundingBox()
+	local boxCf, box = m:GetBoundingBox()
+	local c = boxCf.Position
 	local r = math.max(box.X, box.Y, box.Z)
 	cam.FieldOfView = 30
-	cam.CFrame = CFrame.lookAt(Vector3.new(0, box.Y * 0.6, r * 2.6), Vector3.new(0, box.Y * 0.45, 0))
+	-- squishies face -Z: look at the face from the front, a little above and to the side
+	cam.CFrame = CFrame.lookAt(c + Vector3.new(r * 0.5, r * 0.4, -r * 1.7), c)
 	cam.Parent = vp
 	vp.CurrentCamera = cam
 	return vp
@@ -56,6 +58,7 @@ end
 ------------------------------------------------------------------ Upgrades
 local function upgradeRow(list: Instance, order: number, iconText: string, name: string, effect: string, cost: number?, status: string, onBuy: () -> ())
 	local f = row(list, order)
+	f.Name = "Row" .. order
 	local ic = Candy.make("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(64, 64), Position = UDim2.fromOffset(14, 14), Parent = f })
 	Candy.icon(ic, iconText, { TextColor3 = P.ink })
 	Candy.label(f, name, { Font = F.header, TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(1, -330, 0, 36), Position = UDim2.fromOffset(92, 10) })
@@ -68,7 +71,7 @@ local function upgradeRow(list: Instance, order: number, iconText: string, name:
 		else
 			Sound.play("ui_error")
 		end
-	end, { AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -16, 0.5, 0) })
+	end, { Name = "Buy", AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -16, 0.5, 0) })
 	if status == "poor" then
 		b.setKind("disabled")
 	end

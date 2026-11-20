@@ -26,7 +26,7 @@ return function(B, ctx)
 	for i, zone in Z.List do
 		local z0 = math.max(V.z0, zone.min + line)
 		local z1 = if i == #Z.List then V.z1 else zone.max + line
-		local band = B.boxMM(valley, "Zone" .. i, V.x0, V.y - 4, z0, V.x1, V.y, z1, if i == 6 then "#FFF6FC" else zone.color, "SmoothPlastic")
+		local band = B.boxMM(valley, "Zone" .. i, V.x0, V.y - 4, z0, V.x1, V.y, z1, if i == 6 then "#FFD9EE" else zone.color, "SmoothPlastic")
 		band:SetAttribute("Zone", i)
 		-- sign anchor: the client draws the floating sign (with the odds button) here
 		local sign = B.part(valley, { name = "ZoneSign" .. i, size = B.V3.new(1, 1, 1), cf = B.CF.new(0, 34, z0 + 6), t = 1, cc = false, cq = false, ct = false })

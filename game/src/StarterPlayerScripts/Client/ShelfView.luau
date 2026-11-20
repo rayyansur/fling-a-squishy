@@ -25,7 +25,7 @@ ShelfView.entries = {} :: { any } -- own shelf: { uid, s, size, glitter, readyAt
 
 -- shelf geometry (matches art/models/shelf_l1.py): tier surfaces above the plot floor,
 -- forward offset (+Z) per tier, gentle forward curve at the ends
-ShelfView.TIER_Y = { 1.0, 3.4, 5.8, 8.2 }
+ShelfView.TIER_Y = { 1.05, 3.45, 5.85, 8.25 } -- board tops + a hair, so feet sit on (not in) the board
 ShelfView.TIER_Z = { 2.6, 1.2, -0.2, -1.6 }
 ShelfView.HALF_WIDTH = 11
 ShelfView.CURVE = 0.9
@@ -155,7 +155,8 @@ local function sync(plotIndex: number, items: { any }, keyOf: (any, number) -> s
 	local base = anchorCf(plotIndex)
 	for i, key in order do
 		local r = view.rigs[key]
-		place(r, base * CFrame.new(slots[i]))
+		-- faces toward the slingshot / valley (+Z); models face -Z
+		place(r, base * CFrame.new(slots[i]) * CFrame.Angles(0, math.pi, 0))
 	end
 end
 

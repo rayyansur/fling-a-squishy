@@ -12,7 +12,7 @@ return function(B, ctx)
 
 	-- terrace slab (Z -60..0) and the hub floor behind it (Z -120..-60), one height
 	B.boxMM(world, "TerraceFloor", T.x0, top - 6, T.z0, T.x1, top, T.z1, T.color, "SmoothPlastic")
-	B.boxMM(world, "HubFloor", T.x0, top - 6, -120, T.x1, top, T.z0, "#FFD6E8", "SmoothPlastic")
+	B.boxMM(world, "HubFloor", T.x0, top - 6, -120, T.x1, top, T.z0, "#FFB3D6", "SmoothPlastic")
 	-- candy-brick trim along the valley edge: alternating pink / cream blocks on the face
 	local x = T.x0
 	local i = 0

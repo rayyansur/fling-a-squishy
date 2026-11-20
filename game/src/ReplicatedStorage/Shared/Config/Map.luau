@@ -4,7 +4,7 @@
 local Map = {}
 
 Map.TerraceTop = 2
-Map.Terrace = { x0 = -190, x1 = 190, z0 = -60, z1 = 0, color = "#FFE3F1", trim = "#FF4FA3" }
+Map.Terrace = { x0 = -190, x1 = 190, z0 = -60, z1 = 0, color = "#FFC6E2", trim = "#FF4FA3" }
 Map.Valley = { x0 = -240, x1 = 240, z0 = 0, z1 = 950, y = 0 }
 Map.Spawn = { 0, 3, -52 }
 Map.WallZ = 2 -- invisible wall keeping players on the terrace

@@ -263,7 +263,9 @@ function Hud.start()
 	-- live stats
 	local function refresh()
 		local coins = (player:GetAttribute("coins") :: number?) or 0
-		Candy.countTo(coinsLabel, coins)
+		Candy.countTo(coinsLabel, coins, function(n: number): string
+			return Format.abbrev(math.floor(n)) -- whole coins on the pill; income is fractional
+		end)
 		rateLabel.Text = "+" .. Format.abbrev((player:GetAttribute("IncomePerSec") :: number?) or 0) .. "/s"
 		shelfLabel.Text = ("%d / %d"):format((player:GetAttribute("ShelfCount") :: number?) or 0, (player:GetAttribute("Slots") :: number?) or E.Slots.start)
 		local gloves = (player:GetAttribute("gloves") :: number?) or 1

@@ -21,7 +21,7 @@ return function(B, ctx)
 		local half = M.PlotSize / 2
 
 		-- floor tile (slightly raised so it never z-fights the terrace)
-		B.boxMM(plot, "Floor", x - half, top, M.PlotZ - half, x + half, top + 0.2, M.PlotZ + half, "#FFF4FA", "SmoothPlastic")
+		B.boxMM(plot, "Floor", x - half, top, M.PlotZ - half, x + half, top + 0.2, M.PlotZ + half, "#FFE0EF", "SmoothPlastic")
 		B.boxMM(plot, "Border", x - half - 0.4, top, M.PlotZ - half - 0.4, x + half + 0.4, top + 0.12, M.PlotZ + half + 0.4, "#FF8FC4", "SmoothPlastic")
 
 		-- shelf (back of the plot, facing the valley)

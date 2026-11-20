@@ -83,7 +83,7 @@ def shelf(bpy, kit, level=1):
         yf = -ty - SHELF["depth"] / 2
         curved_slab(bpy, "Boards", -half - 0.4, half + 0.4, yf, SHELF["depth"], tz - 0.4, tz, SHELF["curve"], half, board)
         # rounded lip along the front edge
-        curved_slab(bpy, "Lips", -half - 0.4, half + 0.4, yf - 0.25, 0.35, tz - 0.55, tz + 0.12, SHELF["curve"], half, lip)
+        curved_slab(bpy, "Lips", -half - 0.4, half + 0.4, yf - 0.25, 0.35, tz - 0.55, tz + 0.03, SHELF["curve"], half, lip)
         # frosting drips under the lip
         for i in range(12):
             x = -half + (2 * half) * (i + 0.5) / 12
