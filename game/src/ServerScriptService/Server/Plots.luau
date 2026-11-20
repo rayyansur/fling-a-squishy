@@ -10,6 +10,7 @@ local Config = require(ReplicatedStorage.Shared.Config)
 local ConfigCheck = require(ReplicatedStorage.Shared.Util.ConfigCheck)
 local Format = require(ReplicatedStorage.Shared.Util.Format)
 local Data = require(ServerScriptService.Kit.Data)
+local Net = require(ReplicatedStorage.Kit.Net)
 local State = require(script.Parent.State)
 
 local M = Config.Map
@@ -158,6 +159,11 @@ function Plots.start()
 			task.wait(0.2)
 			Plots.teleportHome(player)
 		end)
+	end)
+	Net.on("GoHome", { rate = 1, burst = 2 }, function(player)
+		if player:GetAttribute("Ready") then
+			Plots.teleportHome(player)
+		end
 	end)
 	Plots.ready = true
 end
