@@ -106,7 +106,7 @@ function GooRainFx.start()
 			chipLabel.Text = t
 		end
 	end
-	RunService.RenderStepped:Connect(function(dt: number)
+	RunService.Heartbeat:Connect(function(dt: number)
 		local s = ReplicatedStorage:GetAttribute("GooRainStart") :: number?
 		local f = ReplicatedStorage:GetAttribute("GooRainEnd") :: number?
 		if not s or not f then
