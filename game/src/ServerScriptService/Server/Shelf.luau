@@ -312,7 +312,15 @@ function Shelf.squeeze(player: Player): (number, number)
 end
 
 function Shelf.start()
-	Net.declare({ "ShelfUpdate", "ShelfFull", "Squeezed", "Merged", "Arrived", "Announce" })
+	Net.declare({ "ShelfUpdate", "ShelfFull", "Squeezed", "Merged", "Arrived", "Announce", "DexState" })
+
+	-- the Squishydex panel asks when it opens: { [speciesId] = { n, best, glitter } }
+	Net.on("DexRequest", { rate = 2, burst = 4 }, function(player)
+		local data = Data.get(player)
+		if data then
+			Net.fire(player, "DexState", data.dex)
+		end
+	end)
 
 	Net.on("SqueezeRequest", { rate = G.SqueezeRate, burst = G.SqueezeRate }, function(player)
 		Shelf.squeeze(player)

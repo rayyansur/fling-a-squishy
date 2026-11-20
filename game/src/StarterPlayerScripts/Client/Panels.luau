@@ -255,7 +255,13 @@ end
 ------------------------------------------------------------------ Odds
 function Panels.odds(zone: number?)
 	local modal = Candy.modal("Odds", "ODDS")
-	local list = Candy.scroll(modal.body)
+	Panels.oddsInto(modal.body, zone)
+	refreshOpen = nil
+end
+
+-- the odds table + notes in a scroll inside `parent` (the Odds panel and the Dex's Odds tab)
+function Panels.oddsInto(parent: Instance, zone: number?)
+	local list = Candy.scroll(parent)
 	Candy.make("UIListLayout", { Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder, Parent = list })
 	local head = row(list, 0, 56)
 	head.BackgroundColor3 = P.grape
@@ -286,7 +292,6 @@ function Panels.odds(zone: number?)
 		local r = row(list, 10 + k, 64)
 		Candy.label(r, t, { Font = F.small, TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(1, -24, 1, -12), Position = UDim2.fromOffset(12, 6) })
 	end
-	refreshOpen = nil
 end
 
 ------------------------------------------------------------------ Shelf Full

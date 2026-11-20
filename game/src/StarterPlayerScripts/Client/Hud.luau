@@ -206,8 +206,9 @@ function Hud.start()
 	_spPill, spLabel = statPill(stats, 4, "sp", 300, 52)
 
 	-- left menu column
-	local menu = Candy.make("Frame", { Name = "Menu", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 24, 0.55, 0), Size = UDim2.fromOffset(92, 540), Parent = gui })
-	Candy.make("UIListLayout", { Padding = UDim.new(0, 12), SortOrder = Enum.SortOrder.LayoutOrder, VerticalAlignment = Enum.VerticalAlignment.Center, Parent = menu })
+	-- two columns under the stat pills, so 6 buttons fit a 700 px tall screen with the pills
+	local menu = Candy.make("Frame", { Name = "Menu", BackgroundTransparency = 1, Position = UDim2.fromOffset(24, 266), Size = UDim2.fromOffset(196, 320), Parent = gui })
+	Candy.make("UIGridLayout", { CellSize = UDim2.fromOffset(88, 92), CellPadding = UDim2.fromOffset(12, 12), SortOrder = Enum.SortOrder.LayoutOrder, Parent = menu })
 
 	-- FLING (bottom-centre)
 	local d = if Candy.isTouch() then 220 else 190
@@ -284,6 +285,27 @@ function Hud.start()
 		Hud.announce(text, if hex then Color3.fromHex(hex) else nil)
 	end)
 	Hud.ready = true
+end
+
+-- bottom-left Re-Squish pill (DESIGN 7.2); glows when a Re-Squish is ready
+local stopGlow: (() -> ())? = nil
+function Hud.reSquishButton(open: () -> ())
+	local b = Candy.button(gui, "Re-Squish", "grape", UDim2.fromOffset(190, 64), open, { Name = "ReSquish", AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 24, 1, -24) })
+	Hud.buttons.ReSquish = b.frame
+	Candy.buttonIcon(b, "resquish")
+end
+
+function Hud.setReSquishReady(ready: boolean)
+	local b = Hud.buttons.ReSquish
+	if not b then
+		return
+	end
+	if ready and not stopGlow then
+		stopGlow = Candy.pulse(b)
+	elseif not ready and stopGlow then
+		stopGlow()
+		stopGlow = nil
+	end
 end
 
 -- set by the Shelf view (it knows which squishies are ready)
