@@ -162,8 +162,13 @@ end
 
 for _, name in args do
 	local path = "tests/cloud/" .. name .. ".test.luau"
+	local base = "tests/cloud/" .. name
+	if not fs.isFile(path) and fs.isFile("tests/local/" .. name .. ".luau") then
+		-- local-only suites (balance sim) live in tests/local
+		path, base = "tests/local/" .. name .. ".luau", "tests/local/" .. name
+	end
 	local ok, err = pcall(function()
-		load(path, proxy("tests/cloud/" .. name))(t)
+		load(path, proxy(base))(t)
 	end)
 	if not ok then
 		table.insert(failed, name .. " (load) :: " .. tostring(err))
