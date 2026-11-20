@@ -36,13 +36,16 @@ function ReSquish.run(player: Player): boolean
 		return false
 	end
 	local coinsOk, legOk = R.check(data, E, S, Z.Rarities)
-	if not (coinsOk and legOk) then
-		return false
+	if not (coinsOk and legOk) or State.get(player).hopping > 0 then
+		return false -- wait for squishies still hopping home (they'd be lost in the machine)
 	end
 	local n = 0
 	Data.update(player, function(d)
 		R.apply(d)
 		n = d.reSquishes
+		-- the shelf is empty now: never pay offline income at the old rate
+		d.lastIncomePerSec = 0
+		d.lastOnline = os.time()
 	end)
 	local st = State.get(player)
 	st.epoch += 1

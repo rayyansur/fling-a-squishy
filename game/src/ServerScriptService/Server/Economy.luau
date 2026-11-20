@@ -80,6 +80,13 @@ function Economy.refresh(player: Player)
 	local st = State.get(player)
 	st.incomePerSec = Economy.incomePerSec(player, data)
 	player:SetAttribute("IncomePerSec", st.incomePerSec)
+	-- keep the offline-income rate current on every shelf/multiplier change, not only every 10 s
+	local logout = Economy.incomePerSec(player, data, false)
+	if data.lastIncomePerSec ~= logout then
+		Data.update(player, function(d)
+			d.lastIncomePerSec = logout
+		end)
+	end
 	player:SetAttribute("ShelfCount", #data.shelf)
 	player:SetAttribute("Slots", E.slotCount(data.slotUpgrades))
 	setStats(player, #data.shelf, data.coins)

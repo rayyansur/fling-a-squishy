@@ -77,9 +77,14 @@ function ShelfDecor.start()
 			ShelfDecor.refresh(plot)
 		end
 	end)
-	local a = 0
+	local a, acc = 0, 0
 	RunService.Heartbeat:Connect(function(dt: number)
 		a = (a + dt * 1.5) % (2 * math.pi)
+		acc += dt
+		if acc < 0.05 then
+			return -- 20 Hz is plenty for a slow spin
+		end
+		acc = 0
 		local cam = workspace.CurrentCamera
 		local cp = if cam then cam.CFrame.Position else Vector3.zero
 		for _, t in toppers do

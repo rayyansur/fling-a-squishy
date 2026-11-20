@@ -115,7 +115,8 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 		s, g, rarity = pool[rng:NextInteger(1, #pool)].id, false, "Uncommon"
 	elseif Tutorial.rigThird(player) and #data.shelf > 0 then
 		local owned = data.shelf[rng:NextInteger(1, #data.shelf)]
-		s, rarity = owned.s, S.ById[owned.s].rarity
+		local known = S.ById[owned.s]
+		s, rarity = owned.s, if known then known.rarity else rarity
 		g = false
 	end
 

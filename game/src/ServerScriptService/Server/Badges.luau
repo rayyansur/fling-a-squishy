@@ -31,7 +31,10 @@ function Badges.award(player: Player, key: string)
 	task.spawn(function()
 		local ok, has = pcall(BadgeService.UserHasBadgeAsync, BadgeService, player.UserId, id)
 		if ok and not has then
-			pcall(BadgeService.AwardBadge, BadgeService, player.UserId, id)
+			ok = pcall(BadgeService.AwardBadge, BadgeService, player.UserId, id)
+		end
+		if not ok and tried[player] then
+			tried[player][key] = nil -- BadgeService hiccup: try again next time it triggers
 		end
 	end)
 end

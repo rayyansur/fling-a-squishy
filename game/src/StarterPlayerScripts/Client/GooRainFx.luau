@@ -99,6 +99,13 @@ function GooRainFx.start()
 	end
 
 	local spin = 0
+	local shown = ""
+	local function setText(t: string)
+		if t ~= shown then
+			shown = t
+			chipLabel.Text = t
+		end
+	end
 	RunService.RenderStepped:Connect(function(dt: number)
 		local s = ReplicatedStorage:GetAttribute("GooRainStart") :: number?
 		local f = ReplicatedStorage:GetAttribute("GooRainEnd") :: number?
@@ -111,11 +118,11 @@ function GooRainFx.start()
 		local on = now >= s and now < f
 		setActive(on)
 		if on then
-			chipLabel.Text = "GOO RAIN!  " .. mmss(f - now)
+			setText("GOO RAIN!  " .. mmss(f - now))
 			spin = (spin + dt * 180) % 360
 			grad.Rotation = spin
 		else
-			chipLabel.Text = "Next Goo Rain " .. mmss(s - now)
+			setText("Next Goo Rain " .. mmss(s - now))
 			local left = s - now
 			if left <= cfg.Warning and left > 0 and warned ~= s then
 				warned = s

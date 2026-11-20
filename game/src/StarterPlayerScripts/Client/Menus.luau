@@ -198,9 +198,10 @@ function Menus.reSquish()
 		local cost = attr("ReSquishCost", E.reSquishCost(n + 1))
 		local coins = attr("coins", 0)
 		local legOk = attr("ReSquishLegendary", false)
-		local ready = coins >= cost and legOk
+		local ready = coins >= cost and legOk and (attr("Hopping", 0) :: number) == 0
 		check(modal.body, 0, coins >= cost, ("Have %s coins (%s now)"):format(Format.abbrev(cost), Format.abbrev(math.floor(coins))))
-		check(modal.body, 66, legOk, "A Legendary or Mythic squishy on your shelf")
+		local hopping = (attr("Hopping", 0) :: number) > 0
+		check(modal.body, 66, legOk and not hopping, if hopping then "Wait for your squishies to hop home" else "A Legendary or Mythic squishy on your shelf")
 		local info = card(modal.body, UDim2.new(1, 0, 0, 200), P.white, { Position = UDim2.fromOffset(0, 136) })
 		Candy.stroke(info, 3, P.grape)
 		local inc0, inc1 = 1 + E.ReSquish.incomePer * n, 1 + E.ReSquish.incomePer * (n + 1)
@@ -362,9 +363,9 @@ function Menus.start()
 	end)
 	Net.listen("WelcomeBack", welcomeBack)
 	Net.listen("ReSquished", wipe)
-	Net.listen("Arrived", function()
-		-- a new species may have joined the Dex
-		if Candy.modalOpen() == "Dex" then
+	Net.listen("Arrived", function(_uid: string, _s: string, _g: boolean, isNew: boolean)
+		-- only a new species changes what the Dex shows
+		if isNew and Candy.modalOpen() == "Dex" then
 			Net.send("DexRequest")
 		end
 	end)
@@ -386,7 +387,7 @@ function Menus.start()
 		end)
 	end
 	Menus.applySettings()
-	for _, a in { "ReSquishReady", "ReSquishLegendary", "ReSquishCost", "reSquishes" } do
+	for _, a in { "ReSquishReady", "ReSquishLegendary", "ReSquishCost", "reSquishes", "Hopping" } do
 		player:GetAttributeChangedSignal(a):Connect(function()
 			redrawIfOpen("ReSquish")
 			Hud.setReSquishReady(attr("ReSquishReady", false) == true)
