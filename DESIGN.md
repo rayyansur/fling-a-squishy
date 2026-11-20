@@ -557,3 +557,10 @@ Where the spec is silent or conflicts with the template; Rayyan can overrule any
   player's lane, then one 50% bounce. The pad layout guarantees one zone-2 pad within ±30° of every plot.
 - **Offline income** is in the spec, though an earlier game's feedback called it unnecessary; built as written.
 - **Studio-only `Dev` remote** (set SP, force Goo Rain, add coins) for the §15 checks.
+- **Rebalance (2026-11-20, approved by Rayyan's "continue" after the PR 1 report).** The spec's own
+  numbers reached the Rim in ~2 min. Changed: distance `25 + 1.2·√SP` (was 22·√SP), so goo and gloves
+  carry the early climb; goo/glove/shelf prices ×20, except the first goo/glove tier (2,000 / 1,200)
+  so the tutorial's buy stays quick; slots `floor(20,000 × 2.4^k)`; Re-Squish `2.5B × 4^(n−1)`.
+  Odds and squishy incomes are unchanged. Sim (`lune run tests/local/run.luau balance`, median of 5):
+  Lime Slime 0:42 · first Rare 2:28 · first Epic 13:31 · first Legendary 46:00 · 20 slots 32:12 ·
+  Rainbow Rim 1:36 · Re-Squish affordable 3:03.
