@@ -1,1 +1,1607 @@
-{}
+{
+ "acc_avocado": {
+  "parts": [
+   {
+    "color": "#3E7B27",
+    "material": null,
+    "name": "Skin",
+    "tris": 168
+   },
+   {
+    "color": "#8B5A2B",
+    "material": null,
+    "name": "Pit",
+    "tris": 80
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "559d01aafad85fd9a8087e909aa22bbf8877c24c94cee840b47a100e7e0a1130",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 260
+ },
+ "acc_boba": {
+  "parts": [
+   {
+    "color": "#3A2418",
+    "material": null,
+    "name": "Pearls",
+    "tris": 408
+   },
+   {
+    "color": "#C99A6B",
+    "material": null,
+    "name": "Ears",
+    "tris": 96
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Straw",
+    "tris": 20
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "25c4ebebb61728d9ef564ebf8472384d674dd232a231e079de88edcad63208d4",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 536
+ },
+ "acc_bunny_ears": {
+  "parts": [
+   {
+    "color": "#BFF3FF",
+    "material": null,
+    "name": "Ears",
+    "tris": 96
+   },
+   {
+    "color": "#FFB3D9",
+    "material": null,
+    "name": "Inner",
+    "tris": 96
+   },
+   {
+    "color": "#E8FBFF",
+    "material": null,
+    "name": "Crystals",
+    "tris": 24
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "7b50ccb8faf2fbdc68ce913eec802a1da3831401a2d194053f060492014d455f",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 228
+ },
+ "acc_crown": {
+  "parts": [
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Crown",
+    "tris": 40
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Gems",
+    "tris": 120
+   },
+   {
+    "color": "#FF9EC7",
+    "material": null,
+    "name": "Frosting",
+    "tris": 348
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "4a54790d066e00f0db9a786a907802f614218251c7537f7da9e1757bece1790b",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 520
+ },
+ "acc_cupcake": {
+  "parts": [
+   {
+    "color": "#7FD3FF",
+    "material": null,
+    "name": "Wrapper",
+    "tris": 32
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Frosting",
+    "tris": 216
+   },
+   {
+    "color": "#E8243C",
+    "material": null,
+    "name": "Cherry",
+    "tris": 48
+   },
+   {
+    "color": "#4DB52E",
+    "material": null,
+    "name": "Stem",
+    "tris": 12
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "64f67b1d7508b73ddbaf1bd656df276141fbd85443d7182677d9f77d7046dbe9",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 320
+ },
+ "acc_donut_dragon": {
+  "parts": [
+   {
+    "color": "#C98A4B",
+    "material": null,
+    "name": "Donut",
+    "tris": 192
+   },
+   {
+    "color": "#FFB3D9",
+    "material": null,
+    "name": "Icing",
+    "tris": 96
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Sprinkles",
+    "tris": 120
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Wings",
+    "tris": 12
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Horns",
+    "tris": 20
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "38eea6ae43b8e52514ca7884055d9484c3bd49407ce90b9ca592ab34e33828ec",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 452
+ },
+ "acc_frog_eyes": {
+  "parts": [
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Bumps",
+    "tris": 160
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "EyeWhite",
+    "tris": 96
+   },
+   {
+    "color": "#2B1B4A",
+    "material": null,
+    "name": "Pupil",
+    "tris": 48
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "9a4d27bb0af922280ab1e8284c009c7a365212c5fd8017dcb52a6eeb6e947bd2",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 316
+ },
+ "acc_gold_steam": {
+  "parts": [
+   {
+    "color": "#FFE680",
+    "material": null,
+    "name": "Steam",
+    "tris": 480
+   },
+   {
+    "color": "#E8A900",
+    "material": null,
+    "name": "Pleat",
+    "tris": 48
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "29bc307a60b13a47fea07fde051cc5df2f537ab72c5b3fc5a630d0df6b8604d0",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 540
+ },
+ "acc_lava_cracks": {
+  "parts": [
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Cracks",
+    "tris": 356
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "7dfbd663aab925718fd234f5d27c2a0ea17cfa66f751d9c86b22971e8f642298",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 368
+ },
+ "acc_leaf": {
+  "parts": [
+   {
+    "color": "#7A5A44",
+    "material": null,
+    "name": "Stem",
+    "tris": 16
+   },
+   {
+    "color": "#4DB52E",
+    "material": null,
+    "name": "Leaf",
+    "tris": 16
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "926c73c50143127a5df7b3555b7fa6788dc162ad761e9258c21cb7c7b5dc1af2",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 44
+ },
+ "acc_party_hat": {
+  "parts": [
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Hat",
+    "tris": 20
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Stripes",
+    "tris": 80
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Pompom",
+    "tris": 48
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Confetti",
+    "tris": 64
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "b4b7bddf9d4223cc602248a29a19f9b18dd1c666c13f136885b66223ffcc316e",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 224
+ },
+ "acc_prism": {
+  "parts": [
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Shard1",
+    "tris": 8
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Shard2",
+    "tris": 8
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Shard3",
+    "tris": 8
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Shard4",
+    "tris": 8
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Shard5",
+    "tris": 8
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Gem",
+    "tris": 24
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "e69788df7f592105c15844122a8ab82b389fba6fe874decfd55164c1baf07716",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 76
+ },
+ "acc_raindrop": {
+  "parts": [
+   {
+    "color": "#7FD3FF",
+    "material": null,
+    "name": "Drop",
+    "tris": 96
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Tuft",
+    "tris": 144
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "0bce8b643ad2e2b1301abb48e40d975b727759b1b04ec5f7ab3d23af9521b662",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 252
+ },
+ "acc_star_spout": {
+  "parts": [
+   {
+    "color": "#8FE0FF",
+    "material": null,
+    "name": "Spout",
+    "tris": 104
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Star",
+    "tris": 40
+   },
+   {
+    "color": "#3A2E8C",
+    "material": null,
+    "name": "Body",
+    "tris": 20
+   },
+   {
+    "color": "#B8A8FF",
+    "material": null,
+    "name": "Belly",
+    "tris": 84
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Specks",
+    "tris": 200
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "60bcc700a5c027dc1f4cedf8bd86e3381628d72e8940dedaf009c950b0eb19d7",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 460
+ },
+ "acc_steam": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Steam",
+    "tris": 480
+   },
+   {
+    "color": "#F2E2C4",
+    "material": null,
+    "name": "Pleat",
+    "tris": 48
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "f57cea55c305cd7b7bfe52a2cb9984e5609ff2365fc25a1bc930acfd26c42aae",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 540
+ },
+ "acc_strawberry": {
+  "parts": [
+   {
+    "color": "#3FBF4A",
+    "material": null,
+    "name": "Leaves",
+    "tris": 140
+   },
+   {
+    "color": "#FFE680",
+    "material": null,
+    "name": "Seeds",
+    "tris": 128
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "643a07a1cf340149bc62340b05ad73a761df07a7a8943df90c6cc2c6f3146182",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 280
+ },
+ "acc_sushi": {
+  "parts": [
+   {
+    "color": "#1F3A2E",
+    "material": null,
+    "name": "Nori",
+    "tris": 112
+   },
+   {
+    "color": "#FF8A65",
+    "material": null,
+    "name": "Salmon",
+    "tris": 72
+   },
+   {
+    "color": "#FFD0BC",
+    "material": null,
+    "name": "Stripes",
+    "tris": 36
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "e4aa58daa7860ba890b5d85291a747275e4ca38cfa90c0ef3d904fe053ed92a9",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 232
+ },
+ "acc_taco": {
+  "parts": [
+   {
+    "color": "#F5B83A",
+    "material": null,
+    "name": "Shell",
+    "tris": 100
+   },
+   {
+    "color": "#6BD34A",
+    "material": null,
+    "name": "Lettuce",
+    "tris": 240
+   },
+   {
+    "color": "#FF4F4F",
+    "material": null,
+    "name": "Tomato",
+    "tris": 96
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "1a9a1fa14fbff9b1301dff22aa5c2111b3391ec28674aaa7f1132e14e1038650",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 448
+ },
+ "acc_tentacles": {
+  "parts": [
+   {
+    "color": "#9B6BFF",
+    "material": null,
+    "name": "Tentacles",
+    "tris": 744
+   },
+   {
+    "color": "#E3D1FF",
+    "material": null,
+    "name": "Spots",
+    "tris": 96
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "ab11e04001bf78f1658cd6369a83e02fa3098c22dbbac87d6879281464d4a3e7",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 852
+ },
+ "acc_toasted": {
+  "parts": [
+   {
+    "color": "#E0A060",
+    "material": null,
+    "name": "Toast",
+    "tris": 84
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "8342269824d15aa70d603182071637a86549e5e41f2160b5fb22fa68d135ed66",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 96
+ },
+ "acc_unicorn": {
+  "parts": [
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Horn",
+    "tris": 12
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Mane1",
+    "tris": 48
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Mane2",
+    "tris": 48
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Mane3",
+    "tris": 48
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Mane4",
+    "tris": 48
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Ears",
+    "tris": 20
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "37ae39f2ad1dac5755b96b60b68946cd65b44f556074b4ff9f173cbe4d0b058f",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 236
+ },
+ "body_bean": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": "SmoothPlastic",
+    "name": "Body",
+    "tris": 168
+   },
+   {
+    "color": "#2B1B4A",
+    "material": "SmoothPlastic",
+    "name": "Eyes",
+    "tris": 128
+   },
+   {
+    "color": "#FFFFFF",
+    "material": "SmoothPlastic",
+    "name": "Shine",
+    "tris": 48
+   },
+   {
+    "color": "#FF9EC7",
+    "material": "SmoothPlastic",
+    "name": "Blush",
+    "tris": 96
+   },
+   {
+    "color": "#2B1B4A",
+    "material": "SmoothPlastic",
+    "name": "Mouth",
+    "tris": 96
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "15e04a781a0e989b95fd3c7ba6f5a49b1deb484b28dbbf2eeee7d43e03f68c7b",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 548
+ },
+ "body_blob": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": "SmoothPlastic",
+    "name": "Body",
+    "tris": 196
+   },
+   {
+    "color": "#2B1B4A",
+    "material": "SmoothPlastic",
+    "name": "Eyes",
+    "tris": 128
+   },
+   {
+    "color": "#FFFFFF",
+    "material": "SmoothPlastic",
+    "name": "Shine",
+    "tris": 48
+   },
+   {
+    "color": "#FF9EC7",
+    "material": "SmoothPlastic",
+    "name": "Blush",
+    "tris": 96
+   },
+   {
+    "color": "#2B1B4A",
+    "material": "SmoothPlastic",
+    "name": "Mouth",
+    "tris": 96
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "79ba32d42bb9db0e1dbab9def77e4a3668a18c2fc6e563470c80c939233d8ccc",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 576
+ },
+ "body_bun": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": "SmoothPlastic",
+    "name": "Body",
+    "tris": 168
+   },
+   {
+    "color": "#2B1B4A",
+    "material": "SmoothPlastic",
+    "name": "Eyes",
+    "tris": 128
+   },
+   {
+    "color": "#FFFFFF",
+    "material": "SmoothPlastic",
+    "name": "Shine",
+    "tris": 48
+   },
+   {
+    "color": "#FF9EC7",
+    "material": "SmoothPlastic",
+    "name": "Blush",
+    "tris": 96
+   },
+   {
+    "color": "#2B1B4A",
+    "material": "SmoothPlastic",
+    "name": "Mouth",
+    "tris": 96
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "e24d13e9d81c0d488b631c4ee0ed9c72eea3c453c3207d7b02f0e9d46cb4dbc6",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 548
+ },
+ "body_loaf": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": "SmoothPlastic",
+    "name": "Body",
+    "tris": 192
+   },
+   {
+    "color": "#2B1B4A",
+    "material": "SmoothPlastic",
+    "name": "Eyes",
+    "tris": 128
+   },
+   {
+    "color": "#FFFFFF",
+    "material": "SmoothPlastic",
+    "name": "Shine",
+    "tris": 48
+   },
+   {
+    "color": "#FF9EC7",
+    "material": "SmoothPlastic",
+    "name": "Blush",
+    "tris": 96
+   },
+   {
+    "color": "#2B1B4A",
+    "material": "SmoothPlastic",
+    "name": "Mouth",
+    "tris": 96
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "697ddaa59c9e2595c8c0890e0f0ae15f14e20d7e781abc61b501362abf1498f3",
+  "size": [
+   2.99,
+   3.6,
+   2.9946
+  ],
+  "tris": 572
+ },
+ "cloud": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Cloud",
+    "tris": 560
+   }
+  ],
+  "sha256": "821a8a8e2bd40b2dd7d6b4682ba60d6ba03212e5903427476cd9d9925da4e4ba",
+  "size": [
+   11.6517,
+   4.66,
+   4.1477
+  ],
+  "tris": 560
+ },
+ "frosted_peak": {
+  "parts": [
+   {
+    "color": "#B98CFF",
+    "material": null,
+    "name": "Rock",
+    "tris": 90
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Frost",
+    "tris": 270
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Sprinkles",
+    "tris": 168
+   }
+  ],
+  "sha256": "038860c040f28065f93af516e7165f688274b32f5262228969f68a27c8aea899",
+  "size": [
+   16.4874,
+   15.12,
+   16.7417
+  ],
+  "tris": 528
+ },
+ "glove_stand": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Counter",
+    "tris": 108
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "CounterTop",
+    "tris": 108
+   },
+   {
+    "color": "#FFE3F1",
+    "material": null,
+    "name": "Back",
+    "tris": 12
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Posts",
+    "tris": 64
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "AwningA",
+    "tris": 176
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "AwningB",
+    "tris": 176
+   },
+   {
+    "color": "#FF8A3D",
+    "material": null,
+    "name": "Glove",
+    "tris": 168
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Cuff",
+    "tris": 40
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Gloves1",
+    "tris": 72
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Cuffs",
+    "tris": 96
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Gloves2",
+    "tris": 72
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Gloves3",
+    "tris": 72
+   }
+  ],
+  "sha256": "1f18246c9d7e4c9e847f2a9836ede0016c8eec7f15c7de6ac717bb8fe6e06d20",
+  "size": [
+   12.4,
+   14.1,
+   7.7872
+  ],
+  "tris": 1164
+ },
+ "goo_blob": {
+  "parts": [
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Body",
+    "tris": 144
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Shine",
+    "tris": 48
+   }
+  ],
+  "sha256": "5efb591b89ca92fcf6c7a8aed7cf6647ea9292351e7755a27f59d04a85b1e1b9",
+  "size": [
+   1.9319,
+   1.9319,
+   2.45
+  ],
+  "tris": 192
+ },
+ "goo_lab": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Counter",
+    "tris": 108
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "CounterTop",
+    "tris": 108
+   },
+   {
+    "color": "#FFE3F1",
+    "material": null,
+    "name": "Back",
+    "tris": 12
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Posts",
+    "tris": 64
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "AwningA",
+    "tris": 176
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "AwningB",
+    "tris": 176
+   },
+   {
+    "color": "#E6F7FF",
+    "material": null,
+    "name": "Flasks",
+    "tris": 320
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Goo1",
+    "tris": 96
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Goo2",
+    "tris": 96
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Goo3",
+    "tris": 96
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Goo4",
+    "tris": 96
+   },
+   {
+    "color": "#C9A6FF",
+    "material": null,
+    "name": "Vat",
+    "tris": 48
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "VatGoo",
+    "tris": 48
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Pipes",
+    "tris": 64
+   }
+  ],
+  "sha256": "bb0834ab579b8b286d6c6f4a7295552488e02fcfbca94fdf26073b3c712d9a02",
+  "size": [
+   12.4,
+   10.7,
+   7.9191
+  ],
+  "tris": 1508
+ },
+ "gumdrop_bush": {
+  "parts": [
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Drop1",
+    "tris": 80
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Sugar",
+    "tris": 240
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Drop2",
+    "tris": 80
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Drop3",
+    "tris": 80
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Drop4",
+    "tris": 80
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Drop5",
+    "tris": 80
+   },
+   {
+    "color": "#FF8A3D",
+    "material": null,
+    "name": "Drop6",
+    "tris": 80
+   }
+  ],
+  "sha256": "bfbc85d4e8dd8555fe94b5c8ca5b59c7a725527921424c489762abf707200ed4",
+  "size": [
+   7.9209,
+   2.6,
+   7.26
+  ],
+  "tris": 720
+ },
+ "jelly_pad": {
+  "parts": [
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Jelly",
+    "tris": 200
+   }
+  ],
+  "sha256": "767075796651b8c537b0bbdae9a87b6841ebf307c46c7c026907ca9c728f54f2",
+  "size": [
+   17.7784,
+   1.7,
+   17.7784
+  ],
+  "tris": 200
+ },
+ "lollipop_tree": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Stick",
+    "tris": 32
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Swirl3",
+    "tris": 108
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Swirl2",
+    "tris": 432
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Swirl5",
+    "tris": 144
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Swirl7",
+    "tris": 144
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Bow",
+    "tris": 16
+   }
+  ],
+  "sha256": "8f1a008b2584bf7289b6c646dbd2304ba6ab72a448a6906824ca750944d658e7",
+  "size": [
+   6.3999,
+   13.5539,
+   1.0
+  ],
+  "tris": 876
+ },
+ "rainbow_arch": {
+  "parts": [
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Band1",
+    "tris": 260
+   },
+   {
+    "color": "#FF8A3D",
+    "material": null,
+    "name": "Band2",
+    "tris": 260
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Band3",
+    "tris": 260
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Band4",
+    "tris": 260
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Band5",
+    "tris": 260
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Band6",
+    "tris": 260
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Clouds",
+    "tris": 640
+   }
+  ],
+  "sha256": "aacaddcd47ef4d8bbfa332cc66c8f1d3762fd3460dff0944dfe3683dbfb43251",
+  "size": [
+   268.0,
+   138.4,
+   23.9344
+  ],
+  "tris": 2200
+ },
+ "resquish_machine": {
+  "parts": [
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Base",
+    "tris": 108
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Body",
+    "tris": 108
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Funnel",
+    "tris": 96
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "FunnelGoo",
+    "tris": 48
+   },
+   {
+    "color": "#7FD3FF",
+    "material": null,
+    "name": "Window",
+    "tris": 108
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Swirl",
+    "tris": 40
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Crank",
+    "tris": 56
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Knob",
+    "tris": 48
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Chute",
+    "tris": 40
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Lights1",
+    "tris": 24
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Lights2",
+    "tris": 24
+   },
+   {
+    "color": "#7CF25A",
+    "material": null,
+    "name": "Lights3",
+    "tris": 24
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Lights4",
+    "tris": 24
+   },
+   {
+    "color": "#FF8A3D",
+    "material": null,
+    "name": "Lights5",
+    "tris": 24
+   }
+  ],
+  "sha256": "28a58982832e6b6d382a2a741401c277c9c02170f9feae8b17c0322534c3fbca",
+  "size": [
+   10.9081,
+   12.2,
+   7.7773
+  ],
+  "tris": 772
+ },
+ "shelf_l1": {
+  "parts": [
+   {
+    "color": "#FFB3D9",
+    "material": null,
+    "name": "Boards",
+    "tris": 600
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Lips",
+    "tris": 300
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Drips",
+    "tris": 864
+   },
+   {
+    "color": "#FFB3D9",
+    "material": null,
+    "name": "Back",
+    "tris": 12
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Scallops",
+    "tris": 540
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Posts",
+    "tris": 64
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "PostTops",
+    "tris": 192
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "PostStars",
+    "tris": 80
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "1d75fda2463a69387221987c0e575f4b16b2c29f4d121b0930174d88a4c2b564",
+  "size": [
+   25.6373,
+   10.6,
+   10.014
+  ],
+  "tris": 2664
+ },
+ "slingshot": {
+  "parts": [
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Base",
+    "tris": 80
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Frame",
+    "tris": 284
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Tips",
+    "tris": 96
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Stripes",
+    "tris": 160
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Bow",
+    "tris": 40
+   }
+  ],
+  "sha256": "5a915186bd8baaf087e915e24d4d514d5c4c1ade0284fe8ec1e02b7ecdad2dd0",
+  "size": [
+   5.1761,
+   7.92,
+   3.6
+  ],
+  "tris": 660
+ },
+ "soda_geyser": {
+  "parts": [
+   {
+    "color": "#C9A6FF",
+    "material": null,
+    "name": "Mound",
+    "tris": 120
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Soda",
+    "tris": 48
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Foam",
+    "tris": 168
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Drips",
+    "tris": 64
+   }
+  ],
+  "sha256": "07d53b8b2b179b56b54c4223e91077da7c7dca15461c904331a9dc767b3c19ce",
+  "size": [
+   10.6252,
+   6.35,
+   10.6252
+  ],
+  "tris": 400
+ },
+ "taffy_hill": {
+  "parts": [
+   {
+    "color": "#FFB3D9",
+    "material": null,
+    "name": "Hill",
+    "tris": 160
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Stripes",
+    "tris": 960
+   }
+  ],
+  "sha256": "41291c91c69c34fc6944c77f9189a354d4200131b96e1008e47f9e855a23e1c0",
+  "size": [
+   16.6547,
+   6.1124,
+   12.8707
+  ],
+  "tris": 1120
+ }
+}

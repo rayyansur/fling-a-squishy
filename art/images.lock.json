@@ -1,0 +1,52 @@
+{
+ "coin": {
+  "assetId": "121864435901035",
+  "imageId": "121864435901035",
+  "sha256": "e6c31187fbfe839dfe8a98b44b4be1ab2fd943b76afa930956c39cf41b3d209b"
+ },
+ "daily": {
+  "assetId": "103324107790102",
+  "imageId": "103324107790102",
+  "sha256": "ac2c97dd138de8c8fc3d7d868401f5db8295d1474c0b71deeb2f3c470f9c8448"
+ },
+ "dex": {
+  "assetId": "75026505019221",
+  "imageId": "75026505019221",
+  "sha256": "7a484a348061769141d4883853c1b945ca0d0c2e2d7cb5de2c2d53f216f8740f"
+ },
+ "resquish": {
+  "assetId": "136464743171257",
+  "imageId": "136464743171257",
+  "sha256": "c7e581486099573fb99ef12643048d8c690cf58b1057207bb27d40e1ff24d9d6"
+ },
+ "settings": {
+  "assetId": "88144934992925",
+  "imageId": "88144934992925",
+  "sha256": "0469337ff24a6fe8a4e3b6a5b9a838b3d18766e77f25c813f8cdeee76b1c288e"
+ },
+ "shelf": {
+  "assetId": "72223686276680",
+  "imageId": "72223686276680",
+  "sha256": "a569d0f2a57ef541649342fba2e0387d7a15a78d5ab72e399296a3b706221a29"
+ },
+ "shop": {
+  "assetId": "91413246057663",
+  "imageId": "91413246057663",
+  "sha256": "211521c8bc7134cf7809e6f1ded7263237775c26d6144323fcb33620aa6d50c2"
+ },
+ "sp": {
+  "assetId": "94163678844910",
+  "imageId": "94163678844910",
+  "sha256": "e1e9193e9682abf02dfd70b22a14f876477797d3fbd4b65ce9d358f438a65158"
+ },
+ "squishy": {
+  "assetId": "117621828001228",
+  "imageId": "117621828001228",
+  "sha256": "de72e70d8b75c02ffa1bb39e180d9107e3611427f983906fb0b2abdf2c24b111"
+ },
+ "upgrades": {
+  "assetId": "123491670526706",
+  "imageId": "123491670526706",
+  "sha256": "bd97ea25010f3846c5da29d6f0ed682845e2a9b7cb7c9a323e11032c20520f3f"
+ }
+}
