@@ -217,6 +217,16 @@ local function updateState()
 end
 
 function Fling.start()
+	player:GetAttributeChangedSignal("HomeSeq"):Connect(function()
+		task.wait()
+		local char = player.Character
+		local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
+		local cam = workspace.CurrentCamera
+		if root and cam then
+			local p = root.Position
+			cam.CFrame = CFrame.lookAt(p + Vector3.new(0, 7, -14), p + Vector3.new(0, 2, 12))
+		end
+	end)
 	while not Hud.ready do
 		task.wait()
 	end

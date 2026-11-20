@@ -106,6 +106,8 @@ function Plots.teleportHome(player: Player)
 	local fp = Plots.flingPoint(i)
 	local stand = Vector3.new(fp.X, M.TerraceTop + 3, fp.Z - 4)
 	char:PivotTo(CFrame.lookAt(stand, stand + Vector3.new(0, 0, 1)))
+	-- tells the client to put the camera behind the player, looking down the valley
+	player:SetAttribute("HomeSeq", ((player:GetAttribute("HomeSeq") :: number?) or 0) + 1)
 end
 
 local function assign(player: Player)

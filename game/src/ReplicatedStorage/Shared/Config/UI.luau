@@ -13,7 +13,7 @@ return {
 	WobbleWithin = 100,
 	Abbrev = { "K", "M", "B", "T", "Qa", "Qi" },
 	Fallback = {
-		coin = "🪙",
+		coin = "$",
 		squishy = "🍡",
 		sp = "💪",
 		shop = "🛒",

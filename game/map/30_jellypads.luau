@@ -8,7 +8,7 @@ return function(B, ctx)
 	local folder = B.folder(ctx.workspace, "JellyPads")
 	for i, p in M.JellyPads do
 		local color = M.PadColors[(i - 1) % #M.PadColors + 1]
-		local pad = ctx.Assets:place(folder, "jelly_pad", B.CF.new(p.x, M.Valley.y + M.PadHeight, p.z), { collide = false })
+		local pad = ctx.Assets:place(folder, "jelly_pad", B.CF.new(p.x, M.Valley.y, p.z), { collide = false })
 		pad.Name = "JellyPad" .. i
 		pad:SetAttribute("PadIndex", i)
 		pad:SetAttribute("Zone", p.zone)

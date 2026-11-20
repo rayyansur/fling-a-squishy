@@ -75,7 +75,10 @@ function Candy.icon(parent: Instance, name: string, props: { [string]: any }?): 
 	if Icon.has(name) or not fallback then
 		local img = Icon.new(name, { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = parent })
 		for k, v in (props or {}) :: { [string]: any } do
-			(img :: any)[k] = v
+			-- text-only props belong to the emoji fallback label
+			if string.sub(k, 1, 4) ~= "Text" and k ~= "Font" then
+				(img :: any)[k] = v
+			end
 		end
 		return img
 	end
@@ -84,6 +87,16 @@ function Candy.icon(parent: Instance, name: string, props: { [string]: any }?): 
 		(l :: any)[k] = v
 	end
 	return l
+end
+
+-- put an icon at the left of a button's face and shift its label right
+function Candy.buttonIcon(b: Button, name: string)
+	local h = b.face.AbsoluteSize.Y > 0 and b.face.AbsoluteSize.Y or 60
+	local holder = make("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 8, 0.5, 0), Size = UDim2.new(0.7, 0, 0.7, 0), Parent = b.face })
+	make("UIAspectRatioConstraint", { AspectRatio = 1, DominantAxis = Enum.DominantAxis.Height, Parent = holder })
+	Candy.icon(holder, name)
+	b.label.Position = UDim2.new(0, h * 0.55 + 8, 0, 5)
+	b.label.Size = UDim2.new(1, -(h * 0.55 + 16), 1, -10)
 end
 
 -- screen gui with the DESIGN 7 UIScale (base 1920x1080, clamp 0.6-1.2)

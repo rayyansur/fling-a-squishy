@@ -60,7 +60,7 @@ local function upgradeRow(list: Instance, order: number, iconText: string, name:
 	Candy.label(f, name, { Font = F.header, TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(1, -330, 0, 36), Position = UDim2.fromOffset(92, 10) })
 	Candy.label(f, effect, { Font = F.small, TextColor3 = Color3.fromHex("#6E5C8F"), TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(1, -330, 0, 28), Position = UDim2.fromOffset(92, 50) })
 	local kind = if status == "buy" then "success" elseif status == "owned" then "secondary" else "disabled"
-	local text = if status == "buy" or status == "poor" then "🪙 " .. Format.abbrev(cost or 0) elseif status == "owned" then "Owned" else "Locked"
+	local text = if status == "buy" or status == "poor" then Format.abbrev(cost or 0) elseif status == "owned" then "Owned" else "Locked"
 	local b = Candy.button(f, text, kind, UDim2.fromOffset(200, 66), function()
 		if status == "buy" then
 			onBuy()
@@ -70,6 +70,9 @@ local function upgradeRow(list: Instance, order: number, iconText: string, name:
 	end, { AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -16, 0.5, 0) })
 	if status == "poor" then
 		b.setKind("disabled")
+	end
+	if status == "buy" or status == "poor" then
+		Candy.buttonIcon(b, "coin")
 	end
 end
 

@@ -28,6 +28,12 @@ return function(B, ctx)
 		local shelfCf = B.CF.new(x, top + 0.2, M.ShelfZ) * B.CF.Angles(0, math.pi, 0)
 		local shelf = ctx.Assets:place(plot, "shelf_l1", shelfCf)
 		shelf.Name = "Shelf"
+		for _, d in shelf:GetDescendants() do
+			if d.Name == "Pin" and d:IsA("BasePart") then
+				d.Transparency = 1
+				d.CanQuery = false
+			end
+		end
 		-- where squishies sit: tier anchors read by the client renderer
 		local slots = B.part(plot, { name = "ShelfAnchor", size = B.V3.new(1, 1, 1), cf = B.CF.new(x, top + 0.2, M.ShelfZ), t = 1, cc = false, cq = false, ct = false })
 		slots:SetAttribute("Tiers", 3)
