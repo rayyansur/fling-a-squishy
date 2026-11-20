@@ -34,6 +34,29 @@ return function(B, ctx)
 				d.CanQuery = false
 			end
 		end
+		-- shelf level visuals (DESIGN 4.6): each piece has a Level; the client shows the ones the
+		-- plot's ShelfLevel has reached
+		local decor = B.folder(plot, "LevelDecor")
+		local lights = ctx.Assets:place(decor, "shelf_lights", shelfCf)
+		lights.Name = "Lights"
+		lights:SetAttribute("Level", 2)
+		for _, side in { -1, 1 } do
+			local pillar = ctx.Assets:place(decor, "lollipop_tree", B.CF.new(x + side * 11.5, top + 0.2, M.ShelfZ + 7), { scale = 0.8 })
+			pillar.Name = "Pillar"
+			pillar:SetAttribute("Level", 3)
+		end
+		local topper = ctx.Assets:place(decor, "star_topper", shelfCf)
+		topper.Name = "StarTopper"
+		topper:SetAttribute("Level", 4)
+		local arch = ctx.Assets:place(decor, "rainbow_arch", B.CF.new(x, top + 0.2, M.ShelfZ - 3), { scale = 0.105 })
+		arch.Name = "Arch"
+		arch:SetAttribute("Level", 5)
+		for _, d in decor:GetDescendants() do
+			if d:IsA("BasePart") then
+				d.CanCollide, d.CanQuery, d.CanTouch = false, false, false
+			end
+		end
+
 		-- where squishies sit: tier anchors read by the client renderer
 		local slots = B.part(plot, { name = "ShelfAnchor", size = B.V3.new(1, 1, 1), cf = B.CF.new(x, top + 0.2, M.ShelfZ), t = 1, cc = false, cq = false, ct = false })
 		slots:SetAttribute("Tiers", 3)

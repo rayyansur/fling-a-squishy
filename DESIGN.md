@@ -557,3 +557,27 @@ Where the spec is silent or conflicts with the template; Rayyan can overrule any
   player's lane, then one 50% bounce. The pad layout guarantees one zone-2 pad within ±30° of every plot.
 - **Offline income** is in the spec, though an earlier game's feedback called it unnecessary; built as written.
 - **Studio-only `Dev` remote** (set SP, force Goo Rain, add coins) for the §15 checks.
+- **Rebalance (2026-11-20, approved by Rayyan's "continue" after the PR 1 report).** The spec's own
+  numbers reached the Rim in ~2 min. Changed: distance `25 + 1.2·√SP` (was 22·√SP), so goo and gloves
+  carry the early climb; goo/glove/shelf prices ×20, except the first goo/glove tier (2,000 / 1,200)
+  so the tutorial's buy stays quick; slots `floor(20,000 × 2.4^k)`; Re-Squish `2.5B × 4^(n−1)`.
+  Odds and squishy incomes are unchanged. Sim (`lune run tests/local/run.luau balance`, median of 5):
+  Lime Slime 0:42 · first Rare 2:28 · first Epic 13:31 · first Legendary 46:00 · 20 slots 32:12 ·
+  Rainbow Rim 1:36 · Re-Squish affordable 3:03.
+- **PR 2 calls (2026-11-20).**
+  - Offline income is paid on join; the modal's [Collect] only plays the coin fly. The saved rate
+    is refreshed on every shelf change and zeroed by Re-Squish (no offline pay at the old rate).
+  - Re-Squish is refused while any squishy is still hopping home (the checklist says why).
+    Squishies flung just before it would otherwise be lost.
+  - Quests count one per event (a merge to Mega counts as 1 merge). Rare+ and Goo Rain catches
+    count when the squishy reaches the shelf.
+  - The left HUD menu is a 2-column grid under the stat pills (Dex, Upgrades, Shelf, Daily,
+    Settings, Shop in PR 3); a single column of 6 overlapped the pills on 700 px screens.
+    Re-Squish is the bottom-left pill.
+  - Shelf level visuals: L2 gumdrop light string, L3 lollipop pillars at the front corners, L4 a
+    spinning gold star topper, L5 a rainbow arch behind the shelf with sparkles. The shelf itself
+    doesn't widen at L3 or gain a 4th tier at L4.
+  - Audio is licensed only (APMOfficial music, ProSoundEffects SFX). Slots with no licensed match
+    yet stay 0 (silent): sling_stretch, sling_release, perfect, boing, hop, merge, buy,
+    legendary_fanfare, goo_rain_jingle, ui_click, ui_error, ambient.
+  - Badge ids are 0 until the badges are created on the Creator Dashboard (Rayyan's account step).

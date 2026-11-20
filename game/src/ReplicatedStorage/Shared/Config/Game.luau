@@ -20,6 +20,5 @@ return {
 	ShelfFullAutoSeconds = 6,
 	ReleaseSeconds = 30, -- release pays this many seconds of the squishy's income
 	TutorialFlings = 10,
-	TutorialCoinsHint = 600,
 	IncomeTick = 1,
 }

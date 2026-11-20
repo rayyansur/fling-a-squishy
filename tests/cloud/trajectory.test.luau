@@ -7,12 +7,12 @@ return function(t)
 	local E, M, G = Config.Economy, Config.Map, Config.Game
 	local rules = T.rulesFrom(M)
 
-	t.test("reference distances (Bubblegum, perfect, no bounce)", function()
-		local want = { [1] = 47, [25] = 135, [100] = 245, [400] = 465, [900] = 685 }
+	t.test("reference distances (Bubblegum, perfect, no bounce; rebalanced DESIGN 18)", function()
+		local want = { [1] = 26.2, [25] = 31, [100] = 37, [400] = 49, [10000] = 145 }
 		for sp, d in want do
 			local curve = T.chargeCurve(1, G.SweetSpot, E.ChargeFloor)
 			local got = T.power(sp, 1, 0, false, E) * curve
-			t.expect(math.abs(got - d) < 1, ("SP %d: %0.1f, expected %d"):format(sp, got, d))
+			t.expect(math.abs(got - d) < 1, ("SP %d: %0.1f, expected %0.1f"):format(sp, got, d))
 		end
 	end)
 

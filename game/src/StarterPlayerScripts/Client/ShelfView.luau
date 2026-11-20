@@ -342,7 +342,7 @@ function ShelfView.start()
 		local cam = workspace.CurrentCamera
 		local camPos = if cam then cam.CFrame.Position else Vector3.zero
 		local mine = myPlot()
-		local low = player:GetAttribute("LowGraphics") == true
+		local low = player:GetAttribute("SetLow") == true
 		for i, view in views do
 			local d = (anchorCf(i).Position - camPos).Magnitude
 			local visible = i == mine or d <= UIC.RenderOthersWithin

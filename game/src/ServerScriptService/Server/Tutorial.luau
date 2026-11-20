@@ -79,7 +79,7 @@ function Tutorial.onMerge(player: Player)
 end
 
 function Tutorial.onCoins(player: Player, coins: number)
-	if Tutorial.active(player) and coins >= Config.Game.TutorialCoinsHint and step(player) >= 3 then
+	if Tutorial.active(player) and coins >= Config.Economy.Goo[2].cost and step(player) >= 3 then
 		advance(player, 5)
 	end
 end

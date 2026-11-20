@@ -53,9 +53,9 @@ return function(t)
 		t.expect(not L.fits(shelf, 8, "mochi_blob", false, true), "no pair: full")
 	end)
 
-	t.test("slots: 8 + 2 per upgrade up to 40, cost floor(120 * 2.1^k)", function()
+	t.test("slots: 8 + 2 per upgrade up to 40, cost floor(20000 * 2.4^k)", function()
 		t.expect(E.slotCount(0) == 8 and E.slotCount(16) == 40 and E.slotCount(20) == 40, "slot counts")
 		t.expect(E.MaxSlotUpgrades == 16, "16 upgrades")
-		t.expect(E.slotCost(0) == 120 and E.slotCost(1) == 252 and E.slotCost(2) == 529, "costs")
+		t.expect(E.slotCost(0) == 20000 and E.slotCost(1) == 48000 and E.slotCost(2) == 115200, "costs")
 	end)
 end

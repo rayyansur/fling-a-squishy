@@ -15,6 +15,7 @@ local Plots = require(script.Parent.Plots)
 local Shelf = require(script.Parent.Shelf)
 local Tutorial = require(script.Parent.Tutorial)
 local Analytics = require(script.Parent.Analytics)
+local Progress = require(script.Parent.Progress)
 
 local G, M, Z, S, E = Config.Game, Config.Map, Config.Zones, Config.Squishies, Config.Economy
 local rules = T.rulesFrom(M)
@@ -114,7 +115,8 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 		s, g, rarity = pool[rng:NextInteger(1, #pool)].id, false, "Uncommon"
 	elseif Tutorial.rigThird(player) and #data.shelf > 0 then
 		local owned = data.shelf[rng:NextInteger(1, #data.shelf)]
-		s, rarity = owned.s, S.ById[owned.s].rarity
+		local known = S.ById[owned.s]
+		s, rarity = owned.s, if known then known.rarity else rarity
 		g = false
 	end
 
@@ -135,6 +137,14 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 		d.stats.highestZone = math.max(d.stats.highestZone, zone)
 	end)
 	Tutorial.onFling(player, flings, path.bounces > 0)
+	Progress.emit(player, "fling", 1)
+	if perfect then
+		Progress.emit(player, "perfect", 1)
+	end
+	if path.bounces >= 3 then
+		Progress.emit(player, "triple", 1)
+	end
+	Progress.emit(player, "zone", zone)
 	Analytics.custom(player, "CatchRarity", RARITY_INDEX[rarity])
 	if rng:NextInteger(1, 10) == 1 then
 		Analytics.custom(player, "Bounces", path.bounces)
@@ -168,11 +178,22 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 		end)
 	end
 
+	local epoch = st.epoch
 	task.delay(math.max(0, arriveAt - workspace:GetServerTimeNow()), function()
 		st.hopping = math.max(0, st.hopping - 1)
 		if player.Parent then
 			player:SetAttribute("Hopping", st.hopping)
+			if st.epoch ~= epoch then
+				return -- flung before a Re-Squish: it went into the machine too
+			end
 			Shelf.arrive(player, s, g)
+			Progress.emit(player, "catch", ri, g)
+			if ri >= 3 then
+				Progress.emit(player, "rare", 1)
+			end
+			if gooRain then
+				Progress.emit(player, "rain", 1)
+			end
 		end
 	end)
 	return true

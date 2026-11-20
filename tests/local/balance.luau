@@ -18,6 +18,46 @@ return function(t)
 		print("DistPerRootSP override: " .. override)
 	end
 
+	local costMult = tonumber(require("@lune/process").env.FAS_COST_MULT)
+	if costMult then
+		E = table.clone(E)
+		local function scaled(list)
+			local out = {}
+			for i, v in list do
+				local c = table.clone(v)
+				c.cost = math.floor(v.cost * costMult)
+				out[i] = c
+			end
+			return out
+		end
+		E.Goo, E.Gloves, E.ShelfLevels = scaled(E.Goo), scaled(E.Gloves), scaled(E.ShelfLevels)
+		local base = E.Slots.base * costMult
+		E.slotCost = function(k) return math.floor(base * E.Slots.growth ^ k) end
+		local rs = table.clone(E.ReSquish)
+		rs.base *= costMult
+		E.ReSquish = rs
+		E.reSquishCost = function(n) return rs.base * rs.growth ^ (n - 1) end
+		print("cost override x" .. costMult)
+	end
+
+	local env = require("@lune/process").env
+	local slotGrowth, rsBase = tonumber(env.FAS_SLOT_GROWTH), tonumber(env.FAS_RESQUISH_BASE)
+	if slotGrowth then
+		E = table.clone(E)
+		local prev = E.slotCost
+		local base = tonumber(env.FAS_SLOT_BASE) or prev(0)
+		E.slotCost = function(k) return math.floor(base * slotGrowth ^ k) end
+		print("slot growth " .. slotGrowth)
+	end
+	if rsBase then
+		E = table.clone(E)
+		local rs = table.clone(E.ReSquish)
+		rs.base = rsBase
+		E.ReSquish = rs
+		E.reSquishCost = function(n) return rs.base * rs.growth ^ (n - 1) end
+		print("re-squish base " .. rsBase)
+	end
+
 	local function run(seed: number)
 		local rng = Random.new(seed)
 		local d = { coins = 0, sp = 1, goo = 1, gloves = 1, slotUpgrades = 0, shelfLevel = 1, reSquishes = 0, shelf = {} }
@@ -83,10 +123,10 @@ return function(t)
 				bought = false
 				local opts = {}
 				if E.Goo[d.goo + 1] then
-					table.insert(opts, { E.Goo[d.goo + 1].cost, function() d.goo += 1 end })
+					table.insert(opts, { E.Goo[d.goo + 1].cost, function() d.goo += 1; mark("goo " .. d.goo) end })
 				end
 				if E.Gloves[d.gloves + 1] then
-					table.insert(opts, { E.Gloves[d.gloves + 1].cost, function() d.gloves += 1 end })
+					table.insert(opts, { E.Gloves[d.gloves + 1].cost, function() d.gloves += 1; mark("gloves " .. d.gloves) end })
 				end
 				if d.slotUpgrades < E.MaxSlotUpgrades then
 					table.insert(opts, { E.slotCost(d.slotUpgrades), function() d.slotUpgrades += 1 end })
@@ -113,6 +153,7 @@ return function(t)
 	end
 
 	local TARGETS = {
+		{ "goo 2", 0, 90 }, { "gloves 2", 0, 3 * 60 }, { "goo 3", 0, 15 * 60 },
 		{ "first Rare", 0, 5 * 60 }, { "first Chonky", 0, 6 * 60 }, { "first Epic", 0, 20 * 60 },
 		{ "first Legendary", 0, 60 * 60 }, { "20 slots", 45 * 60 * 0.7, 45 * 60 * 1.3 },
 		{ "Rainbow Rim", 1.5 * 3600, 2.5 * 3600 }, { "Re-Squish affordable", 3 * 3600, 4 * 3600 },

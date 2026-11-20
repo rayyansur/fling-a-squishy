@@ -102,6 +102,16 @@ function Sound.music(slot: string)
 	end
 end
 
+-- a one-shot from the Music table (the Re-Squish sting), on the music group
+function Sound.sting(slot: string)
+	local s = make("music_" .. slot, A.Music[slot] or 0, music)
+	if s then
+		s.Looped = false
+		s.Volume = 1
+		s:Play()
+	end
+end
+
 function Sound.setEnabled(musicOn: boolean, sfxOn: boolean)
 	music.Volume = if musicOn then A.MusicVolume else 0
 	sfx.Volume = if sfxOn then A.SfxVolume else 0
