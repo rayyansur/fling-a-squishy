@@ -22,6 +22,7 @@ local player = Players.LocalPlayer
 
 local Panels = {}
 local refreshOpen: (() -> ())? = nil
+local refreshName: string? = nil
 
 local function attr(name: string, default: number): number
 	return (player:GetAttribute(name) :: number?) or default
@@ -138,7 +139,7 @@ function Panels.upgrades(tab: string?)
 		draw()
 	end)
 	select(current)
-	refreshOpen = draw
+	refreshOpen, refreshName = draw, "Upgrades"
 end
 
 ------------------------------------------------------------------ Shelf
@@ -148,7 +149,18 @@ function Panels.shelf()
 	local content = Candy.make("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 72), Size = UDim2.new(1, 0, 1, -72), Parent = modal.body })
 	local header = Candy.label(modal.body, "", { Font = F.header, TextXAlignment = Enum.TextXAlignment.Right, Size = UDim2.new(0, 300, 0, 50), AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, 4) })
 	local confirmUid: string? = nil
+	local lastSig = ""
 	local function draw()
+		-- squeezes resend the shelf every few seconds: rebuild only when what's shown changed
+		local parts = { sortBy, tostring(confirmUid), tostring(player:GetAttribute("autoMerge")), tostring(attr("Slots", 8)) }
+		for _, e in ShelfView.entries do
+			table.insert(parts, e.uid)
+		end
+		local sig = table.concat(parts, ",")
+		if sig == lastSig and #content:GetChildren() > 0 then
+			return
+		end
+		lastSig = sig
 		content:ClearAllChildren()
 		header.Text = ("%d / %d slots"):format(attr("ShelfCount", 0), attr("Slots", 8))
 		local entries = ShelfView.entries
@@ -234,7 +246,7 @@ function Panels.shelf()
 		draw()
 	end)
 	select(sortBy)
-	refreshOpen = draw
+	refreshOpen, refreshName = draw, "Shelf"
 end
 
 ------------------------------------------------------------------ Odds
@@ -282,6 +294,9 @@ local function shelfFull(newCard: any, lowCard: any?, seconds: number)
 	end
 	local gui = fullGui :: ScreenGui
 	gui:ClearAllChildren()
+	if not newCard then
+		return -- the server shelved it after all (space freed up)
+	end
 	local scale = Candy.make("UIScale", { Parent = gui })
 	scale.Scale = (gui.Parent and 1) or 1
 	local root = Candy.make("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(700, 470), BackgroundColor3 = P.white, Parent = gui })
@@ -309,7 +324,7 @@ local function shelfFull(newCard: any, lowCard: any?, seconds: number)
 			return
 		end
 		done = true
-		Net.send("ShelfFullChoice", keep)
+		Net.send("ShelfFullChoice", keep, newCard.uid)
 		gui:ClearAllChildren()
 	end
 	local timer = Candy.label(root, "", { Font = F.small, TextColor3 = Color3.fromHex("#6E5C8F"), Size = UDim2.new(1, -40, 0, 22), Position = UDim2.new(0, 20, 1, -116) })
@@ -371,7 +386,7 @@ function Panels.start()
 	end)
 	-- redraw the open panel when its data changes
 	local function changed()
-		if refreshOpen and Candy.modalOpen() then
+		if refreshOpen and refreshName and Candy.modalOpen() == refreshName then
 			refreshOpen()
 		end
 	end

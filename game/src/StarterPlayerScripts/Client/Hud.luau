@@ -249,7 +249,7 @@ function Hud.start()
 	Hud.buttons.Squeeze = sq.frame
 
 	autoChip = Candy.button(gui, "Auto-Merge: ON", "success", UDim2.fromOffset(220, 52), function()
-		Net.send("SetAutoMerge", not player:GetAttribute("autoMerge"))
+		Net.send("SetAutoMerge", player:GetAttribute("autoMerge") == false)
 	end, { Name = "AutoMerge", AnchorPoint = Vector2.new(1, 1), Position = UDim2.new(1, -24, 1, -232) })
 	Hud.buttons.AutoMerge = autoChip.frame
 

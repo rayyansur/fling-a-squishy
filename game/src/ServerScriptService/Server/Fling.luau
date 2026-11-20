@@ -60,6 +60,9 @@ local function atSlingshot(player: Player, i: number): boolean
 	return d <= G.FlingReach + 2 -- a little slack for lag
 end
 
+-- extra jitter allowed between the client's hold time and the server's (seconds)
+local ChargeSlack = 0.12
+
 function Fling.request(player: Player, charge: number, yawDeg: number, auto: boolean?): boolean
 	local data = Data.get(player)
 	local i = Plots.indexOf(player)
@@ -76,6 +79,15 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 	end
 	st.lastFling = now
 	charge = math.clamp(charge, 0, 1)
+	if not auto then
+		-- the charge must match how long the player actually held (server clock)
+		local began = st.chargeStart
+		st.chargeStart = nil
+		if not began or now - began > 30 then
+			return false
+		end
+		charge = T.verifyCharge(charge, now - began, G.ChargeCycle, ChargeSlack)
+	end
 	yawDeg = math.clamp(yawDeg, -G.AimClampDeg, G.AimClampDeg)
 
 	local start = Plots.flingPoint(i)
@@ -168,6 +180,9 @@ end
 
 function Fling.start()
 	Net.declare({ "FlingVisual", "SquishySpawned" })
+	Net.on("ChargeBegin", { args = {}, rate = G.FlingRate, burst = G.FlingRate }, function(player)
+		State.get(player).chargeStart = os.clock()
+	end)
 	Net.on("FlingRequest", { args = { "number", "number" }, rate = G.FlingRate, burst = G.FlingRate }, function(player, charge, yaw)
 		Fling.request(player, charge, yaw)
 	end)

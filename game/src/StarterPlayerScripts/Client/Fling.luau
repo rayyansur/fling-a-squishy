@@ -10,6 +10,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local T = require(ReplicatedStorage.Shared.Util.Trajectory)
+local GOLD, WHITE = Color3.fromHex("#FFD23F"), Color3.fromHex("#FFFFFF")
 local Net = require(ReplicatedStorage.Kit.Net)
 local Hud = require(script.Parent.Hud)
 local Sound = require(script.Parent.Sound)
@@ -51,8 +52,7 @@ local function pouchRest(): CFrame?
 end
 
 local function triangle(t: number): number
-	local phase = (t % G.ChargeCycle) / G.ChargeCycle
-	return if phase < 0.5 then phase * 2 else 2 - phase * 2
+	return T.chargeAt(t, G.ChargeCycle)
 end
 
 local function yaw(): number
@@ -91,7 +91,7 @@ local function updatePreview()
 	for i, d in preview do
 		local a = i / DOTS
 		d.Position = T.at(seg, a)
-		d.Color = if charge >= G.SweetSpot then Color3.fromHex("#FFD23F") else Color3.fromHex("#FFFFFF")
+		d.Color = if charge >= G.SweetSpot then GOLD else WHITE
 	end
 end
 
@@ -105,6 +105,7 @@ local function begin()
 	end
 	Fling.charging = true
 	t0 = os.clock()
+	Net.send("ChargeBegin")
 	showPreview(true)
 	local cam = workspace.CurrentCamera
 	if cam then

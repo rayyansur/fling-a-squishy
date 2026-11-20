@@ -35,6 +35,28 @@ function Trajectory.rulesFrom(Map: any): Rules
 end
 
 -- charge curve: 0.35 + 0.65c, or 1 (PERFECT) at the sweet spot
+-- the charge meter: a triangle wave 0 -> 1 -> 0 over `cycle` seconds of holding
+function Trajectory.chargeAt(held: number, cycle: number): number
+	local phase = (math.max(0, held) % cycle) / cycle
+	return if phase < 0.5 then phase * 2 else 2 - phase * 2
+end
+
+-- the server's view of a charge: the client's value is accepted only if the meter could have
+-- shown it at some hold time within `slack` seconds of what the server measured (latency jitter);
+-- otherwise the server's own estimate is used. Stops "always send 1.0" exploits.
+function Trajectory.verifyCharge(claimed: number, held: number, cycle: number, slack: number): number
+	local lo, hi = math.huge, -math.huge
+	local steps = 12
+	for k = 0, steps do
+		local c = Trajectory.chargeAt(held - slack + 2 * slack * k / steps, cycle)
+		lo, hi = math.min(lo, c), math.max(hi, c)
+	end
+	if claimed >= lo - 0.02 and claimed <= hi + 0.02 then
+		return claimed
+	end
+	return Trajectory.chargeAt(held, cycle)
+end
+
 function Trajectory.chargeCurve(c: number, sweet: number, floor: number): (number, boolean)
 	c = math.clamp(c, 0, 1)
 	if c >= sweet then

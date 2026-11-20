@@ -127,7 +127,6 @@ function Economy.start()
 		end)
 	end)
 	-- income tick: every shelved squishy pays directly into coins
-	local acc: { [Player]: number } = {}
 	local saveTick = 0
 	while true do
 		task.wait(Config.Game.IncomeTick)
@@ -145,7 +144,7 @@ function Economy.start()
 				end
 				if per > 0 then
 					Economy.add(player, per * Config.Game.IncomeTick, "Income")
-					acc[player] = (acc[player] or 0) + per
+					st.incomeAcc += per
 				end
 				if saveTick % 10 == 0 then
 					Data.update(player, function(d)
@@ -153,9 +152,9 @@ function Economy.start()
 						d.lastIncomePerSec = Economy.incomePerSec(player, d, false)
 						d.stats.playSeconds += 10
 					end)
-					if (acc[player] or 0) > 0 then
-						Analytics.source(player, acc[player], data.coins, "Income")
-						acc[player] = 0
+					if st.incomeAcc > 0 then
+						Analytics.source(player, st.incomeAcc, data.coins, "Income")
+						st.incomeAcc = 0
 					end
 				end
 			end
@@ -163,14 +162,7 @@ function Economy.start()
 	end
 end
 
-Players.PlayerRemoving:Connect(function(player)
-	local data = Data.get(player)
-	if data then
-		Data.update(player, function(d)
-			d.lastOnline = os.time()
-			d.lastIncomePerSec = Economy.incomePerSec(player, d, false)
-		end)
-	end
-end)
+-- no writes on leave: Kit.Data is already saving the player by then, and the 10 s tick above
+-- keeps lastOnline / lastIncomePerSec current (offline income tolerates 10 s of slack)
 
 return Economy

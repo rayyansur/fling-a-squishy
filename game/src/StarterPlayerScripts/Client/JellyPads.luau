@@ -75,12 +75,20 @@ function JellyPads.start()
 			squeezeRigs[i] = r
 		end
 	end
-	RunService.RenderStepped:Connect(function()
+	-- idle wobble at 30 Hz within 300 studs; squashes (short, rare) run every frame
+	local acc = 0
+	RunService.RenderStepped:Connect(function(dt)
+		acc += dt
 		local now = os.clock()
+		local idleFrame = acc >= 1 / 30
+		if idleFrame then
+			acc = 0
+		end
 		local cam = workspace.CurrentCamera
 		local camPos = if cam then cam.CFrame.Position else Vector3.zero
 		for _, r in rigs do
-			if (r.base.Position - camPos).Magnitude < 700 then
+			local squashing = now - r.squashAt < 0.5
+			if (squashing or idleFrame) and (r.base.Position - camPos).Magnitude < 300 then
 				local idle = 0.925 + 0.075 * math.cos(now / 0.8 * math.pi * 2 + r.phase)
 				apply(r, idle * squashK(r, now))
 			end

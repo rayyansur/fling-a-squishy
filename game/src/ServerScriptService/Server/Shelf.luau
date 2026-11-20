@@ -34,8 +34,50 @@ local function newUid(player: Player): () -> string
 	end
 end
 
+-- ids allocated inside an existing Data.update callback (no nested update)
+local function uidFrom(d: any): () -> string
+	return function(): string
+		d.uidSeq += 1
+		return tostring(d.uidSeq)
+	end
+end
+
+-- merges consume squishies: forget their squeeze timers and carry the latest one onto the
+-- merged result, so merging never skips the squeeze cooldown
+local function carryReady(player: Player, before: { string }, after: { any }, made: { any })
+	local st = State.get(player)
+	local still: { [string]: boolean } = {}
+	for _, e in after do
+		still[e.uid] = true
+	end
+	local latest = 0
+	for _, uid in before do
+		if not still[uid] then
+			latest = math.max(latest, st.readyAt[uid] or 0)
+			st.readyAt[uid] = nil
+		end
+	end
+	for _, m in made do
+		if still[m.uid] then
+			st.readyAt[m.uid] = latest
+		end
+	end
+end
+
+local function uidsOf(shelf: { any }): { string }
+	local out = {}
+	for _, e in shelf do
+		table.insert(out, e.uid)
+	end
+	return out
+end
+
+local drainQueue: (Player) -> boolean
+
 -- full shelf for the owner, with squeeze readiness (server time)
 function Shelf.send(player: Player)
+	-- space may have freed up (release, merge, slot purchase): shelve waiting arrivals first
+	drainQueue(player)
 	local data = Data.get(player)
 	if not data then
 		return
@@ -74,13 +116,19 @@ end
 
 local function doAutoMerge(player: Player, s: string, z: number, g: boolean)
 	local merged: { any } = {}
+	local before: { string } = {}
 	Data.update(player, function(d)
-		merged = L.autoMerge(d.shelf, s, z, g, newUid(player))
+		before = uidsOf(d.shelf)
+		merged = L.autoMerge(d.shelf, s, z, g, uidFrom(d))
 		d.stats.merges += #merged
 		for _, m in merged do
 			recordDex(d, m.s, m.z, m.g)
 		end
 	end)
+	local data = Data.get(player)
+	if data and #merged > 0 then
+		carryReady(player, before, data.shelf, merged)
+	end
 	for _, m in merged do
 		announceMerge(player, m)
 	end
@@ -113,7 +161,7 @@ local function showNextFull(player: Player)
 	local low = lowestIndex(player, data)
 	local lowEntry = low and data.shelf[low]
 	p.deadline = os.clock() + G.ShelfFullAutoSeconds
-	Net.fire(player, "ShelfFull", { s = p.entry.s, size = 1, glitter = p.entry.g }, lowEntry and { uid = lowEntry.uid, s = lowEntry.s, size = lowEntry.z, glitter = lowEntry.g }, G.ShelfFullAutoSeconds)
+	Net.fire(player, "ShelfFull", { uid = p.entry.uid, s = p.entry.s, size = 1, glitter = p.entry.g }, lowEntry and { uid = lowEntry.uid, s = lowEntry.s, size = lowEntry.z, glitter = lowEntry.g }, G.ShelfFullAutoSeconds)
 	local mine = p
 	task.delay(G.ShelfFullAutoSeconds + 0.25, function()
 		if st.fullQueue[1] == mine then
@@ -130,9 +178,43 @@ local function showNextFull(player: Player)
 	end)
 end
 
--- keepNew: release the lowest-income squishy and shelve the new one; else release the new one
-function Shelf.resolveFull(player: Player, keepNew: boolean)
+-- queued arrivals that fit now (a slot bought, a release, a merge) go straight on the shelf.
+-- Returns true if the front of the queue changed.
+function drainQueue(player: Player): boolean
 	local st = State.get(player)
+	local changed = false
+	while st.fullQueue[1] do
+		local data = Data.get(player)
+		local e = st.fullQueue[1].entry
+		if not data or not L.fits(data.shelf, E.slotCount(data.slotUpgrades), e.s, e.g, data.autoMerge) then
+			break
+		end
+		table.remove(st.fullQueue, 1)
+		insert(player, e)
+		changed = true
+	end
+	if changed then
+		if st.fullQueue[1] then
+			showNextFull(player)
+		else
+			Net.fire(player, "ShelfFull", nil, nil, 0) -- closes the prompt
+		end
+	end
+	return changed
+end
+
+-- keepNew: release the lowest-income squishy and shelve the new one; else release the new one.
+-- uid (from the client) must name the prompt being answered.
+function Shelf.resolveFull(player: Player, keepNew: boolean, uid: string?)
+	local st = State.get(player)
+	local front = st.fullQueue[1]
+	if not front or (uid ~= nil and front.entry.uid ~= uid) then
+		return
+	end
+	if drainQueue(player) then
+		Shelf.send(player)
+		return
+	end
 	local p = table.remove(st.fullQueue, 1)
 	local data = Data.get(player)
 	if not p or not data then
@@ -228,10 +310,8 @@ function Shelf.start()
 		Shelf.squeeze(player)
 	end)
 
-	Net.on("ShelfFullChoice", { args = { "boolean" }, rate = 4 }, function(player, keepNew)
-		if #State.get(player).fullQueue > 0 then
-			Shelf.resolveFull(player, keepNew)
-		end
+	Net.on("ShelfFullChoice", { args = { "boolean", "string" }, rate = 4, maxString = 16 }, function(player, keepNew, uid)
+		Shelf.resolveFull(player, keepNew, uid)
 	end)
 
 	Net.on("MergeRequest", { args = { "string", "int", "boolean" }, rate = 6 }, function(player, s, z, g)
@@ -240,14 +320,20 @@ function Shelf.start()
 			return
 		end
 		local m
+		local before: { string } = {}
 		Data.update(player, function(d)
-			m = L.merge(d.shelf, s, z, g, newUid(player))
+			before = uidsOf(d.shelf)
+			m = L.merge(d.shelf, s, z, g, uidFrom(d))
 			if m then
 				d.stats.merges += 1
 				recordDex(d, m.s, m.z, m.g)
 			end
 		end)
 		if m then
+			local after = Data.get(player)
+			if after then
+				carryReady(player, before, after.shelf, { m })
+			end
 			announceMerge(player, m)
 			Shelf.send(player)
 		end
@@ -291,19 +377,7 @@ function Shelf.start()
 	Data.onLoaded(function(player)
 		Shelf.send(player)
 	end)
-	Players.PlayerRemoving:Connect(function(player)
-		-- unanswered Shelf Full choices: keep the better one, like the auto-choice
-		local st = State.get(player)
-		while #st.fullQueue > 0 do
-			local p = st.fullQueue[1]
-			local d = Data.get(player)
-			if not d then
-				break
-			end
-			local li = lowestIndex(player, d)
-			Shelf.resolveFull(player, li ~= nil and Economy.incomeOf(player, d, p.entry) > Economy.incomeOf(player, d, d.shelf[li]))
-		end
-	end)
+	-- unanswered Shelf Full prompts are forfeited on leave: Kit.Data is already saving by then
 end
 
 return Shelf

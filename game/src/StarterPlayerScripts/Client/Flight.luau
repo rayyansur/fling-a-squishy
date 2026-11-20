@@ -23,7 +23,7 @@ local MAX_GOO, MAX_HOP = 72, 72
 
 local Flight = {}
 
-type Goo = { blob: Model, segs: { any }, starts: { number }, t0: number, total: number, owner: number, seg: number, color: Color3, rainbow: boolean, perfect: boolean, bounces: number }
+type Goo = { parts: { BasePart }, blob: Model, segs: { any }, starts: { number }, t0: number, total: number, owner: number, seg: number, color: Color3, rainbow: boolean, perfect: boolean, bounces: number }
 type Hop = { model: Model?, from: Vector3, to: Vector3, landAt: number, arriveAt: number, owner: number, s: string, g: boolean, popped: boolean, hops: number, lastHop: number, size: number }
 
 local goos: { Goo } = {}
@@ -175,7 +175,14 @@ local function onFling(owner: number, start: Vector3, segs: { any }, gooTier: nu
 	end
 	local tier = E.Goo[gooTier] or E.Goo[1]
 	local color = gooColor(gooTier)
-	table.insert(goos, { blob = makeBlob(color), segs = segs, starts = starts, t0 = t0, total = total, owner = owner, seg = 1, color = color, rainbow = tier.rainbow == true, perfect = perfect, bounces = bounces })
+	local blob = makeBlob(color)
+	local parts: { BasePart } = {}
+	for _, d in blob:GetDescendants() do
+		if d:IsA("BasePart") and d.Name ~= "Shine" then
+			table.insert(parts, d)
+		end
+	end
+	table.insert(goos, { parts = parts, blob = blob, segs = segs, starts = starts, t0 = t0, total = total, owner = owner, seg = 1, color = color, rainbow = tier.rainbow == true, perfect = perfect, bounces = bounces })
 	if owner == player.UserId then
 		if perfect then
 			Candy.toast("PERFECT!", Palette.lemon)
@@ -225,10 +232,8 @@ local function stepGoo(t: number)
 			g.blob:PivotTo(look)
 			if g.rainbow then
 				local c = Color3.fromHSV((t * 0.6) % 1, 0.7, 1)
-				for _, d in g.blob:GetDescendants() do
-					if d:IsA("BasePart") then
-						d.Color = c
-					end
+				for _, d in g.parts do
+					d.Color = c
 				end
 			end
 		end
@@ -312,7 +317,8 @@ local function stepHops(t: number)
 				if hopIndex ~= h.hops then
 					h.hops = hopIndex
 					h.lastHop = os.clock()
-					if (flat - (workspace.CurrentCamera :: Camera).CFrame.Position).Magnitude < 120 then
+					local cam = workspace.CurrentCamera
+					if cam and (flat - cam.CFrame.Position).Magnitude < 120 then
 						Sound.play("hop", 1, 4, 0.2)
 					end
 				end

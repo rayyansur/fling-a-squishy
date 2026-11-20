@@ -329,13 +329,14 @@ function ShelfView.start()
 		end
 	end)
 
-	local acc = 0
+	local acc, frame = 0, 0
 	RunService.RenderStepped:Connect(function(dt)
 		acc += dt
 		if acc < 1 / 30 then
 			return
 		end
 		acc = 0
+		frame += 1
 		local now = os.clock()
 		local cam = workspace.CurrentCamera
 		local camPos = if cam then cam.CFrame.Position else Vector3.zero
@@ -350,7 +351,8 @@ function ShelfView.start()
 					r.model.Parent = if visible then folder else nil
 				end
 			end
-			local wobble = visible and d <= UIC.WobbleWithin and not (low and i ~= mine)
+			-- other plots wobble only up close (and at 15 Hz); yours always at 30 Hz
+			local wobble = visible and not (low and i ~= mine) and (i == mine or (d <= UIC.WobbleWithin * 0.6 and frame % 2 == 0))
 			if wobble then
 				for _, r in view.rigs do
 					local kx, ky, lift = 1, 1 + 0.04 * math.sin(now / 1.6 * math.pi * 2 + r.phase), 0

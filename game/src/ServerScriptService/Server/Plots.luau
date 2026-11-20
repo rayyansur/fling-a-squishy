@@ -136,6 +136,8 @@ local function release(player: Player)
 	if plot then
 		plot:SetAttribute("OwnerUserId", 0)
 		plot:SetAttribute("Shelf", "")
+		plot:SetAttribute("Slots", nil)
+		plot:SetAttribute("ShelfLevel", nil)
 	end
 	Plots.setSign(i, "Free plot", "", "")
 end
