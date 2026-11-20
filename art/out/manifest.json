@@ -1505,6 +1505,35 @@
   ],
   "tris": 2664
  },
+ "shelf_lights": {
+  "parts": [
+   {
+    "color": "#2B1B4A",
+    "material": null,
+    "name": "Wire",
+    "tris": 432
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Bulbs",
+    "tris": 720
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "72c408047be639d798057915df77b067105969825f0e6ab5cdb0207d515e4aaf",
+  "size": [
+   24.99,
+   10.6,
+   9.9946
+  ],
+  "tris": 1164
+ },
  "slingshot": {
   "parts": [
    {
@@ -1580,6 +1609,41 @@
    10.6252
   ],
   "tris": 400
+ },
+ "star_topper": {
+  "parts": [
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Stick",
+    "tris": 28
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Star",
+    "tris": 88
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Sparkles",
+    "tris": 80
+   },
+   {
+    "color": "#FF00FF",
+    "material": null,
+    "name": "Pin",
+    "tris": 12
+   }
+  ],
+  "sha256": "85c065c70d823099ddfbe511e27c41b3204d5dde3bcab91002185f5936e2a3cb",
+  "size": [
+   24.99,
+   14.8,
+   9.9946
+  ],
+  "tris": 208
  },
  "taffy_hill": {
   "parts": [

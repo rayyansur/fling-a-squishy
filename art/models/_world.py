@@ -339,3 +339,37 @@ def resquish_machine(bpy, kit):
     for i, x in enumerate((-2.8, -1.4, 0.0, 1.4, 2.8)):
         c = ["#FF4FA3", "#FFD23F", "#7CF25A", "#3EC5FF", "#FF8A3D"][i]
         ball(bpy, "Lights" + str(i + 1), 0.3, (x, -2.75, 7.6), M(kit, c, emit=1.2), sides=6, stacks=3)
+
+
+# ------------------------------------------------------------------ shelf level decor
+# Built in shelf coordinates with the shelf's footprint pins, so placing them with the shelf's
+# CFrame lines them up (Assets:place pivots at the bounding box's bottom centre).
+def shelf_lights(bpy, kit):
+    """Level 2: a string of glowing gumdrop lights draped across the top of the shelf."""
+    half = SHELF["half"] + 0.9
+    wire = M(kit, "#2B1B4A", rough=0.6)
+    cols = ["#FF4FA3", "#FFD23F", "#7CF25A", "#3EC5FF", "#9B5CFF"]
+    pts = []
+    n = 16
+    for k in range(n + 1):
+        x = -half + 2 * half * k / n
+        u = x / half
+        pts.append((x, -1.0 + 1.6 * (1 - u * u), 9.5 - 1.1 * (1 - u * u)))
+    polyline(bpy, "Wire", pts, 0.07, wire, sides=4)
+    for k in range(1, n):
+        x, y, z = pts[k]
+        mat = M(kit, cols[k % len(cols)], rough=0.3, emit=1.5)
+        rings(bpy, "Bulbs", [(0.0, 0.0), (0.46, 0.0), (0.41, 0.34), (0.2, 0.64), (0.0, 0.7)], mat, sides=8,
+              center=(x, y, z - 0.8))
+    pins_box(bpy, kit, (-SHELF["half"] - 1.5, -5.0, 0.0), (SHELF["half"] + 1.5, 5.0, 10.6))
+
+
+def star_topper(bpy, kit):
+    """Level 4: a puffy gold star on a candy stick above the shelf (the client spins it)."""
+    gold = M(kit, "#FFD23F", rough=0.35, emit=0.4)
+    stick(bpy, "Stick", (0, 0.4, 8.8), (0, 0.4, 11.0), 0.22, M(kit, "#FF4FA3", rough=0.45), sides=8)
+    star(bpy, "Star", 1.9, (0, 0.4, 12.6), gold, thick=0.7)
+    ball(bpy, "Star", 0.55, (0, 0.05, 12.6), gold, scale=(1, 0.5, 1), sides=8, stacks=4)
+    for s in (-1, 1):
+        star(bpy, "Sparkles", 0.4, (s * 2.4, 0.4, 13.6), M(kit, "#FFFFFF", emit=0.8), thick=0.12)
+    pins_box(bpy, kit, (-SHELF["half"] - 1.5, -5.0, 0.0), (SHELF["half"] + 1.5, 5.0, 14.8))
