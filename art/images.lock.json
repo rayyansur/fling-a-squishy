@@ -4,6 +4,21 @@
   "imageId": "121864435901035",
   "sha256": "e6c31187fbfe839dfe8a98b44b4be1ab2fd943b76afa930956c39cf41b3d209b"
  },
+ "coin_bag": {
+  "assetId": "125628396138045",
+  "imageId": "125628396138045",
+  "sha256": "fc28c0fdfc1618e353d381e897a0c3a13d9ae6b787aa8c39f831cbf91cb4053a"
+ },
+ "coin_jar": {
+  "assetId": "92001280184623",
+  "imageId": "92001280184623",
+  "sha256": "732f379a63264e06729e3d88adb5487e8a2fff22543232a58dc564232da3f9e8"
+ },
+ "coin_tub": {
+  "assetId": "101127810950587",
+  "imageId": "101127810950587",
+  "sha256": "5551d5be9bfeea2e245972e804c3f42c9622ab78cbbf03dc84968730cacdd992"
+ },
  "daily": {
   "assetId": "103324107790102",
   "imageId": "103324107790102",
@@ -13,6 +28,31 @@
   "assetId": "75026505019221",
   "imageId": "75026505019221",
   "sha256": "7a484a348061769141d4883853c1b945ca0d0c2e2d7cb5de2c2d53f216f8740f"
+ },
+ "party": {
+  "assetId": "105408778464435",
+  "imageId": "105408778464435",
+  "sha256": "6c2e01b1a0569ea2a15f3457278b3795c32e5bf3ad47257ae8323e70be6652f0"
+ },
+ "pass_coins": {
+  "assetId": "92912761502731",
+  "imageId": "92912761502731",
+  "sha256": "333aa8741bba19e40ee47fa4502d390afda7e765f1269dd325b825c8a1fdd5fd"
+ },
+ "pass_fling": {
+  "assetId": "110542340434290",
+  "imageId": "110542340434290",
+  "sha256": "0b22ac297ba9c15336a156dd7a8d80fd1563dfde6676469172b7214fa8939358"
+ },
+ "pass_rainbow": {
+  "assetId": "124838569190354",
+  "imageId": "124838569190354",
+  "sha256": "fcf45d693d24f44137655edf908df75827b74d2f615ed7c68bfe69d1bfd3b8af"
+ },
+ "pass_squeeze": {
+  "assetId": "76392130296603",
+  "imageId": "76392130296603",
+  "sha256": "bd4c6ff39463e37a59741e0bb36236d7ea04d11adc5f4969164cbcf87bd7a197"
  },
  "resquish": {
   "assetId": "136464743171257",
