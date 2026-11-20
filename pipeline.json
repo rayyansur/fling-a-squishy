@@ -1,11 +1,11 @@
 {
-  "name": "New Game",
-  "repo": "rayyansur/roblox-pipeline",
+  "name": "Fling a Squishy",
+  "repo": "rayyansur/fling-a-squishy",
   "placeFile": "out/Game.rbxlx",
   "maxPlayers": 12,
   "roblox": {
-    "testPlaceId": "79217107657819",
-    "testUniverseId": "10770862515",
+    "testPlaceId": "100567007156204",
+    "testUniverseId": "10778038428",
     "livePlaceId": "",
     "liveUniverseId": ""
   },
@@ -16,34 +16,86 @@
     "scripts": 200
   },
   "studio": {
-    "playtestSeconds": 15,
+    "playtestSeconds": 20,
     "buildsUrl": "http://127.0.0.1:34872/studio"
   },
   "views": [
     {
       "name": "overview",
       "pos": [
-        60,
-        45,
-        60
+        0,
+        140,
+        -160
       ],
       "look": [
         0,
         0,
-        0
+        250
       ]
     },
     {
-      "name": "spawn",
+      "name": "plots",
+      "pos": [
+        -60,
+        24,
+        30
+      ],
+      "look": [
+        -60,
+        6,
+        -30
+      ]
+    },
+    {
+      "name": "plot_close",
+      "pos": [
+        -16,
+        14,
+        8
+      ],
+      "look": [
+        -16,
+        5,
+        -38
+      ]
+    },
+    {
+      "name": "hub",
       "pos": [
         0,
-        8,
-        24
+        30,
+        -30
       ],
       "look": [
         0,
-        3,
-        0
+        4,
+        -95
+      ]
+    },
+    {
+      "name": "valley",
+      "pos": [
+        0,
+        60,
+        40
+      ],
+      "look": [
+        0,
+        0,
+        400
+      ]
+    },
+    {
+      "name": "rainbow_rim",
+      "pos": [
+        0,
+        70,
+        560
+      ],
+      "look": [
+        0,
+        10,
+        820
       ]
     }
   ]
