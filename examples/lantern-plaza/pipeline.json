@@ -1,0 +1,51 @@
+{
+  "name": "Lantern Plaza (example)",
+  "placeFile": "out/Game.rbxlx",
+  "budget": {
+    "parts": 15000,
+    "lights": 200,
+    "emitters": 60,
+    "scripts": 200
+  },
+  "views": [
+    {
+      "name": "overview",
+      "pos": [
+        34,
+        26,
+        34
+      ],
+      "look": [
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "name": "lantern",
+      "pos": [
+        9,
+        7,
+        9
+      ],
+      "look": [
+        0,
+        4.5,
+        0
+      ]
+    },
+    {
+      "name": "ground",
+      "pos": [
+        0,
+        5,
+        22
+      ],
+      "look": [
+        0,
+        4,
+        0
+      ]
+    }
+  ]
+}

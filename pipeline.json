@@ -1,0 +1,50 @@
+{
+  "name": "New Game",
+  "repo": "rayyansur/roblox-pipeline",
+  "placeFile": "out/Game.rbxlx",
+  "maxPlayers": 12,
+  "roblox": {
+    "testPlaceId": "79217107657819",
+    "testUniverseId": "10770862515",
+    "livePlaceId": "",
+    "liveUniverseId": ""
+  },
+  "budget": {
+    "parts": 15000,
+    "lights": 200,
+    "emitters": 60,
+    "scripts": 200
+  },
+  "studio": {
+    "playtestSeconds": 15,
+    "buildsUrl": "http://127.0.0.1:34872/studio"
+  },
+  "views": [
+    {
+      "name": "overview",
+      "pos": [
+        60,
+        45,
+        60
+      ],
+      "look": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "spawn",
+      "pos": [
+        0,
+        8,
+        24
+      ],
+      "look": [
+        0,
+        3,
+        0
+      ]
+    }
+  ]
+}

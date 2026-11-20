@@ -1,0 +1,43 @@
+{
+ "lantern": {
+  "parts": [
+   {
+    "color": "#22261f",
+    "material": "Metal",
+    "name": "Base",
+    "tris": 640
+   },
+   {
+    "color": "#22261f",
+    "material": "Metal",
+    "name": "Post",
+    "tris": 560
+   },
+   {
+    "color": "#22261f",
+    "material": "Metal",
+    "name": "Cage",
+    "tris": 264
+   },
+   {
+    "color": "#ffe2a6",
+    "material": "Glass",
+    "name": "Glass",
+    "tris": 12
+   },
+   {
+    "color": "#22261f",
+    "material": "Metal",
+    "name": "Cap",
+    "tris": 236
+   }
+  ],
+  "sha256": "bd2c687a94543699b9073339f43fc6c7f2a64fbbad8331963ce74699f70fca91",
+  "size": [
+   2.4042,
+   6.08,
+   2.4042
+  ],
+  "tris": 1712
+ }
+}

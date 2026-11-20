@@ -1,0 +1,149 @@
+# roblox-pipeline CI
+#   every push / PR:
+#     art      upload changed Blender models (art/out/*.fbx) and images (art/images/*.png), and
+#              commit art/assets.lock.json + art/images.lock.json;
+#              create/update passes + products (game/monetization.json) in the TEST universe and
+#              commit game/monetization.lock.json
+#     check    build the place + offline checks (types, property names, structure, budget)
+#     test     publish to the TEST place and crash-test inside a real Roblox server
+#   live publish: Actions → "roblox-pipeline" → Run workflow → tick publish_live (needs roblox.livePlaceId in pipeline.json).
+#              Creates/updates the passes + products in the LIVE universe, rebuilds with their ids, publishes.
+#
+# Settings → Secrets and variables → Actions
+#   secret   ROBLOX_API_KEY      Open Cloud key (universe-places W, luau-execution-session R/W, assets R/W,
+#                                game-pass R/W, developer-product R/W)
+#   variable ROBLOX_CREATOR_ID   your Roblox user id (owner of uploaded art)
+# Place/universe ids for test + live live in pipeline.json → "roblox".
+name: roblox-pipeline
+
+on:
+  push:
+    branches: [main, "idea/**"]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publish_live:
+        description: "Publish to the LIVE game after all checks pass"
+        type: boolean
+        default: false
+
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  art:
+    name: Upload art
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
+    outputs:
+      changed: ${{ steps.upload.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload changed models
+        id: upload
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          ROBLOX_CREATOR_ID: ${{ vars.ROBLOX_CREATOR_ID }}
+        run: python3 tools/roblox_cloud.py upload-art --target test
+      - name: Sync passes + products
+        id: products
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+        run: python3 tools/roblox_cloud.py sync-products --target test
+      - name: Commit locks
+        if: steps.upload.outputs.changed == 'true' || steps.products.outputs.changed == 'true'
+        run: |
+          git config user.name "roblox-pipeline[bot]"
+          git config user.email "roblox-pipeline@users.noreply.github.com"
+          git add art/assets.lock.json
+          [ -f art/images.lock.json ] && git add art/images.lock.json
+          [ -f game/monetization.lock.json ] && git add game/monetization.lock.json
+          git commit -m "art/products: update locks [skip ci]"
+          git push
+
+  check:
+    name: Build + offline checks
+    needs: art
+    if: ${{ always() && (needs.art.result == 'success' || needs.art.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+      - name: Install Lune + luau-lsp
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: tools/install_tools.sh
+      - name: Build and check
+        run: tools/check.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: place
+          path: |
+            out/Game.rbxlx
+            out/typecheck.txt
+          retention-days: 14
+
+  test:
+    name: Publish TEST place + crash test in Roblox
+    needs: check
+    if: ${{ always() && needs.check.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: place
+          path: out
+      - name: Publish to TEST place
+        id: pub
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+        run: python3 tools/roblox_cloud.py publish --target test --file out/Game.rbxlx
+      - name: Crash test inside a Roblox server
+        if: steps.pub.outputs.skipped != 'true'
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          UNIVERSE_ID: ${{ steps.pub.outputs.universe }}
+        # push runs synced products first (art job), so every item must have an id by now
+        run: >-
+          python3 tools/roblox_cloud.py test --target test --version "${{ steps.pub.outputs.version }}"
+          ${{ github.event_name != 'pull_request' && '--expect-product-ids' || '' }}
+
+  release:
+    name: Publish LIVE
+    needs: test
+    if: ${{ always() && needs.test.result == 'success' && github.event_name == 'workflow_dispatch' && inputs.publish_live }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lune + luau-lsp
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: tools/install_tools.sh
+      - name: Sync passes + products to the LIVE universe
+        id: products
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+        run: python3 tools/roblox_cloud.py sync-products --target live
+      - name: Rebuild with live product ids
+        run: tools/check.sh
+      - name: Publish to LIVE place
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+        run: python3 tools/roblox_cloud.py publish --target live --file out/Game.rbxlx
+      - name: Commit product lock
+        if: steps.products.outputs.changed == 'true'
+        run: |
+          git config user.name "roblox-pipeline[bot]"
+          git config user.email "roblox-pipeline@users.noreply.github.com"
+          git add game/monetization.lock.json
+          git commit -m "products: live ids [skip ci]"
+          git push
