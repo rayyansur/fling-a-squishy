@@ -24,7 +24,9 @@ function Format.abbrev(n: number): string
 			i += 1
 		end
 		local s = if n >= 100 then string.format("%d", math.floor(n)) elseif n >= 10 then string.format("%.1f", math.floor(n * 10) / 10) else string.format("%.2f", math.floor(n * 100) / 100)
-		s = s:gsub("%.?0+$", "")
+		if string.find(s, ".", 1, true) then
+			s = s:gsub("0+$", ""):gsub("%.$", "") -- 1.50 -> 1.5, 2.00 -> 2; never 270 -> 27
+		end
 		out = s .. SUFFIX[i]
 	end
 	return if neg then "-" .. out else out

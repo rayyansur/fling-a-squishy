@@ -15,6 +15,7 @@ local Candy = require(script.Parent.Candy)
 local Sound = require(script.Parent.Sound)
 local JellyPads = require(script.Parent.JellyPads)
 local SquishyModel = require(script.Parent.SquishyModel)
+local Store = require(script.Parent.Store)
 local Palette = require(ReplicatedStorage.Shared.Theme).Palette
 
 local G, M, E, S, Z = Config.Game, Config.Map, Config.Economy, Config.Squishies, Config.Zones
@@ -176,6 +177,7 @@ local function onFling(owner: number, start: Vector3, segs: { any }, gooTier: nu
 	local tier = E.Goo[gooTier] or E.Goo[1]
 	local color = gooColor(gooTier)
 	local blob = makeBlob(color)
+	Store.decorateGoo(owner, blob)
 	local parts: { BasePart } = {}
 	for _, d in blob:GetDescendants() do
 		if d:IsA("BasePart") and d.Name ~= "Shine" then

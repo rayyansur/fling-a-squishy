@@ -1,0 +1,40 @@
+{
+ "10778038428": {
+  "passes": {
+   "auto_fling": {
+    "hash": "3ae15233a9ea513d",
+    "id": 2097088713
+   },
+   "auto_squeeze": {
+    "hash": "1f525db6cb70cde1",
+    "id": 2093008931
+   },
+   "coins_2x": {
+    "hash": "6745a170017e0110",
+    "id": 2093549007
+   },
+   "rainbow_trail": {
+    "hash": "236815860b2618c0",
+    "id": 2094562904
+   }
+  },
+  "products": {
+   "coin_bag": {
+    "hash": "c150836ea251609d",
+    "id": 3734016653
+   },
+   "coin_jar": {
+    "hash": "b7398d7c442566fa",
+    "id": 3734016656
+   },
+   "coin_tub": {
+    "hash": "720412b5478da5d7",
+    "id": 3734016659
+   },
+   "squish_party": {
+    "hash": "2c0d53949f734017",
+    "id": 3734016660
+   }
+  }
+ }
+}

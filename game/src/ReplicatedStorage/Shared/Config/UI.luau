@@ -23,5 +23,13 @@ return {
 		daily = "📅",
 		settings = "⚙️",
 		resquish = "🔄",
+		pass_coins = "x2",
+		pass_fling = "»",
+		pass_squeeze = "✋",
+		pass_rainbow = "🌈",
+		coin_bag = "$",
+		coin_jar = "$$",
+		coin_tub = "$$$",
+		party = "🎉",
 	},
 }

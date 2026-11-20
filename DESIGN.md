@@ -581,3 +581,17 @@ Where the spec is silent or conflicts with the template; Rayyan can overrule any
     yet stay 0 (silent): sling_stretch, sling_release, perfect, boing, hop, merge, buy,
     legendary_fanfare, goo_rain_jingle, ui_click, ui_error, ambient.
   - Badge ids are 0 until the badges are created on the Creator Dashboard (Rayyan's account step).
+- **PR 3 calls (2026-11-20).**
+  - Shop: own panel (Passes | Coins), 2×2 cards, dearest pass first. Items with no id outside Studio
+    show "Coming soon" (disabled); Studio grants them free. No passive or join prompt anywhere (§15.13).
+  - Auto-Fling / Auto-Squeeze toggles appear on the HUD only once owned (§10.1); there are no locked
+    teaser toggles, so §10.3's "locked toggles open the Shop" doesn't apply. Auto-Fling starts OFF each
+    session, Auto-Squeeze ON. Both run on the server (1.5 s / 10 s); Auto-Fling needs you standing still
+    within reach of your slingshot.
+  - Coin packs pay `max(floor, minutes × income without the party)`; the card shows the exact amount
+    from the server's `BaseIncome` attribute.
+  - Squish Party: +5 min per purchase from max(now, current end), capped at 30 min from now; the card
+    turns "Party is full" past 25 min queued. A pill above FLING shows the timer while it runs.
+  - Rainbow Trail: a Trail on the owner's goo (drawn by every client) and a rainbow gradient on the
+    owner's plot sign name. No particles on the avatar.
+  - Game page art (icon + thumbnails, §11) moves to its own PR.
