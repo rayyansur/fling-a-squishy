@@ -122,7 +122,14 @@ function SquishyModel.build(speciesId: string, size: number?, glitter: boolean?)
 	end
 	-- the templates are authored at scale 1 = BASE_WIDTH studs wide; pivot at the base
 	local cf, bbox = model:GetBoundingBox()
-	model.WorldPivot = cf * CFrame.new(0, -bbox.Y / 2, 0)
+	local base = cf * CFrame.new(0, -bbox.Y / 2, 0)
+	-- with a PrimaryPart the model's pivot IS the primary part's pivot (WorldPivot is ignored),
+	-- so set it through PivotOffset or everything sits half sunk into the shelf
+	if root then
+		root.PivotOffset = root.CFrame:ToObjectSpace(base)
+	else
+		model.WorldPivot = base
+	end
 	local s = (sp.scale or 1) * S.SizeScale[size or 1]
 	if s ~= 1 and #model:GetChildren() > 0 then
 		model:ScaleTo(s)
