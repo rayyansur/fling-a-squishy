@@ -127,39 +127,42 @@ function Economy.start()
 		end)
 	end)
 	-- income tick: every shelved squishy pays directly into coins
-	local saveTick = 0
-	while true do
-		task.wait(Config.Game.IncomeTick)
-		saveTick += 1
-		for _, player in Players:GetPlayers() do
-			local data = Data.get(player)
-			if data then
-				local st = State.get(player)
-				-- recompute each tick so a party starting/ending applies at once
-				local per = Economy.incomePerSec(player, data)
-				if per ~= st.incomePerSec then
-					st.incomePerSec = per
-					player:SetAttribute("IncomePerSec", per)
-					Plots.refreshSign(player)
-				end
-				if per > 0 then
-					Economy.add(player, per * Config.Game.IncomeTick, "Income")
-					st.incomeAcc += per
-				end
-				if saveTick % 10 == 0 then
-					Data.update(player, function(d)
-						d.lastOnline = os.time()
-						d.lastIncomePerSec = Economy.incomePerSec(player, d, false)
-						d.stats.playSeconds += 10
-					end)
-					if st.incomeAcc > 0 then
-						Analytics.source(player, st.incomeAcc, data.coins, "Income")
-						st.incomeAcc = 0
+	-- runs forever on its own thread so start() returns
+	task.spawn(function()
+		local saveTick = 0
+		while true do
+			task.wait(Config.Game.IncomeTick)
+			saveTick += 1
+			for _, player in Players:GetPlayers() do
+				local data = Data.get(player)
+				if data then
+					local st = State.get(player)
+					-- recompute each tick so a party starting/ending applies at once
+					local per = Economy.incomePerSec(player, data)
+					if per ~= st.incomePerSec then
+						st.incomePerSec = per
+						player:SetAttribute("IncomePerSec", per)
+						Plots.refreshSign(player)
+					end
+					if per > 0 then
+						Economy.add(player, per * Config.Game.IncomeTick, "Income")
+						st.incomeAcc += per
+					end
+					if saveTick % 10 == 0 then
+						Data.update(player, function(d)
+							d.lastOnline = os.time()
+							d.lastIncomePerSec = Economy.incomePerSec(player, d, false)
+							d.stats.playSeconds += 10
+						end)
+						if st.incomeAcc > 0 then
+							Analytics.source(player, st.incomeAcc, data.coins, "Income")
+							st.incomeAcc = 0
+						end
 					end
 				end
 			end
 		end
-	end
+	end)
 end
 
 -- no writes on leave: Kit.Data is already saving the player by then, and the 10 s tick above
