@@ -149,6 +149,10 @@ function Hud.announce(text: string, color: Color3?)
 	end)
 end
 
+function Hud.gui(): ScreenGui
+	return gui
+end
+
 function Hud.coinTarget(): GuiObject
 	return coinsLabel
 end
@@ -290,7 +294,7 @@ end
 -- bottom-left Re-Squish pill (DESIGN 7.2); glows when a Re-Squish is ready
 local stopGlow: (() -> ())? = nil
 function Hud.reSquishButton(open: () -> ())
-	local b = Candy.button(gui, "Re-Squish", "grape", UDim2.fromOffset(190, 64), open, { Name = "ReSquish", AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 24, 1, -24) })
+	local b = Candy.button(gui, "Re-Squish", "grape", UDim2.fromOffset(230, 64), open, { Name = "ReSquish", AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 24, 1, -24) })
 	Hud.buttons.ReSquish = b.frame
 	Candy.buttonIcon(b, "resquish")
 end

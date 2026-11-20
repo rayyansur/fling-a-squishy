@@ -82,6 +82,7 @@ function Economy.refresh(player: Player)
 	player:SetAttribute("IncomePerSec", st.incomePerSec)
 	-- keep the offline-income rate current on every shelf/multiplier change, not only every 10 s
 	local logout = Economy.incomePerSec(player, data, false)
+	player:SetAttribute("BaseIncome", logout) -- the Shop's coin cards scale from this
 	if data.lastIncomePerSec ~= logout then
 		Data.update(player, function(d)
 			d.lastIncomePerSec = logout

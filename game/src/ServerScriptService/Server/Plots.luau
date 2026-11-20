@@ -11,6 +11,7 @@ local ConfigCheck = require(ReplicatedStorage.Shared.Util.ConfigCheck)
 local Format = require(ReplicatedStorage.Shared.Util.Format)
 local Data = require(ServerScriptService.Kit.Data)
 local Net = require(ReplicatedStorage.Kit.Net)
+local Products = require(ReplicatedStorage.Kit.Products)
 local State = require(script.Parent.State)
 
 local M = Config.Map
@@ -57,12 +58,38 @@ local function sign(i: number): BillboardGui?
 	return anchor and anchor:FindFirstChild("NameSign") :: BillboardGui?
 end
 
-function Plots.setSign(i: number, owner: string, income: string, title: string)
+local RAINBOW = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromHex("#FF4F6E")),
+	ColorSequenceKeypoint.new(0.2, Color3.fromHex("#FF9A3D")),
+	ColorSequenceKeypoint.new(0.4, Color3.fromHex("#FFE14D")),
+	ColorSequenceKeypoint.new(0.6, Color3.fromHex("#7CF25A")),
+	ColorSequenceKeypoint.new(0.8, Color3.fromHex("#3EC5FF")),
+	ColorSequenceKeypoint.new(1, Color3.fromHex("#B36BFF")),
+})
+
+function Plots.setSign(i: number, owner: string, income: string, title: string, rainbow: boolean?)
 	local bb = sign(i)
 	if not bb then
 		return
 	end
-	(bb:FindFirstChild("Owner") :: TextLabel).Text = owner;
+	local ownerLabel = bb:FindFirstChild("Owner") :: TextLabel
+	ownerLabel.Text = owner
+	-- Rainbow Trail pass: the owner's name in rainbow (white text so the gradient shows true)
+	local grad = ownerLabel:FindFirstChild("Rainbow") :: UIGradient?
+	if rainbow and not grad then
+		local g = Instance.new("UIGradient")
+		g.Name = "Rainbow"
+		g.Color = RAINBOW
+		g.Parent = ownerLabel
+		ownerLabel:SetAttribute("BaseColor", ownerLabel.TextColor3)
+		ownerLabel.TextColor3 = Color3.new(1, 1, 1)
+	elseif not rainbow and grad then
+		grad:Destroy()
+		local base = ownerLabel:GetAttribute("BaseColor")
+		if typeof(base) == "Color3" then
+			ownerLabel.TextColor3 = base
+		end
+	end;
 	(bb:FindFirstChild("Income") :: TextLabel).Text = income;
 	(bb:FindFirstChild("Title") :: TextLabel).Text = title
 end
@@ -74,7 +101,8 @@ function Plots.refreshSign(player: Player)
 		return
 	end
 	local title = if data.reSquishes > 0 then "Re-Squish " .. Format.roman(data.reSquishes) else ""
-	Plots.setSign(i, player.DisplayName, "+" .. Format.abbrev(State.get(player).incomePerSec) .. "/s", title)
+	local rainbow = player:GetAttribute(Products.passAttribute("rainbow_trail")) == true
+	Plots.setSign(i, player.DisplayName, "+" .. Format.abbrev(State.get(player).incomePerSec) .. "/s", title, rainbow)
 end
 
 -- "speciesId:size:glitter;..." for other clients' shelf renderers

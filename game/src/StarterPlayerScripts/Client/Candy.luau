@@ -95,8 +95,9 @@ function Candy.buttonIcon(b: Button, name: string)
 	local holder = make("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 8, 0.5, 0), Size = UDim2.new(0.7, 0, 0.7, 0), Parent = b.face })
 	make("UIAspectRatioConstraint", { AspectRatio = 1, DominantAxis = Enum.DominantAxis.Height, Parent = holder })
 	Candy.icon(holder, name)
-	b.label.Position = UDim2.new(0, h * 0.55 + 8, 0, 5)
-	b.label.Size = UDim2.new(1, -(h * 0.55 + 16), 1, -10)
+	-- the icon is 0.7 h wide from x = 8: start the label past it (0.55 h let it cover the first letter)
+	b.label.Position = UDim2.new(0, h * 0.7 + 12, 0, 5)
+	b.label.Size = UDim2.new(1, -(h * 0.7 + 20), 1, -10)
 end
 
 -- screen gui with the DESIGN 7 UIScale (base 1920x1080, clamp 0.6-1.2)

@@ -35,7 +35,9 @@ end
 
 local function card(parent: Instance, size: UDim2, color: Color3?, props: { [string]: any }?): Frame
 	local f = Candy.pill(parent, size, color or P.cream, props)
-	Candy.corner(f, 18)
+	-- replace the pill's own corner (grid cells are sized 0 tall when made, so it would be square)
+	local corner = f:FindFirstChildOfClass("UICorner") :: UICorner
+	corner.CornerRadius = UDim.new(0, 18)
 	return f
 end
 

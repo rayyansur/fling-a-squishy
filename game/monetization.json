@@ -1,4 +1,14 @@
 {
-  "passes": {},
-  "products": {}
+  "passes": {
+    "coins_2x": { "name": "2x Coins", "description": "Every squishy earns double coins, forever. Squeezes pay double too.", "price": 299 },
+    "auto_fling": { "name": "Auto-Fling", "description": "Flings for you every 1.5 s while you stand at your slingshot. Toggle it on the HUD.", "price": 199 },
+    "auto_squeeze": { "name": "Auto-Squeeze", "description": "Squeezes every ready squishy for you every 10 seconds.", "price": 149 },
+    "rainbow_trail": { "name": "Rainbow Trail", "description": "Your goo leaves a rainbow trail and your plot sign turns rainbow. Just for looks.", "price": 79 }
+  },
+  "products": {
+    "coin_bag": { "name": "Coin Bag", "description": "10 minutes of your income (at least 5,000 coins).", "price": 49 },
+    "coin_jar": { "name": "Coin Jar", "description": "45 minutes of your income (at least 25,000 coins).", "price": 149 },
+    "coin_tub": { "name": "Coin Tub", "description": "3 hours of your income (at least 120,000 coins).", "price": 399 },
+    "squish_party": { "name": "Squish Party", "description": "2x coins for everyone in the server for 5 minutes. Stacks up to 30 minutes.", "price": 99 }
+  }
 }
