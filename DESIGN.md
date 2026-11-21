@@ -595,3 +595,13 @@ Where the spec is silent or conflicts with the template; Rayyan can overrule any
   - Rainbow Trail: a Trail on the owner's goo (drawn by every client) and a rainbow gradient on the
     owner's plot sign name. No particles on the avatar.
   - Game page art (icon + thumbnails, §11) moves to its own PR.
+- **Page art calls (2026-11-20).** In `marketing/` (see its README). Everything is the real game:
+  staged in the real map in Studio with the real "bacon hair" avatar and the game's own squishy,
+  goo, pad and slingshot models, then finished with type in `marketing/compose.py`.
+  - Icon: the Mega Mochi (with its party hat) slightly squashed on a lemon starburst with goo splats.
+  - Thumbnail 1 "BOUNCE = RARER!": as §11, staged by the plot's slingshot rather than mid-pull (the
+    pull pose hid the avatar's face); a MYTHIC tag on the Prism Blob.
+  - Thumbnail 2 "MERGE TO MEGA!": Normal → Chonky → Mega strawberry puffs with their real income
+    multipliers (x1, x4, x16) instead of a packed shelf, which reads poorly at thumbnail size.
+  - Thumbnail 3 "COLLECT ALL 24 SQUISHIES": the avatar in a crowd of Rare-to-Mythic squishies.
+  - The 10-second clip is still to do (needs a screen recording of a real fling; Rayyan's call).
