@@ -1,4 +1,4 @@
-"""Fling a Squishy UI icons: chunky candy objects, bright and readable at 40 px."""
+"""Throw a Squishy UI icons: chunky candy objects, bright and readable at 40 px."""
 import math
 import os
 import sys

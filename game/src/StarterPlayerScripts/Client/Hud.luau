@@ -97,7 +97,7 @@ function Hud.setFlingState(state: string)
 		face.BackgroundColor3 = kind[1]
 		lip.BackgroundColor3 = kind[2]
 	end
-	flingLabel.Text = if state == "busy" then "Squishies incoming…" elseif state == "loading" then "Loading…" else "FLING"
+	flingLabel.Text = if state == "busy" then "Squishies incoming…" elseif state == "loading" then "Loading…" else "THROW"
 	flingLabel.TextScaled = true
 end
 
@@ -223,7 +223,7 @@ function Hud.start()
 		end
 	end
 	fling.label:Destroy()
-	flingLabel = Candy.label(fling.face, "FLING", { Font = F.header, TextColor3 = P.white, Size = UDim2.new(0.8, 0, 0.3, 0), Position = UDim2.fromScale(0.1, 0.35) })
+	flingLabel = Candy.label(fling.face, "THROW", { Font = F.header, TextColor3 = P.white, Size = UDim2.new(0.8, 0, 0.3, 0), Position = UDim2.fromScale(0.1, 0.35) })
 	Candy.textStroke(flingLabel, 3)
 	flingRing = ring(fling.face, d, 16)
 	Hud.buttons.Fling = fling.frame
@@ -274,7 +274,7 @@ function Hud.start()
 		rateLabel.Text = "+" .. Format.abbrev((player:GetAttribute("IncomePerSec") :: number?) or 0) .. "/s"
 		shelfLabel.Text = ("%d / %d"):format((player:GetAttribute("ShelfCount") :: number?) or 0, (player:GetAttribute("Slots") :: number?) or E.Slots.start)
 		local gloves = (player:GetAttribute("gloves") :: number?) or 1
-		spLabel.Text = ("SP %s (+%d/fling)"):format(Format.abbrev((player:GetAttribute("sp") :: number?) or 1), E.Gloves[gloves].sp)
+		spLabel.Text = ("SP %s (+%d/throw)"):format(Format.abbrev((player:GetAttribute("sp") :: number?) or 1), E.Gloves[gloves].sp)
 		local on = player:GetAttribute("autoMerge") ~= false
 		autoChip.setText(if on then "Auto-Merge: ON" else "Auto-Merge: OFF")
 		autoChip.setKind(if on then "success" else "disabled")

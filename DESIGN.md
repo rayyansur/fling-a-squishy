@@ -1,4 +1,4 @@
-# DESIGN.md: Fling a Squishy
+# DESIGN.md: Throw a Squishy
 
 > Rayyan's spec, saved as the design brief (sections 1-17, verbatim). The template's `CLAUDE.md`
 > is the runbook. Section 18 lists the builder's decisions where the spec is silent; keep it current.
@@ -469,10 +469,10 @@ No paid random items: no Robux eggs, capsules, crates, spins or luck boosts. All
 
 ## 11. Store page and launch assets
 
-- **Title:** `Fling a Squishy 🍡`
+- **Title:** `Throw a Squishy 🍡`
 - **Description (paste exactly):**
-  "FLING goo across Squish Valley and catch the cutest squishies! 🍡💥
-  The farther you fling, the rarer the squishy, so bounce off JELLY PADS to go even farther!
+  "THROW goo across Squish Valley and catch the cutest squishies! 🍡💥
+  The farther you throw, the rarer the squishy, so bounce off JELLY PADS to go even farther!
   ⭐ Collect 24 squishies (and shiny GLITTER ones!)
   🧸 MERGE 3 into a CHONKY, then 3 Chonkies into a MEGA!
   👐 SQUEEZE your squishies for instant coins
@@ -605,3 +605,9 @@ Where the spec is silent or conflicts with the template; Rayyan can overrule any
     multipliers (x1, x4, x16) instead of a packed shelf, which reads poorly at thumbnail size.
   - Thumbnail 3 "COLLECT ALL 24 SQUISHIES": the avatar in a crowd of Rare-to-Mythic squishies.
   - The 10-second clip is still to do (needs a screen recording of a real fling; Rayyan's call).
+- **Renamed to Throw a Squishy (2026-11-21, Rayyan: "dont like fling i like throw more").** Every
+  player-facing "fling" is now "throw": the game name, the THROW button, tutorial, quests, upgrade
+  text, banners ("threw a MYTHIC …"), the Auto-Throw pass and the page text. Internal names
+  (`Fling` modules, `FlingRequest`, `auto_fling`, save field `flings`, analytics `FirstFling`) stay,
+  so saves, pass ids and dashboards carry over. The rest of this document still says "fling"; read
+  it as "throw".

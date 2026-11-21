@@ -40,7 +40,7 @@ function Leaderboard.start()
 			local label = body()
 			if label then
 				local lines = Leaderboard.lines()
-				label.Text = if #lines > 0 then table.concat(lines, "\n") else "Fling to get on the board!"
+				label.Text = if #lines > 0 then table.concat(lines, "\n") else "Throw to get on the board!"
 			end
 			task.wait(5)
 		end

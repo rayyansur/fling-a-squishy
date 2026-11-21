@@ -283,7 +283,7 @@ function Store.start()
 	end)
 	-- stacked above the Auto-Merge chip (bottom-right)
 	autoChip("squeeze", "auto_squeeze", "Auto-Squeeze", -292)
-	autoChip("fling", "auto_fling", "Auto-Fling", -352)
+	autoChip("fling", "auto_fling", "Auto-Throw", -352)
 	partyPill()
 
 	Net.listen("Kit.Purchased", function(kind: string, key: string)

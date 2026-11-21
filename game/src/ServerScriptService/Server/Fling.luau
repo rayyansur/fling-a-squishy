@@ -174,7 +174,7 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 	if ri >= 5 then
 		task.delay(math.max(0, landAt - workspace:GetServerTimeNow()), function()
 			local sp = S.ById[s]
-			Net.fireAll("Announce", ("⭐ %s flung a %s %s!"):format(player.DisplayName, string.upper(rarity), sp.name), rarity)
+			Net.fireAll("Announce", ("⭐ %s threw a %s %s!"):format(player.DisplayName, string.upper(rarity), sp.name), rarity)
 		end)
 	end
 

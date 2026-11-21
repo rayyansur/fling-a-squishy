@@ -37,8 +37,8 @@ P.Daily = {
 
 -- `event` is the progress event that counts toward it (server Progress module)
 P.Quests = {
-	{ id = "fling", text = "Fling %d times", goal = 150, event = "fling" },
-	{ id = "perfect", text = "Land %d PERFECT flings", goal = 15, event = "perfect" },
+	{ id = "fling", text = "Throw %d times", goal = 150, event = "fling" },
+	{ id = "perfect", text = "Land %d PERFECT throws", goal = 15, event = "perfect" },
 	{ id = "triple", text = "Get a triple bounce", goal = 1, event = "triple" },
 	{ id = "merge", text = "Merge %d times", goal = 5, event = "merge" },
 	{ id = "squeeze", text = "Squeeze %d times", goal = 30, event = "squeeze" },

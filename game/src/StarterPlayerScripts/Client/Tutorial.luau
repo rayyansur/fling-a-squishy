@@ -14,11 +14,11 @@ local M = Config.Map
 local Tutorial = {}
 
 local HINTS = {
-	[1] = { text = "Hold FLING, let go in the gold!", button = "Fling", target = "sling" },
+	[1] = { text = "Hold THROW, let go in the gold!", button = "Fling", target = "sling" },
 	[2] = { text = "BOING! Jelly Pads bounce you farther!", button = "Fling", target = "sling" },
 	[3] = { text = "Squishies make coins every second! Press SQUEEZE for a burst!", button = "Squeeze", target = "shelf" },
 	[4] = { text = "Get 3 of the same to MERGE!", button = "Fling", target = "sling" },
-	[5] = { text = "Buy Lime Slime goo to fling farther!", button = "Upgrades", target = "goo" },
+	[5] = { text = "Buy Lime Slime goo to throw farther!", button = "Upgrades", target = "goo" },
 }
 
 local stopPulse: (() -> ())? = nil
