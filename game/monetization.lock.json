@@ -36,5 +36,43 @@
     "id": 3734016660
    }
   }
+ },
+ "10778128673": {
+  "passes": {
+   "auto_fling": {
+    "hash": "9faec60db4a900bf",
+    "id": 2092984955
+   },
+   "auto_squeeze": {
+    "hash": "1f525db6cb70cde1",
+    "id": 2092936953
+   },
+   "coins_2x": {
+    "hash": "6745a170017e0110",
+    "id": 2093021013
+   },
+   "rainbow_trail": {
+    "hash": "236815860b2618c0",
+    "id": 2093819011
+   }
+  },
+  "products": {
+   "coin_bag": {
+    "hash": "c150836ea251609d",
+    "id": 3734056801
+   },
+   "coin_jar": {
+    "hash": "b7398d7c442566fa",
+    "id": 3734056802
+   },
+   "coin_tub": {
+    "hash": "720412b5478da5d7",
+    "id": 3734056805
+   },
+   "squish_party": {
+    "hash": "2c0d53949f734017",
+    "id": 3734056807
+   }
+  }
  }
 }
