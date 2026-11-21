@@ -1,4 +1,4 @@
-"""Shared low-poly helpers for Fling a Squishy (DESIGN 9.1: flat-shaded low-poly, chunky rounded
+"""Shared low-poly helpers for Throw a Squishy (DESIGN 9.1: flat-shaded low-poly, chunky rounded
 silhouettes, solid candy colours). Blender Z is up; a model's front faces Blender -Y.
 
 Squishy frame (scale 1 = about 2 studs wide): every body and every accessory carries two tiny

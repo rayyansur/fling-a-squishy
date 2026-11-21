@@ -94,7 +94,7 @@ function GooRainFx.start()
 		end
 		Sound.music(if on then "goo_rain" else "main_theme")
 		if on then
-			Hud.announce("GOO RAIN! Farther flings, double Rare+ luck!", P.pink)
+			Hud.announce("GOO RAIN! Farther throws, double Rare+ luck!", P.pink)
 		end
 	end
 

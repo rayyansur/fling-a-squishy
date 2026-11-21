@@ -1,4 +1,4 @@
-"""World models for Fling a Squishy: candy low-poly, chunky, flat-shaded, saturated (DESIGN 9).
+"""World models for Throw a Squishy: candy low-poly, chunky, flat-shaded, saturated (DESIGN 9).
 Front faces Blender -Y (Roblox -Z); the map rotates models to face where they need to."""
 import math
 import random

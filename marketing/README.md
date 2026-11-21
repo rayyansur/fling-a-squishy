@@ -42,14 +42,14 @@ Every claim is true: bouncing raises rarity, the size multipliers are `Config.Sq
 
 ## Game page text (paste-ready, DESIGN §11)
 
-**Title:** `Fling a Squishy 🍡`
+**Title:** `Throw a Squishy 🍡`
 
 **Description** (under 1,000 characters; if the filter refuses it, save the title alone first,
 then the description in halves to find the line):
 
 ```
-FLING goo across Squish Valley and catch the cutest squishies! 🍡💥
-The farther you fling, the rarer the squishy, so bounce off JELLY PADS to go even farther!
+THROW goo across Squish Valley and catch the cutest squishies! 🍡💥
+The farther you throw, the rarer the squishy, so bounce off JELLY PADS to go even farther!
 ⭐ Collect 24 squishies (and shiny GLITTER ones!)
 🧸 MERGE 3 into a CHONKY, then 3 Chonkies into a MEGA!
 👐 SQUEEZE your squishies for instant coins

@@ -208,7 +208,7 @@ function Menus.reSquish()
 		Candy.stroke(info, 3, P.grape)
 		local inc0, inc1 = 1 + E.ReSquish.incomePer * n, 1 + E.ReSquish.incomePer * (n + 1)
 		local d0, d1 = 1 + E.ReSquish.distPer * n, 1 + E.ReSquish.distPer * (n + 1)
-		Candy.label(info, ("Income ×%g → ×%g   ·   Fling distance ×%g → ×%g"):format(inc0, inc1, d0, d1), { Font = F.header, TextColor3 = P.grape, Size = UDim2.new(1, -24, 0, 40), Position = UDim2.fromOffset(12, 10) })
+		Candy.label(info, ("Income ×%g → ×%g   ·   Throw distance ×%g → ×%g"):format(inc0, inc1, d0, d1), { Font = F.header, TextColor3 = P.grape, Size = UDim2.new(1, -24, 0, 40), Position = UDim2.fromOffset(12, 10) })
 		Candy.label(info, "Resets: coins, Sling Power, goo, gloves, every squishy on your shelf, slots, shelf level.", { Font = F.small, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(1, -24, 0, 60), Position = UDim2.fromOffset(12, 58) })
 		Candy.label(info, "Keeps: Squishydex, Re-Squish count, badges, passes, daily streak, stats, Auto-Merge.", { Font = F.small, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(1, -24, 0, 60), Position = UDim2.fromOffset(12, 122) })
 		if confirming then

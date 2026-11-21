@@ -105,14 +105,14 @@ function Panels.upgrades(tab: string?)
 		if current == "Goo" then
 			local owned = attr("goo", 1)
 			for t, g in E.Goo do
-				upgradeRow(list, t, "upgrades", g.name, ("Fling distance ×%.2f"):format(g.mult), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
+				upgradeRow(list, t, "upgrades", g.name, ("Throw distance ×%.2f"):format(g.mult), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
 					Net.send("BuyUpgrade", "goo", t)
 				end)
 			end
 		elseif current == "Gloves" then
 			local owned = attr("gloves", 1)
 			for t, g in E.Gloves do
-				upgradeRow(list, t, "sp", g.name, ("+%d Sling Power per fling"):format(g.sp), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
+				upgradeRow(list, t, "sp", g.name, ("+%d Sling Power per throw"):format(g.sp), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
 					Net.send("BuyUpgrade", "gloves", t)
 				end)
 			end
@@ -168,7 +168,7 @@ function Panels.shelf()
 		header.Text = ("%d / %d slots"):format(attr("ShelfCount", 0), attr("Slots", 8))
 		local entries = ShelfView.entries
 		if #entries == 0 then
-			Candy.label(content, "Your shelf is empty.\nHold FLING at your slingshot to catch your first squishy!", { Font = F.header, TextColor3 = Color3.fromHex("#6E5C8F"), Size = UDim2.new(1, 0, 0, 120) })
+			Candy.label(content, "Your shelf is empty.\nHold THROW at your slingshot to catch your first squishy!", { Font = F.header, TextColor3 = Color3.fromHex("#6E5C8F"), Size = UDim2.new(1, 0, 0, 120) })
 			return
 		end
 		-- group by species + size + glitter
