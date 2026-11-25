@@ -77,12 +77,12 @@ return function(B, ctx)
 		local anchor = B.part(plot, { name = "FlingAnchor", size = B.V3.new(0.4, 0.4, 0.4), cf = B.CF.new(x, top, M.SlingshotZ), t = 1, cc = false, cq = false, ct = false })
 		local fp = B.I.new("Attachment")
 		fp.Name = "FlingPoint"
-		fp.Position = B.V3.new(0, POUCH_Y, 0)
+		fp.CFrame = B.CF.new(0, POUCH_Y, 0) -- never .Position: Lune drops it (HANDBOOK 7)
 		fp.Parent = anchor
 		for _, side in { -1, 1 } do
 			local tip = B.I.new("Attachment")
 			tip.Name = if side < 0 then "TipL" else "TipR"
-			tip.Position = B.V3.new(side * TIP_X, TIP_Y, 0)
+			tip.CFrame = B.CF.new(side * TIP_X, TIP_Y, 0)
 			tip.Parent = anchor
 		end
 		-- pouch (moved by the owner's client while charging) + the two rubber bands
@@ -90,7 +90,7 @@ return function(B, ctx)
 		for _, side in { -1, 1 } do
 			local a = B.I.new("Attachment")
 			a.Name = if side < 0 then "BandL" else "BandR"
-			a.Position = B.V3.new(side * 0.55, 0, 0)
+			a.CFrame = B.CF.new(side * 0.55, 0, 0)
 			a.Parent = pouch
 			local band = B.I.new("Beam")
 			band.Name = if side < 0 then "BandL" else "BandR"

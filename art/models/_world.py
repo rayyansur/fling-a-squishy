@@ -40,15 +40,41 @@ def goo_blob(bpy, kit):
 
 
 # ------------------------------------------------------------------ slingshot
-def slingshot(bpy, kit):
-    wood = M(kit, "#FF4FA3", rough=0.45)
-    stripe = M(kit, "#FFFFFF", rough=0.45)
-    gum = M(kit, "#9B5CFF", rough=0.5)
-    # gumdrop base
-    rings(bpy, "Base", [(0.0, 0.0), (1.8, 0.0), (1.75, 0.35), (1.3, 0.9), (0.6, 1.2), (0.0, 1.25)], gum, sides=10)
-    # trunk and the two arms (candy-cane striped)
-    trunk = [(0, 0, 0.8), (0, 0, 4.4)]
-    stick(bpy, "Frame", trunk[0], trunk[1], 0.42, wood, sides=8)
+# Six tiers, same fork geometry (tips at x=+-2.2, z=7.4: the bands attach there), new candy theme
+# each. Tier 1 is the starter candy cane.
+SLING_THEMES = {
+    1: dict(frame="#FF4FA3", stripe="#FFFFFF", base="#9B5CFF", tip="#FFD23F", bow="#3EC5FF"),
+    2: dict(frame="#5FD94A", stripe="#C8FFB0", base="#FF8A3D", tip="#FF3B5C", bow="#FFD23F"),
+    3: dict(frame="#3EC5FF", stripe="#FFFFFF", base="#FF9EC7", tip="#FF4FA3", bow="#9B5CFF"),
+    4: dict(frame="#7A4A2A", stripe="#FFE3C2", base="#4E2C18", tip="#E0203A", bow="#FF9EC7"),
+    5: dict(frame="#9B5CFF", stripe="#E2D2FF", base="#6B32C9", tip="#7FE8FF", bow="#7FE8FF"),
+    6: dict(frame="#FFD23F", stripe="#FF4FA3", base="#FFFFFF", tip="#FFD23F", bow="#FF4FA3"),
+}
+RAINBOW = ["#FF4FA3", "#FF8A3D", "#FFD23F", "#7CF25A", "#3EC5FF", "#9B5CFF"]
+
+
+def slingshot(bpy, kit, tier=1):
+    t = SLING_THEMES[tier]
+    wood = M(kit, t["frame"], rough=0.45, metal=0.3 if tier == 6 else 0.0)
+    gum = M(kit, t["base"], rough=0.5)
+    # base: gumdrop (1-3), chocolate truffle (4), crystal cluster (5), cloud (6)
+    if tier == 6:
+        for (x, y, z, r) in [(0, 0, 0.55, 1.1), (1.0, 0.2, 0.45, 0.8), (-1.0, -0.1, 0.45, 0.85), (0.2, -0.9, 0.4, 0.7), (-0.3, 0.9, 0.4, 0.7)]:
+            ball(bpy, "Base", r, (x, y, z), gum, scale=(1, 1, 0.75), sides=10, stacks=5)
+    else:
+        rings(bpy, "Base", [(0.0, 0.0), (1.8, 0.0), (1.75, 0.35), (1.3, 0.9), (0.6, 1.2), (0.0, 1.25)], gum, sides=10)
+    if tier == 4:
+        for k in range(8):
+            a = math.radians(k * 45 + 10)
+            cyl(bpy, "Sprinkles", 0.07, 0.35, (1.35 * math.cos(a), 1.35 * math.sin(a), 0.78), M(kit, RAINBOW[k % 6]), sides=5,
+                rot=(70, 0, k * 45))
+    if tier == 5:
+        for k in range(6):
+            a = math.radians(k * 60)
+            cone(bpy, "Crystals", 0.32, 1.0, (1.45 * math.cos(a), 1.45 * math.sin(a), 0.6), M(kit, t["tip"], rough=0.1, emit=0.35),
+                 sides=5, rot=(18 * math.cos(a), -18 * math.sin(a), 0))
+    # trunk and the two arms
+    stick(bpy, "Frame", (0, 0, 0.8), (0, 0, 4.4), 0.42, wood, sides=8)
     ball(bpy, "Frame", 0.5, (0, 0, 4.4), wood, sides=8, stacks=4)
     for s in (-1, 1):
         mid = (s * 1.6, 0, 5.6)
@@ -56,14 +82,30 @@ def slingshot(bpy, kit):
         stick(bpy, "Frame", (0, 0, 4.4), mid, 0.36, wood, sides=8)
         stick(bpy, "Frame", mid, tip, 0.32, wood, sides=8)
         ball(bpy, "Frame", 0.36, mid, wood, sides=8, stacks=4)
-        ball(bpy, "Tips", 0.42, (tip[0], tip[1], tip[2] + 0.1), M(kit, "#FFD23F", rough=0.4), sides=8, stacks=4)
-    # spiral stripes on the trunk
+        tipm = M(kit, t["tip"], rough=0.4, emit=0.4 if tier >= 5 else 0.0)
+        top = (tip[0], tip[1], tip[2] + 0.1)
+        if tier == 3:  # swirl lollipops
+            cyl(bpy, "Tips", 0.75, 0.22, (tip[0], 0.11, tip[2] + 0.75), tipm, sides=14, rot=(90, 0, 0))
+            for k in range(3):
+                cyl(bpy, "Swirl", 0.6 - 0.18 * k, 0.24, (tip[0], 0.12 + 0.005 * k, tip[2] + 0.75), M(kit, "#FFFFFF" if k % 2 == 0 else t["tip"]),
+                    sides=14, rot=(90, 0, 0))
+        elif tier == 4:  # cherries
+            ball(bpy, "Tips", 0.48, top, tipm, sides=10, stacks=5)
+            stick(bpy, "Stems", (tip[0], 0, tip[2] + 0.5), (tip[0] + 0.25 * s, 0, tip[2] + 1.0), 0.05, M(kit, "#3E7D2A"), sides=5)
+        elif tier == 5:  # crystals
+            cone(bpy, "Tips", 0.42, 1.1, (tip[0], 0, tip[2]), tipm, sides=5)
+        elif tier == 6:  # stars
+            star(bpy, "Tips", 0.75, (tip[0], 0, tip[2] + 0.6), M(kit, "#FFD23F", rough=0.3, emit=0.5), thick=0.3)
+        else:
+            ball(bpy, "Tips", 0.42, top, tipm, sides=8, stacks=4)
+    # stripes on the trunk (rainbow for tier 6)
     for k in range(5):
         z = 1.2 + 0.7 * k
-        rings(bpy, "Stripes", [(0.0, 0.0), (0.45, 0.0), (0.45, 0.22), (0.0, 0.22)], stripe, sides=8,
+        col = RAINBOW[k % 6] if tier == 6 else t["stripe"]
+        rings(bpy, "Stripes", [(0.0, 0.0), (0.45, 0.0), (0.45, 0.22), (0.0, 0.22)], M(kit, col, rough=0.45), sides=8,
               center=(0, 0, z), rot=(0, 18, 0))
-    # bow
-    bow = M(kit, "#3EC5FF", rough=0.4)
+    # bow on the front
+    bow = M(kit, t["bow"], rough=0.4)
     for s in (-1, 1):
         cone(bpy, "Bow", 0.38, 0.6, (0, -0.42, 3.0), bow, sides=4, rot=(0, s * 90, 0), scale=(1, 0.5, 1))
     ball(bpy, "Bow", 0.16, (0, -0.45, 3.0), bow, sides=6, stacks=3)

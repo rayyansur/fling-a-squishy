@@ -1,5 +1,5 @@
 --!strict
--- Panels (DESIGN 7.3): Upgrades (Goo | Gloves | Shelf), Shelf, Odds, plus the Shelf Full modal
+-- Panels (DESIGN 7.3): Upgrades (Goo | Slingshot | Gloves | Shelf), Shelf, Odds, plus the Shelf Full modal
 -- (4.6). Hub prompts and HUD buttons open the same panels.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -109,6 +109,13 @@ function Panels.upgrades(tab: string?)
 					Net.send("BuyUpgrade", "goo", t)
 				end)
 			end
+		elseif current == "Slingshot" then
+			local owned = attr("sling", 1)
+			for t, g in E.Slingshots do
+				upgradeRow(list, t, "sp", g.name, if t == 1 then "Your starter slingshot" else ("Throw distance ×%.2f · new look"):format(g.mult), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
+					Net.send("BuyUpgrade", "sling", t)
+				end)
+			end
 		elseif current == "Gloves" then
 			local owned = attr("gloves", 1)
 			for t, g in E.Gloves do
@@ -137,7 +144,7 @@ function Panels.upgrades(tab: string?)
 			end
 		end
 	end
-	local select = Candy.tabs(modal.body, { "Goo", "Gloves", "Shelf" }, function(name)
+	local select = Candy.tabs(modal.body, { "Goo", "Slingshot", "Gloves", "Shelf" }, function(name)
 		current = name
 		draw()
 	end)
@@ -398,7 +405,7 @@ function Panels.start()
 			refreshOpen()
 		end
 	end
-	for _, a in { "goo", "gloves", "slotUpgrades", "shelfLevel", "autoMerge", "ShelfCount" } do
+	for _, a in { "goo", "gloves", "sling", "slotUpgrades", "shelfLevel", "autoMerge", "ShelfCount" } do
 		player:GetAttributeChangedSignal(a):Connect(changed)
 	end
 	-- coins tick every second: only redraw Upgrades when what's affordable changes
@@ -409,9 +416,11 @@ function Panels.start()
 		end
 		local coins = attr("coins", 0)
 		local nextGoo, nextGlove, nextLvl = E.Goo[attr("goo", 1) + 1], E.Gloves[attr("gloves", 1) + 1], E.ShelfLevels[attr("shelfLevel", 1) + 1]
+		local nextSling = E.Slingshots[attr("sling", 1) + 1]
 		local sig = table.concat({
 			tostring(nextGoo ~= nil and coins >= nextGoo.cost),
 			tostring(nextGlove ~= nil and coins >= nextGlove.cost),
+			tostring(nextSling ~= nil and coins >= nextSling.cost),
 			tostring(nextLvl ~= nil and coins >= nextLvl.cost),
 			tostring(coins >= E.slotCost(attr("slotUpgrades", 0))),
 		}, ",")

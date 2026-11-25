@@ -628,3 +628,17 @@ Rayyan: the throw felt odd, spamming won, aim and power didn't work. Changes:
 - **Preview:** the whole path including pad bounces, plus a landing ring in the zone colour (gold
   when it bounces) labelled with the zone name and "BOING ×n".
 - Per-throw time goes from ~0.9 s to ~1.5 s; the balance sim still lands every milestone in range.
+
+## 20. Slingshot pull + slingshot tiers (2026-11-25)
+- **Bug fixed:** the map set the slingshot Attachments' `.Position` (Lune drops it), so the Fling
+  Point and fork tips sat on the floor: the pouch dropped to the ground and the bands with it.
+- **Pull:** pressing THROW steps you behind the pouch facing the aim; both arms reach for the
+  pouch (shoulders aimed at it each frame) and drag it back up to 3 studs towards your face
+  (ease-out), stepping back as the pull grows. The loaded goo (goo colour) sits in the pouch until
+  thrown and reappears after the reload. Release: pouch snaps forward past the fork and settles,
+  arms follow through for 0.35 s.
+- **Slingshots** (Upgrades → Slingshot tab, coins, reset by Re-Squish), distance ×: Candy Cane 1.00
+  (free), Gummy 1.05 (8K), Lollipop 1.10 (400K), Choco-Cherry 1.16 (6M), Rock Candy 1.23 (60M),
+  Rainbow Star 1.30 (400M). Each has its own Blender model with the same fork geometry; the
+  plot's `Sling` attribute picks it. Mults are small on purpose: bigger ones put the Rainbow Rim at
+  56 min in the balance sim (target 90-150).

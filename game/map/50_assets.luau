@@ -21,6 +21,12 @@ return function(B, ctx)
 		end
 	end
 	ctx.Assets:place(assets, "goo_blob", B.CF.new(), { collide = false })
+	-- slingshot tiers (Economy.Slingshots): the client swaps the plot's slingshot for its tier
+	local slings = B.folder(assets, "Slingshots")
+	for t = 1, #Config.Economy.Slingshots do
+		local m = ctx.Assets:place(slings, if t == 1 then "slingshot" else "slingshot_" .. t, B.CF.new(), { collide = false })
+		m.Name = tostring(t)
+	end
 	-- every template: no collision, no queries (they're visuals)
 	for _, d in assets:GetDescendants() do
 		if d:IsA("BasePart") then

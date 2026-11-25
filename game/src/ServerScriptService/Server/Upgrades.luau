@@ -1,5 +1,5 @@
 --!strict
--- BuyUpgrade (DESIGN 4.2, 4.6, 4.7, 6.3): goo, gloves, shelf slots, shelf level. Only the next
+-- BuyUpgrade (DESIGN 4.2, 4.6, 4.7, 6.3, 20): goo, gloves, slingshot, shelf slots, shelf level. Only the next
 -- tier can be bought, at the server's price.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -22,6 +22,8 @@ function Upgrades.price(data: any, kind: string, tier: number): (number?, string
 		return E.Goo[tier].cost, "goo", "Goo"
 	elseif kind == "gloves" and tier == data.gloves + 1 and E.Gloves[tier] then
 		return E.Gloves[tier].cost, "gloves", "Gloves"
+	elseif kind == "sling" and tier == (data.sling or 1) + 1 and E.Slingshots[tier] then
+		return E.Slingshots[tier].cost, "sling", "Slingshot"
 	elseif kind == "slots" and tier == data.slotUpgrades + 1 and data.slotUpgrades < E.MaxSlotUpgrades then
 		return E.slotCost(data.slotUpgrades), "slotUpgrades", "Slots"
 	elseif kind == "shelf" and tier == data.shelfLevel + 1 and E.ShelfLevels[tier] then

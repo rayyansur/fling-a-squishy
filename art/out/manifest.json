@@ -1567,13 +1567,242 @@
     "tris": 40
    }
   ],
-  "sha256": "5a915186bd8baaf087e915e24d4d514d5c4c1ade0284fe8ec1e02b7ecdad2dd0",
+  "sha256": "c92d0061f4e1cee8320184d596bf47a8fe2f2b97999a26a1b196da42f78a89b2",
   "size": [
    5.1761,
    7.92,
    3.6
   ],
   "tris": 660
+ },
+ "slingshot_2": {
+  "parts": [
+   {
+    "color": "#FF8A3D",
+    "material": null,
+    "name": "Base",
+    "tris": 80
+   },
+   {
+    "color": "#5FD94A",
+    "material": null,
+    "name": "Frame",
+    "tris": 284
+   },
+   {
+    "color": "#FF3B5C",
+    "material": null,
+    "name": "Tips",
+    "tris": 96
+   },
+   {
+    "color": "#C8FFB0",
+    "material": null,
+    "name": "Stripes",
+    "tris": 160
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Bow",
+    "tris": 40
+   }
+  ],
+  "sha256": "db25f7a08f3e61c198a443437d324750d192638a13ca09ab8c713d26e1fe0988",
+  "size": [
+   5.1761,
+   7.92,
+   3.6
+  ],
+  "tris": 660
+ },
+ "slingshot_3": {
+  "parts": [
+   {
+    "color": "#FF9EC7",
+    "material": null,
+    "name": "Base",
+    "tris": 80
+   },
+   {
+    "color": "#3EC5FF",
+    "material": null,
+    "name": "Frame",
+    "tris": 284
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Tips",
+    "tris": 112
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Swirl",
+    "tris": 336
+   },
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Stripes",
+    "tris": 160
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Bow",
+    "tris": 40
+   }
+  ],
+  "sha256": "8fb4e0daa6f6bf57224b7725671ae4078f89ce5dfa9baa82401259337d6ab6e9",
+  "size": [
+   5.8624,
+   8.9,
+   3.6
+  ],
+  "tris": 1012
+ },
+ "slingshot_4": {
+  "parts": [
+   {
+    "color": "#4E2C18",
+    "material": null,
+    "name": "Base",
+    "tris": 80
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Sprinkles",
+    "tris": 160
+   },
+   {
+    "color": "#7A4A2A",
+    "material": null,
+    "name": "Frame",
+    "tris": 284
+   },
+   {
+    "color": "#E0203A",
+    "material": null,
+    "name": "Tips",
+    "tris": 160
+   },
+   {
+    "color": "#3E7D2A",
+    "material": null,
+    "name": "Stems",
+    "tris": 32
+   },
+   {
+    "color": "#FFE3C2",
+    "material": null,
+    "name": "Stripes",
+    "tris": 160
+   },
+   {
+    "color": "#FF9EC7",
+    "material": null,
+    "name": "Bow",
+    "tris": 40
+   }
+  ],
+  "sha256": "5f4e95f4e4b7a915ddf6360286c6b1af4b6c91ea9860541223dfa77c4a5bfa1c",
+  "size": [
+   5.2683,
+   8.4213,
+   3.6
+  ],
+  "tris": 916
+ },
+ "slingshot_5": {
+  "parts": [
+   {
+    "color": "#6B32C9",
+    "material": null,
+    "name": "Base",
+    "tris": 80
+   },
+   {
+    "color": "#7FE8FF",
+    "material": null,
+    "name": "Crystals",
+    "tris": 60
+   },
+   {
+    "color": "#9B5CFF",
+    "material": null,
+    "name": "Frame",
+    "tris": 284
+   },
+   {
+    "color": "#7FE8FF",
+    "material": null,
+    "name": "Tips",
+    "tris": 20
+   },
+   {
+    "color": "#E2D2FF",
+    "material": null,
+    "name": "Stripes",
+    "tris": 160
+   },
+   {
+    "color": "#7FE8FF",
+    "material": null,
+    "name": "Bow",
+    "tris": 40
+   }
+  ],
+  "sha256": "e5147c2d14a5cf8875a0e77df39cc9bc3b1bc5fd2f43d6293a2cd375a10c0551",
+  "size": [
+   5.1598,
+   8.5,
+   3.6
+  ],
+  "tris": 644
+ },
+ "slingshot_6": {
+  "parts": [
+   {
+    "color": "#FFFFFF",
+    "material": null,
+    "name": "Base",
+    "tris": 400
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Frame",
+    "tris": 284
+   },
+   {
+    "color": "#FFD23F",
+    "material": null,
+    "name": "Tips",
+    "tris": 80
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Stripes",
+    "tris": 160
+   },
+   {
+    "color": "#FF4FA3",
+    "material": null,
+    "name": "Bow",
+    "tris": 40
+   }
+  ],
+  "sha256": "60d5aa21f821dcf09248fffefb9b64cadbfb6593ebecb51c06f8d5d188f1064d",
+  "size": [
+   5.8266,
+   9.025,
+   3.1315
+  ],
+  "tris": 964
  },
  "soda_geyser": {
   "parts": [
