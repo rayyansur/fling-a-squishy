@@ -106,21 +106,21 @@ function Panels.upgrades(tab: string?)
 		if current == "Goo" then
 			local owned = attr("goo", 1)
 			for t, g in E.Goo do
-				upgradeRow(list, t, "upgrades", g.name, ("Throw distance ×%.2f"):format(g.mult), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
+				upgradeRow(list, t, "goo_" .. t, g.name, ("Throw distance ×%.2f"):format(g.mult), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
 					Net.send("BuyUpgrade", "goo", t)
 				end)
 			end
 		elseif current == "Slingshot" then
 			local owned = attr("sling", 1)
 			for t, g in E.Slingshots do
-				upgradeRow(list, t, "sp", g.name, if t == 1 then "Your starter slingshot" else ("Throw distance ×%.2f · new look"):format(g.mult), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
+				upgradeRow(list, t, "sling_" .. t, g.name, if t == 1 then "Your starter slingshot" else ("Throw distance ×%.2f · new look"):format(g.mult), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
 					Net.send("BuyUpgrade", "sling", t)
 				end)
 			end
 		elseif current == "Gloves" then
 			local owned = attr("gloves", 1)
 			for t, g in E.Gloves do
-				upgradeRow(list, t, "sp", g.name, ("+%d Sling Power per throw"):format(g.sp), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
+				upgradeRow(list, t, "gloves_" .. t, g.name, ("+%d Sling Power per throw"):format(g.sp), g.cost, if t == 1 then "owned" else tierStatus(owned, t, g.cost), function()
 					Net.send("BuyUpgrade", "gloves", t)
 				end)
 			end
@@ -129,16 +129,16 @@ function Panels.upgrades(tab: string?)
 			local slots = E.slotCount(k)
 			if k < E.MaxSlotUpgrades then
 				local cost = E.slotCost(k)
-				upgradeRow(list, 1, "shelf", "+2 Shelf Slots", ("%d → %d slots"):format(slots, slots + 2), cost, if attr("coins", 0) >= cost then "buy" else "poor", function()
+				upgradeRow(list, 1, "slots", "+2 Shelf Slots", ("%d → %d slots"):format(slots, slots + 2), cost, if attr("coins", 0) >= cost then "buy" else "poor", function()
 					Net.send("BuyUpgrade", "slots", k + 1)
 				end)
 			else
-				upgradeRow(list, 1, "shelf", "Shelf Slots", "All 40 slots unlocked", nil, "owned", function() end)
+				upgradeRow(list, 1, "slots", "Shelf Slots", "All 40 slots unlocked", nil, "owned", function() end)
 			end
 			local lvl = attr("shelfLevel", 1)
 			for t, l in E.ShelfLevels do
 				if t > 1 then
-					upgradeRow(list, t + 1, "shelf", "Shelf Level " .. t, ("Income ×%.2f · %s"):format(l.mult, l.visual), l.cost, tierStatus(lvl, t, l.cost), function()
+					upgradeRow(list, t + 1, "shelf_" .. t, "Shelf Level " .. t, ("Income ×%.2f · %s"):format(l.mult, l.visual), l.cost, tierStatus(lvl, t, l.cost), function()
 						Net.send("BuyUpgrade", "shelf", t)
 					end)
 				end
