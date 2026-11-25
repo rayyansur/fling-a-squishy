@@ -642,3 +642,20 @@ Rayyan: the throw felt odd, spamming won, aim and power didn't work. Changes:
   Rainbow Star 1.30 (400M). Each has its own Blender model with the same fork geometry; the
   plot's `Sling` attribute picks it. Mults are small on purpose: bigger ones put the Rainbow Rim at
   56 min in the balance sim (target 90-150).
+
+## 21. Rare modifiers + catch moments (2026-11-25)
+
+- **Modifiers** roll on every catch, independent of rarity (`Zones.Modifiers`): **Big** 6% (×1.5 income,
+  1.3× size), **Giant** 1.2% (×4, 1.7×), **Galactic** 0.3% (×12, 1.15×, cosmic body + force-field shell +
+  star sparkles). Each Jelly Pad bounce adds +25% to these chances. **Shiny** (was "Glitter", 1.5%, ×3)
+  stacks on top: a "Giant Shiny Chonky Boba Bear" is possible.
+- Saved as `m` on the shelf entry (absent = none, so old saves need no migration). Merging only combines
+  the same species + size + Shiny + modifier, and the merged squishy keeps the modifier.
+- **Catch moments** (`Client/Reveal`, queued so they never overlap): Rare/Epic, Big or Shiny = a card
+  under the HUD with the squishy spinning (2.2 s). Legendary/Mythic, Giant or Galactic = full-screen
+  reveal: dim, spinning rays in the rarity/modifier colour, the squishy pops in and turns, the title drops,
+  confetti, a fanfare, FOV punch; 3.4 s, click to skip. In the world, Giant/Galactic also fire a beam and a
+  burst where they land, and the server announces Legendary+ and Giant/Galactic catches to everyone.
+- Odds panel lists modifier chances. No Robux purchase changes them.
+- Studio test hooks: Dev `grant` takes `species:modifier`, Dev `nextmod` forces the next manual throw's
+  modifier (Dev remotes only exist in Studio).

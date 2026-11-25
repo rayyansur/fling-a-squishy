@@ -10,6 +10,7 @@ local Net = require(ReplicatedStorage.Kit.Net)
 local Data = require(ServerScriptService.Kit.Data)
 local Economy = require(script.Parent.Economy)
 local Shelf = require(script.Parent.Shelf)
+local Fling = require(script.Parent.Fling)
 
 local Dev = {}
 Dev.hooks = {} :: { [string]: (Player, number) -> () }
@@ -21,8 +22,15 @@ function Dev.run(player: Player, cmd: string, value: number, text: string?)
 		end)
 	elseif cmd == "coins" then
 		Economy.add(player, value, "Dev")
-	elseif cmd == "grant" and text and Config.Squishies.ById[text] then
-		Shelf.grant(player, text, value == 1)
+	elseif cmd == "grant" and text then
+		-- "species" or "species:modifier"; value 1 = Shiny
+		local sid, mod = string.match(text, "^([%w_]+):?([%w_]*)$")
+		if sid and Config.Squishies.ById[sid] then
+			Shelf.grant(player, sid, value == 1, if mod ~= "" then mod else nil)
+		end
+	elseif cmd == "nextmod" then
+		-- the next manual throw gets this modifier ("" = none); value 1 also makes it Shiny
+		Fling.forceNext[player] = { mod = text or "", shiny = value == 1 }
 	elseif cmd == "tutorial" then
 		Data.update(player, function(d)
 			d.tutorialDone = value == 0

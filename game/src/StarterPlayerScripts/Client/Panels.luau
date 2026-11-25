@@ -7,6 +7,7 @@ local ProximityPromptService = game:GetService("ProximityPromptService")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local Format = require(ReplicatedStorage.Shared.Util.Format)
+local Mod = require(ReplicatedStorage.Shared.Util.Modifier)
 local Rarity = require(ReplicatedStorage.Shared.Util.Rarity)
 local Net = require(ReplicatedStorage.Kit.Net)
 local Theme = require(ReplicatedStorage.Shared.Theme)
@@ -29,12 +30,12 @@ local function attr(name: string, default: number): number
 end
 
 -- a 3D thumbnail of a squishy
-function Panels.thumb(parent: Instance, s: string, size: number?, glitter: boolean?, props: { [string]: any }?): ViewportFrame
+function Panels.thumb(parent: Instance, s: string, size: number?, glitter: boolean?, props: { [string]: any }?, mod: string?): ViewportFrame
 	local vp = Candy.make("ViewportFrame", { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Ambient = Color3.fromRGB(200, 190, 220), LightColor = Color3.new(1, 1, 1), LightDirection = Vector3.new(-1, -1, -1), Parent = parent })
 	for k, v in (props or {}) :: { [string]: any } do
 		(vp :: any)[k] = v
 	end
-	local m = SquishyModel.build(s, size or 1, glitter)
+	local m = SquishyModel.build(s, size or 1, glitter, mod)
 	m:PivotTo(CFrame.new())
 	m.Parent = vp
 	local cam = Instance.new("Camera")
@@ -178,15 +179,15 @@ function Panels.shelf()
 			Candy.label(content, "Your shelf is empty.\nHold THROW at your slingshot to catch your first squishy!", { Font = F.header, TextColor3 = Color3.fromHex("#6E5C8F"), Size = UDim2.new(1, 0, 0, 120) })
 			return
 		end
-		-- group by species + size + glitter
-		type Group = { s: string, size: number, glitter: boolean, uids: { string }, newest: number }
+		-- group by species + size + shiny + modifier
+		type Group = { s: string, size: number, glitter: boolean, mod: string?, uids: { string }, newest: number }
 		local groups: { [string]: Group } = {}
 		local order: { Group } = {}
 		for i, e in entries do
-			local key = ("%s|%d|%s"):format(e.s, e.size, tostring(e.glitter))
+			local key = ("%s|%d|%s|%s"):format(e.s, e.size, tostring(e.glitter), e.mod or "")
 			local g: Group? = groups[key]
 			if not g then
-				local made: Group = { s = e.s, size = e.size, glitter = e.glitter == true, uids = {}, newest = 0 }
+				local made: Group = { s = e.s, size = e.size, glitter = e.glitter == true, mod = e.mod, uids = {}, newest = 0 }
 				groups[key] = made
 				table.insert(order, made)
 				g = made
@@ -200,7 +201,7 @@ function Panels.shelf()
 			rarityIndex[r] = i
 		end
 		local function income(g: Group): number
-			return S.ById[g.s].income * S.SizeMult[g.size] * (if g.glitter then Z.GlitterMult else 1)
+			return S.ById[g.s].income * S.SizeMult[g.size] * Mod.incomeMult(Z, g.glitter, g.mod)
 		end
 		table.sort(order, function(a, b)
 			if sortBy == "Rarity" then
@@ -223,8 +224,8 @@ function Panels.shelf()
 			local band = Candy.make("Frame", { BackgroundColor3 = Color3.fromHex(Z.RarityColors[sp.rarity]), Size = UDim2.new(1, 0, 0, 8), BorderSizePixel = 0, Parent = card })
 			Candy.corner(band, 4)
 			local th = Candy.make("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 96), Position = UDim2.fromOffset(0, 8), Parent = card })
-			Panels.thumb(th, g.s, g.size, g.glitter)
-			local name = (if g.size > 1 then S.SizeNames[g.size] .. " " else "") .. sp.name .. (if g.glitter then " ✨" else "")
+			Panels.thumb(th, g.s, g.size, g.glitter, nil, g.mod)
+			local name = Mod.title(Z, S, g.s, g.size, g.glitter, g.mod)
 			Candy.label(card, name, { Font = F.header, Size = UDim2.new(1, -12, 0, 26), Position = UDim2.fromOffset(6, 104) })
 			local count = #g.uids
 			local need = if g.size >= 3 then "" elseif count >= 3 then " — ready to merge!" else (" — %d more to merge!"):format(3 - count)
@@ -234,7 +235,7 @@ function Panels.shelf()
 			Candy.make("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 8), HorizontalAlignment = Enum.HorizontalAlignment.Center, Parent = btnRow })
 			if not autoOn and count >= 3 and g.size < 3 then
 				Candy.button(btnRow, "Merge", "success", UDim2.new(0.5, -4, 1, 0), function()
-					Net.send("MergeRequest", g.s, g.size, g.glitter)
+					Net.send("MergeRequest", g.s, g.size, g.glitter, g.mod or "")
 				end)
 			end
 			local uid = g.uids[#g.uids]
@@ -292,7 +293,10 @@ function Panels.oddsInto(parent: Instance, zone: number?)
 	local notes = {
 		("Each Jelly Pad bounce multiplies Rare and better by ×%.2f: 1 bounce ×1.25 · 2 bounces ×%.2f · 3 bounces ×%.2f (then the odds are rescaled to 100%%)."):format(M.BounceLuckPerBounce, M.BounceLuckPerBounce ^ 2, M.BounceLuckPerBounce ^ 3),
 		("Goo Rain (free, every 12 min): Rare and better ×%d, stacks with bounces."):format(Z.GooRainLuck),
-		("Glitter: %g%% of every catch, ×%d income."):format(Z.GlitterChance * 100, Z.GlitterMult),
+		("Shiny: %g%% of every catch, ×%d income."):format(Z.GlitterChance * 100, Z.GlitterMult),
+		("Modifiers: Big %g%% (×%g income) · Giant %g%% (×%g) · Galactic %g%% (×%g). Each bounce adds +%d%% to these chances."):format(
+			Z.ModifierById.big.chance * 100, Z.ModifierById.big.mult, Z.ModifierById.giant.chance * 100, Z.ModifierById.giant.mult,
+			Z.ModifierById.galactic.chance * 100, Z.ModifierById.galactic.mult, Z.ModifierBounceLuck * 100),
 		"No Robux purchase changes any odds.",
 	}
 	for k, t in notes do
@@ -324,10 +328,10 @@ local function shelfFull(newCard: any, lowCard: any?, seconds: number)
 		Candy.corner(f, 18)
 		Candy.label(f, caption, { Font = F.small, Size = UDim2.new(1, -16, 0, 24), Position = UDim2.fromOffset(8, 8) })
 		local th = Candy.make("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 140), Position = UDim2.fromOffset(0, 34), Parent = f })
-		Panels.thumb(th, c.s, c.size, c.glitter)
+		Panels.thumb(th, c.s, c.size, c.glitter, nil, c.mod)
 		local sp = S.ById[c.s]
-		Candy.label(f, (if c.size > 1 then S.SizeNames[c.size] .. " " else "") .. sp.name .. (if c.glitter then " ✨" else ""), { Font = F.header, Size = UDim2.new(1, -16, 0, 30), Position = UDim2.fromOffset(8, 176) })
-		Candy.label(f, Format.abbrev(sp.income * S.SizeMult[c.size] * (if c.glitter then Z.GlitterMult else 1)) .. "/s", { Font = F.body, TextColor3 = Color3.fromHex("#4DB52E"), Size = UDim2.new(1, -16, 0, 24), Position = UDim2.fromOffset(8, 210) })
+		Candy.label(f, Mod.title(Z, S, c.s, c.size, c.glitter, c.mod), { Font = F.header, Size = UDim2.new(1, -16, 0, 30), Position = UDim2.fromOffset(8, 176) })
+		Candy.label(f, Format.abbrev(sp.income * S.SizeMult[c.size] * Mod.incomeMult(Z, c.glitter, c.mod)) .. "/s", { Font = F.body, TextColor3 = Color3.fromHex("#4DB52E"), Size = UDim2.new(1, -16, 0, 24), Position = UDim2.fromOffset(8, 210) })
 	end
 	card(40, newCard, "New squishy")
 	if lowCard then

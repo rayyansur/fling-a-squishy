@@ -109,7 +109,7 @@ end
 function Plots.encodeShelf(shelf: { any }): string
 	local parts = table.create(#shelf)
 	for _, e in shelf do
-		table.insert(parts, ("%s:%d:%d"):format(e.s, e.z or 1, if e.g then 1 else 0))
+		table.insert(parts, ("%s:%d:%d:%s"):format(e.s, e.z or 1, if e.g then 1 else 0, e.m or ""))
 	end
 	return table.concat(parts, ";")
 end

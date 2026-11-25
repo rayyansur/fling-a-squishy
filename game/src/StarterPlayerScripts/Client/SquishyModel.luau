@@ -6,7 +6,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Config = require(ReplicatedStorage.Shared.Config)
-local S = Config.Squishies
+local Mod = require(ReplicatedStorage.Shared.Util.Modifier)
+local S, Z = Config.Squishies, Config.Zones
 
 local SquishyModel = {}
 
@@ -35,6 +36,8 @@ local FX = {
 	prism = { color = Color3.fromHex("#FFFFFF"), rate = 6, size = 0.3 },
 	nebula = { color = Color3.fromHex("#B78CFF"), rate = 5, size = 0.35 },
 	glitter = { color = Color3.fromHex("#FFFFFF"), rate = 5, size = 0.22 },
+	galactic = { color = Color3.fromHex("#C9B8FF"), rate = 10, size = 0.3 },
+	giant = { color = Color3.fromHex("#FFD23F"), rate = 3, size = 0.35 },
 }
 
 local function sparkle(parent: BasePart, kind: string)
@@ -56,18 +59,32 @@ local function sparkle(parent: BasePart, kind: string)
 end
 
 -- height of a squishy model in studs (for billboards / pops)
-function SquishyModel.height(speciesId: string, size: number): number
+function SquishyModel.height(speciesId: string, size: number, mod: string?): number
 	local sp = S.ById[speciesId]
-	return 2 * (sp and sp.scale or 1) * S.SizeScale[size or 1]
+	return 2 * (sp and sp.scale or 1) * S.SizeScale[size or 1] * Mod.scale(Z, mod)
 end
 
-function SquishyModel.width(speciesId: string, size: number): number
+function SquishyModel.width(speciesId: string, size: number, mod: string?): number
 	local sp = S.ById[speciesId]
-	return SquishyModel.BASE_WIDTH * (sp and sp.scale or 1) * S.SizeScale[size or 1]
+	return SquishyModel.BASE_WIDTH * (sp and sp.scale or 1) * S.SizeScale[size or 1] * Mod.scale(Z, mod)
+end
+
+-- a see-through shell just outside the body (Shiny rim, Galactic force field)
+local function shell(root: BasePart, model: Model, name: string, material: Enum.Material, color: Color3, t: number, grow: number)
+	local rim = root:Clone()
+	rim:ClearAllChildren()
+	rim.Name = name
+	rim.Material = material
+	rim.Color = color
+	rim.Transparency = t
+	rim.Size = root.Size * grow
+	rim.CFrame = root.CFrame
+	rim.Parent = model
 end
 
 -- returns an anchored, non-colliding Model pivoted at its base centre
-function SquishyModel.build(speciesId: string, size: number?, glitter: boolean?): Model
+function SquishyModel.build(speciesId: string, size: number?, glitter: boolean?, mod: string?): Model
+	mod = Mod.clean(Z, mod)
 	local sp = S.ById[speciesId] or S.List[1]
 	local model = Instance.new("Model")
 	model.Name = sp.id
@@ -78,7 +95,7 @@ function SquishyModel.build(speciesId: string, size: number?, glitter: boolean?)
 			if c:IsA("BasePart") then
 				local p = c:Clone()
 				if p.Name == "Body" or p.Name == "Placeholder" then
-					p.Color = Color3.fromHex(sp.color)
+					p.Color = if mod == "galactic" then Color3.fromHex("#3A2A8C") else Color3.fromHex(sp.color)
 					if sp.mat then
 						p.Material = (Enum.Material :: any)[sp.mat]
 					end
@@ -130,7 +147,7 @@ function SquishyModel.build(speciesId: string, size: number?, glitter: boolean?)
 	else
 		model.WorldPivot = base
 	end
-	local s = (sp.scale or 1) * S.SizeScale[size or 1]
+	local s = (sp.scale or 1) * S.SizeScale[size or 1] * Mod.scale(Z, mod)
 	if s ~= 1 and #model:GetChildren() > 0 then
 		model:ScaleTo(s)
 	end
@@ -140,18 +157,17 @@ function SquishyModel.build(speciesId: string, size: number?, glitter: boolean?)
 		end
 		if glitter then
 			sparkle(root, "glitter")
-			-- slight neon rim: a thin shell just outside the body
-			local rim = root:Clone()
-			rim:ClearAllChildren()
-			rim.Name = "GlitterRim"
-			rim.Material = Enum.Material.Neon
-			rim.Color = Color3.fromHex("#FFF6A8")
-			rim.Transparency = 0.82
-			rim.Size = root.Size * 1.06
-			rim.CFrame = root.CFrame
-			rim.Parent = model
+			shell(root, model, "GlitterRim", Enum.Material.Neon, Color3.fromHex("#FFF6A8"), 0.82, 1.06)
+		end
+		if mod == "galactic" then
+			sparkle(root, "galactic")
+			sparkle(root, "stars")
+			shell(root, model, "GalaxyShell", Enum.Material.ForceField, Color3.fromHex("#9B7CFF"), 0, 1.12)
+		elseif mod == "giant" then
+			sparkle(root, "giant")
 		end
 	end
+	model:SetAttribute("Mod", mod or "")
 	model:SetAttribute("Species", sp.id)
 	model:SetAttribute("Size", size or 1)
 	return model

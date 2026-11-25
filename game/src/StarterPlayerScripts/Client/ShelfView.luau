@@ -21,7 +21,7 @@ local UIC = Config.UI
 local player = Players.LocalPlayer
 
 local ShelfView = {}
-ShelfView.entries = {} :: { any } -- own shelf: { uid, s, size, glitter, readyAt }
+ShelfView.entries = {} :: { any } -- own shelf: { uid, s, size, glitter, mod, readyAt }
 
 -- shelf geometry (matches art/models/shelf_l1.py): tier surfaces above the plot floor,
 -- forward offset (+Z) per tier, gentle forward curve at the ends
@@ -64,14 +64,14 @@ local function apply(r: Rig, kx: number, ky: number, lift: number)
 end
 
 -- slot positions (plot-local offsets from the shelf anchor) for a list of (species, size)
-function ShelfView.layout(items: { { s: string, size: number } }, tiers: number): { Vector3 }
+function ShelfView.layout(items: { { s: string, size: number, mod: string? } }, tiers: number): { Vector3 }
 	local out = {}
 	local rows: { { number } } = {}
 	local widths: { number } = {}
 	local row, used = 1, 0
 	local maxW = ShelfView.HALF_WIDTH * 2
 	for i, it in items do
-		local w = SquishyModel.width(it.s, it.size) + 0.25
+		local w = SquishyModel.width(it.s, it.size, it.mod) + 0.25
 		if used + w > maxW and used > 0 then
 			widths[row] = used
 			row += 1
@@ -86,7 +86,7 @@ function ShelfView.layout(items: { { s: string, size: number } }, tiers: number)
 		local x = -widths[r] / 2
 		for _, i in idxs do
 			local it = items[i]
-			local w = SquishyModel.width(it.s, it.size) + 0.25
+			local w = SquishyModel.width(it.s, it.size, it.mod) + 0.25
 			local cx = x + w / 2
 			x += w
 			local y, z
@@ -109,15 +109,15 @@ local function anchorCf(plotIndex: number): CFrame
 	return CFrame.new(p[1], p[2] + 0.2, p[3])
 end
 
-local function decode(str: string?): { { s: string, size: number, glitter: boolean } }
+local function decode(str: string?): { { s: string, size: number, glitter: boolean, mod: string? } }
 	local out = {}
 	if not str or str == "" then
 		return out
 	end
 	for item in string.gmatch(str, "[^;]+") do
-		local s, z, g = string.match(item, "^([%w_]+):(%d):(%d)$")
+		local s, z, g, m = string.match(item, "^([%w_]+):(%d):(%d):?([%w_]*)$")
 		if s and S.ById[s] then
-			table.insert(out, { s = s, size = tonumber(z) or 1, glitter = g == "1" })
+			table.insert(out, { s = s, size = tonumber(z) or 1, glitter = g == "1", mod = if m ~= "" then m else nil })
 		end
 	end
 	return out
@@ -138,7 +138,7 @@ local function sync(plotIndex: number, items: { any }, keyOf: (any, number) -> s
 		table.insert(order, key)
 		local rig = view.rigs[key]
 		if not rig then
-			local m = SquishyModel.build(it.s, it.size, it.glitter)
+			local m = SquishyModel.build(it.s, it.size, it.glitter, it.mod)
 			m.Parent = if view.visible then folder else nil
 			view.rigs[key] = rigOf(m, key)
 		end
@@ -170,7 +170,7 @@ local function renderOthers()
 		if i and i ~= myPlot() then
 			local items = decode(plot:GetAttribute("Shelf") :: string?)
 			sync(i, items, function(it, n)
-				return ("%d:%s:%d:%s"):format(n, it.s, it.size, tostring(it.glitter))
+				return ("%d:%s:%d:%s:%s"):format(n, it.s, it.size, tostring(it.glitter), it.mod or "")
 			end)
 		end
 	end
@@ -305,7 +305,7 @@ function ShelfView.start()
 			if i and i ~= myPlot() then
 				local items = decode(plot:GetAttribute("Shelf") :: string?)
 				sync(i, items, function(it, n)
-					return ("%d:%s:%d:%s"):format(n, it.s, it.size, tostring(it.glitter))
+					return ("%d:%s:%d:%s:%s"):format(n, it.s, it.size, tostring(it.glitter), it.mod or "")
 				end)
 			end
 		end)
