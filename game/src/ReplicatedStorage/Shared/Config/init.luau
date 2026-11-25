@@ -28,7 +28,8 @@ Config.Data = {
 		slotUpgrades = 0,
 		shelfLevel = 1,
 		reSquishes = 0,
-		shelf = {}, -- { uid, s = speciesId, z = size 1..3, g = glitter }
+		shelf = {}, -- { uid, s = speciesId, z = size 1..3, g = shiny, m = modifier? }
+		inv = {}, -- same entries, off the shelf (earn nothing until equipped)
 		dex = {}, -- [speciesId] = { n, best, glitter }
 		autoMerge = true,
 		daily = { lastClaimDay = 0, streak = 0, cycleDay = 0 },

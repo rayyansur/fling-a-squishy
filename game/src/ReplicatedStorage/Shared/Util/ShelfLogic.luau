@@ -69,6 +69,40 @@ function ShelfLogic.lowest(shelf: { any }, incomeOf: (any) -> number): number?
 	return best
 end
 
+-- Equip Best: the `slots` highest earners of shelf + inventory go on the shelf, the rest to the
+-- inventory. Squishies already on the shelf win ties and keep their order. Returns new lists.
+function ShelfLogic.equipBest(shelf: { any }, inv: { any }, slots: number, incomeOf: (any) -> number): ({ any }, { any })
+	type Ranked = { e: any, v: number, onShelf: boolean, i: number }
+	local all: { Ranked } = {}
+	for i, e in shelf do
+		table.insert(all, { e = e, v = incomeOf(e), onShelf = true, i = i })
+	end
+	for i, e in inv do
+		table.insert(all, { e = e, v = incomeOf(e), onShelf = false, i = i })
+	end
+	table.sort(all, function(a, b)
+		if a.v ~= b.v then
+			return a.v > b.v
+		end
+		if a.onShelf ~= b.onShelf then
+			return a.onShelf
+		end
+		return a.i < b.i
+	end)
+	local keep: { [any]: boolean } = {}
+	for k = 1, math.min(slots, #all) do
+		keep[all[k].e] = true
+	end
+	local newShelf, newInv = {}, {}
+	for _, e in shelf do
+		table.insert(if keep[e] then newShelf else newInv, e)
+	end
+	for _, e in inv do
+		table.insert(if keep[e] then newShelf else newInv, e)
+	end
+	return newShelf, newInv
+end
+
 function ShelfLogic.find(shelf: { any }, uid: string): number?
 	for i, e in shelf do
 		if e.uid == uid then

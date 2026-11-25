@@ -1,5 +1,5 @@
 --!strict
--- Panels (DESIGN 7.3): Upgrades (Goo | Slingshot | Gloves | Shelf), Shelf, Odds, plus the Shelf Full modal
+-- Panels (DESIGN 7.3): Upgrades (Goo | Slingshot | Gloves | Shelf), Shelf / Inventory, Odds
 -- (4.6). Hub prompts and HUD buttons open the same panels.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -18,7 +18,7 @@ local ShelfView = require(script.Parent.ShelfView)
 local SquishyModel = require(script.Parent.SquishyModel)
 
 local P, F = Theme.Palette, Theme.Fonts
-local E, S, Z, M = Config.Economy, Config.Squishies, Config.Zones, Config.Map
+local E, S, Z, M, G = Config.Economy, Config.Squishies, Config.Zones, Config.Map, Config.Game
 local player = Players.LocalPlayer
 
 local Panels = {}
@@ -154,17 +154,51 @@ function Panels.upgrades(tab: string?)
 end
 
 ------------------------------------------------------------------ Shelf
-function Panels.shelf()
-	local modal = Candy.modal("Shelf", "MY SHELF")
+-- Shelf | Inventory (DESIGN 4.4-4.6, 22). Squishies are grouped by species + size + Shiny +
+-- modifier. Shelf cards: Merge / Store / Sell. Inventory cards: Equip / Merge / Sell / Sell all.
+function Panels.shelf(view: string?)
+	local modal = Candy.modal("Shelf", "MY SQUISHIES")
+	local showing = if view == "Inventory" then "Inventory" else "Shelf"
 	local sortBy = "Income"
-	local content = Candy.make("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 72), Size = UDim2.new(1, 0, 1, -72), Parent = modal.body })
-	local header = Candy.label(modal.body, "", { Font = F.header, TextXAlignment = Enum.TextXAlignment.Right, Size = UDim2.new(0, 300, 0, 50), AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, 4) })
-	local confirmUid: string? = nil
+	local SORTS = { "Income", "Rarity", "Newest" }
+	local top = Candy.make("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 60), Parent = modal.body })
+	local info = Candy.label(modal.body, "", { Font = F.small, TextColor3 = Color3.fromHex("#6E5C8F"), TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(1, -8, 0, 28), Position = UDim2.fromOffset(4, 66) })
+	local content = Candy.make("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 100), Size = UDim2.new(1, 0, 1, -100), Parent = modal.body })
+	local confirm: string? = nil
 	local lastSig = ""
-	local function draw()
+	local draw: () -> ()
+
+	local shelfTab = Candy.button(top, "Shelf", "secondary", UDim2.fromOffset(150, 56), function()
+		showing, confirm = "Shelf", nil
+		draw()
+	end)
+	local invTab = Candy.button(top, "Inventory", "secondary", UDim2.fromOffset(210, 56), function()
+		showing, confirm = "Inventory", nil
+		draw()
+	end, { Position = UDim2.fromOffset(162, 0) })
+	local sortBtn = Candy.button(top, "Sort: Income", "secondary", UDim2.fromOffset(210, 56), function()
+		sortBy = SORTS[(table.find(SORTS, sortBy) or 1) % #SORTS + 1]
+		draw()
+	end, { Position = UDim2.fromOffset(384, 0) })
+	Candy.button(top, "Equip Best", "success", UDim2.fromOffset(210, 56), function()
+		Net.send("EquipBest")
+		Sound.play("buy")
+	end, { AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -4, 0, 0) })
+
+	type Group = { s: string, size: number, glitter: boolean, mod: string?, uids: { string }, newest: number }
+	local rarityIndex = {}
+	for i, r in Z.Rarities do
+		rarityIndex[r] = i
+	end
+	local function income(g: Group): number
+		return S.ById[g.s].income * S.SizeMult[g.size] * Mod.incomeMult(Z, g.glitter, g.mod)
+	end
+
+	draw = function()
+		local entries: { any } = if showing == "Shelf" then ShelfView.entries :: { any } else ShelfView.inv :: { any }
 		-- squeezes resend the shelf every few seconds: rebuild only when what's shown changed
-		local parts = { sortBy, tostring(confirmUid), tostring(player:GetAttribute("autoMerge")), tostring(attr("Slots", 8)) }
-		for _, e in ShelfView.entries do
+		local parts = { showing, sortBy, tostring(confirm), tostring(player:GetAttribute("autoMerge")), tostring(attr("Slots", 8)), tostring(#ShelfView.inv) }
+		for _, e in entries do
 			table.insert(parts, e.uid)
 		end
 		local sig = table.concat(parts, ",")
@@ -173,14 +207,18 @@ function Panels.shelf()
 		end
 		lastSig = sig
 		content:ClearAllChildren()
-		header.Text = ("%d / %d slots"):format(attr("ShelfCount", 0), attr("Slots", 8))
-		local entries = ShelfView.entries
+		shelfTab.setKind(if showing == "Shelf" then "primary" else "secondary")
+		invTab.setKind(if showing == "Inventory" then "primary" else "secondary")
+		invTab.setText(("Inventory (%d)"):format(#ShelfView.inv))
+		sortBtn.setText("Sort: " .. sortBy)
+		info.Text = ("Shelf %d / %d slots  ·  Inventory %d / %d  ·  only shelf squishies earn coins"):format(#ShelfView.entries, attr("Slots", 8), #ShelfView.inv, G.InventoryCap)
 		if #entries == 0 then
-			Candy.label(content, "Your shelf is empty.\nHold THROW at your slingshot to catch your first squishy!", { Font = F.header, TextColor3 = Color3.fromHex("#6E5C8F"), Size = UDim2.new(1, 0, 0, 120) })
+			local msg = if showing == "Shelf"
+				then "Your shelf is empty.\nHold THROW at your slingshot to catch your first squishy!"
+				else "Your inventory is empty.\nWhen your shelf is full, new squishies land here."
+			Candy.label(content, msg, { Font = F.header, TextColor3 = Color3.fromHex("#6E5C8F"), Size = UDim2.new(1, 0, 0, 120) })
 			return
 		end
-		-- group by species + size + shiny + modifier
-		type Group = { s: string, size: number, glitter: boolean, mod: string?, uids: { string }, newest: number }
 		local groups: { [string]: Group } = {}
 		local order: { Group } = {}
 		for i, e in entries do
@@ -196,13 +234,6 @@ function Panels.shelf()
 			table.insert(grp.uids, e.uid)
 			grp.newest = math.max(grp.newest, i)
 		end
-		local rarityIndex = {}
-		for i, r in Z.Rarities do
-			rarityIndex[r] = i
-		end
-		local function income(g: Group): number
-			return S.ById[g.s].income * S.SizeMult[g.size] * Mod.incomeMult(Z, g.glitter, g.mod)
-		end
 		table.sort(order, function(a, b)
 			if sortBy == "Rarity" then
 				local ra, rb = rarityIndex[S.ById[a.s].rarity], rarityIndex[S.ById[b.s].rarity]
@@ -214,8 +245,9 @@ function Panels.shelf()
 			end
 			return income(a) > income(b)
 		end)
+		local inInv = showing == "Inventory"
 		local list = Candy.scroll(content)
-		Candy.make("UIGridLayout", { CellSize = UDim2.new(1 / 3, -12, 0, 250), CellPadding = UDim2.fromOffset(12, 12), SortOrder = Enum.SortOrder.LayoutOrder, Parent = list })
+		Candy.make("UIGridLayout", { CellSize = UDim2.new(1 / 3, -12, 0, 300), CellPadding = UDim2.fromOffset(12, 12), SortOrder = Enum.SortOrder.LayoutOrder, Parent = list })
 		local autoOn = player:GetAttribute("autoMerge") ~= false
 		for n, g in order do
 			local sp = S.ById[g.s]
@@ -225,38 +257,57 @@ function Panels.shelf()
 			Candy.corner(band, 4)
 			local th = Candy.make("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 96), Position = UDim2.fromOffset(0, 8), Parent = card })
 			Panels.thumb(th, g.s, g.size, g.glitter, nil, g.mod)
-			local name = Mod.title(Z, S, g.s, g.size, g.glitter, g.mod)
-			Candy.label(card, name, { Font = F.header, Size = UDim2.new(1, -12, 0, 26), Position = UDim2.fromOffset(6, 104) })
+			Candy.label(card, Mod.title(Z, S, g.s, g.size, g.glitter, g.mod), { Font = F.header, Size = UDim2.new(1, -12, 0, 26), Position = UDim2.fromOffset(6, 104) })
 			local count = #g.uids
 			local need = if g.size >= 3 then "" elseif count >= 3 then " — ready to merge!" else (" — %d more to merge!"):format(3 - count)
 			Candy.label(card, ("×%d%s"):format(count, need), { Font = F.small, TextColor3 = Color3.fromHex("#6E5C8F"), Size = UDim2.new(1, -12, 0, 22), Position = UDim2.fromOffset(6, 130) })
-			Candy.label(card, Format.abbrev(income(g)) .. "/s each", { Font = F.body, TextColor3 = Color3.fromHex("#4DB52E"), Size = UDim2.new(1, -12, 0, 20), Position = UDim2.fromOffset(6, 152) })
-			local btnRow = Candy.make("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, -16, 0, 56), Position = UDim2.new(0, 8, 1, -64), Parent = card })
-			Candy.make("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 8), HorizontalAlignment = Enum.HorizontalAlignment.Center, Parent = btnRow })
-			if not autoOn and count >= 3 and g.size < 3 then
-				Candy.button(btnRow, "Merge", "success", UDim2.new(0.5, -4, 1, 0), function()
-					Net.send("MergeRequest", g.s, g.size, g.glitter, g.mod or "")
+			Candy.label(card, Format.abbrev(income(g)) .. "/s each" .. (if inInv then " on the shelf" else ""), { Font = F.body, TextColor3 = Color3.fromHex("#4DB52E"), Size = UDim2.new(1, -12, 0, 20), Position = UDim2.fromOffset(6, 152) })
+			local uid = g.uids[#g.uids]
+			local function row(y: number): Frame
+				local r = Candy.make("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, -16, 0, 50), Position = UDim2.new(0, 8, 1, y), Parent = card })
+				Candy.make("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 8), HorizontalAlignment = Enum.HorizontalAlignment.Center, Parent = r })
+				return r
+			end
+			local top2, bottom = row(-114), row(-58)
+			local half = UDim2.new(0.5, -4, 1, 0)
+			local canMerge = count >= 3 and g.size < 3 and (inInv or not autoOn)
+			if inInv then
+				Candy.button(top2, "Equip", "primary", if canMerge then half else UDim2.new(1, 0, 1, 0), function()
+					Net.send("EquipSquishy", uid)
+				end)
+			else
+				Candy.button(top2, "Store", "primary", if canMerge then half else UDim2.new(1, 0, 1, 0), function()
+					Net.send("StoreSquishy", uid)
 				end)
 			end
-			local uid = g.uids[#g.uids]
-			local risky = g.size >= 2 or (table.find(Z.Rarities, sp.rarity) or 1) >= 4
-			local label = if confirmUid == uid then "Sure?" else "Release"
-			Candy.button(btnRow, label, if confirmUid == uid then "primary" else "secondary", UDim2.new(0.5, -4, 1, 0), function()
-				if risky and confirmUid ~= uid then
-					confirmUid = uid
-					draw()
-					return
-				end
-				confirmUid = nil
-				Net.send("ReleaseSquishy", uid)
-			end)
+			if canMerge then
+				Candy.button(top2, "Merge", "success", half, function()
+					Net.send("MergeRequest", g.s, g.size, g.glitter, g.mod or "", inInv)
+				end)
+			end
+			-- selling: a second tap confirms anything rare, big or modified, and every "Sell all"
+			local risky = g.size >= 2 or g.mod ~= nil or g.glitter or (table.find(Z.Rarities, sp.rarity) or 1) >= 4
+			local function sellBtn(key: string, text: string, all: boolean, size: UDim2)
+				local armed = confirm == key
+				Candy.button(bottom, if armed then "Sure?" else text, if armed then "primary" else "secondary", size, function()
+					if (risky or all) and confirm ~= key then
+						confirm = key
+						draw()
+						return
+					end
+					confirm = nil
+					Net.send("SellSquishy", uid, all)
+				end)
+			end
+			if inInv and count > 1 then
+				sellBtn("1" .. uid, "Sell", false, half)
+				sellBtn("all" .. uid, ("Sell ×%d"):format(count), true, half)
+			else
+				sellBtn("1" .. uid, "Sell", false, UDim2.new(1, 0, 1, 0))
+			end
 		end
 	end
-	local select = Candy.tabs(modal.body, { "Income", "Rarity", "Newest" }, function(name)
-		sortBy = name
-		draw()
-	end)
-	select(sortBy)
+	draw()
 	refreshOpen, refreshName = draw, "Shelf"
 end
 
@@ -305,69 +356,6 @@ function Panels.oddsInto(parent: Instance, zone: number?)
 	end
 end
 
------------------------------------------------------------------- Shelf Full
-local fullGui: ScreenGui? = nil
-local function shelfFull(newCard: any, lowCard: any?, seconds: number)
-	if not fullGui then
-		fullGui = Candy.screen("ShelfFull", 25)
-	end
-	local gui = fullGui :: ScreenGui
-	gui:ClearAllChildren()
-	if not newCard then
-		return -- the server shelved it after all (space freed up)
-	end
-	local scale = Candy.make("UIScale", { Parent = gui })
-	scale.Scale = (gui.Parent and 1) or 1
-	local root = Candy.make("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(700, 470), BackgroundColor3 = P.white, Parent = gui })
-	Candy.corner(root, 22)
-	Candy.stroke(root, 4)
-	local title = Candy.label(root, "Shelf full!", { Font = F.header, TextColor3 = P.pink, Size = UDim2.new(1, -40, 0, 56), Position = UDim2.fromOffset(20, 14) })
-	Candy.textStroke(title, 2)
-	local function card(x: number, c: any, caption: string)
-		local f = Candy.pill(root, UDim2.fromOffset(300, 250), P.cream, { Position = UDim2.fromOffset(x, 84) })
-		Candy.corner(f, 18)
-		Candy.label(f, caption, { Font = F.small, Size = UDim2.new(1, -16, 0, 24), Position = UDim2.fromOffset(8, 8) })
-		local th = Candy.make("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 140), Position = UDim2.fromOffset(0, 34), Parent = f })
-		Panels.thumb(th, c.s, c.size, c.glitter, nil, c.mod)
-		local sp = S.ById[c.s]
-		Candy.label(f, Mod.title(Z, S, c.s, c.size, c.glitter, c.mod), { Font = F.header, Size = UDim2.new(1, -16, 0, 30), Position = UDim2.fromOffset(8, 176) })
-		Candy.label(f, Format.abbrev(sp.income * S.SizeMult[c.size] * Mod.incomeMult(Z, c.glitter, c.mod)) .. "/s", { Font = F.body, TextColor3 = Color3.fromHex("#4DB52E"), Size = UDim2.new(1, -16, 0, 24), Position = UDim2.fromOffset(8, 210) })
-	end
-	card(40, newCard, "New squishy")
-	if lowCard then
-		card(360, lowCard, "Your lowest earner")
-	end
-	local done = false
-	local function choose(keep: boolean)
-		if done then
-			return
-		end
-		done = true
-		Net.send("ShelfFullChoice", keep, newCard.uid)
-		gui:ClearAllChildren()
-	end
-	local timer = Candy.label(root, "", { Font = F.small, TextColor3 = Color3.fromHex("#6E5C8F"), Size = UDim2.new(1, -40, 0, 22), Position = UDim2.new(0, 20, 1, -116) })
-	Candy.button(root, "Keep new", "success", UDim2.fromOffset(290, 72), function()
-		choose(true)
-	end, { Position = UDim2.new(0, 40, 1, -90) })
-	Candy.button(root, "Release new", "secondary", UDim2.fromOffset(290, 72), function()
-		choose(false)
-	end, { Position = UDim2.new(0, 370, 1, -90) })
-	local t0 = os.clock()
-	task.spawn(function()
-		while not done and root.Parent do
-			local left = math.max(0, seconds - (os.clock() - t0))
-			timer.Text = ("Auto-pick in %ds: keeps the higher earner"):format(math.ceil(left))
-			if left <= 0 then
-				done = true
-				gui:ClearAllChildren()
-				break
-			end
-			task.wait(0.2)
-		end
-	end)
-end
-
 ------------------------------------------------------------------ wiring
 function Panels.start()
 	while not Hud.ready do
@@ -394,7 +382,20 @@ function Panels.start()
 		end
 	end)
 
-	Net.listen("ShelfFull", shelfFull)
+	Net.listen("ToInventory", function(sid: string, g: boolean, m: string, pay: number)
+		local name = Mod.title(Z, S, sid, 1, g, if m ~= "" then m else nil)
+		if pay > 0 then
+			Candy.toast(("Inventory full! Sold %s for %s"):format(name, Format.abbrev(pay)), P.pink)
+		else
+			Candy.toast(("Shelf full: %s went to your Inventory"):format(name), Color3.fromHex("#9B5CFF"))
+		end
+	end)
+	Net.listen("Sold", function(pay: number)
+		if pay > 0 then
+			Sound.play("buy")
+			Candy.toast("+" .. Format.abbrev(pay) .. " coins", Color3.fromHex("#4DB52E"))
+		end
+	end)
 	Net.listen("BuyResult", function(_kind: string, _tier: number, ok: boolean)
 		if ok then
 			Sound.play("buy")
@@ -407,6 +408,11 @@ function Panels.start()
 	local function changed()
 		if refreshOpen and refreshName and Candy.modalOpen() == refreshName then
 			refreshOpen()
+		end
+	end
+	ShelfView.onChanged = function()
+		if Candy.modalOpen() == "Shelf" then
+			changed()
 		end
 	end
 	for _, a in { "goo", "gloves", "sling", "slotUpgrades", "shelfLevel", "autoMerge", "ShelfCount" } do

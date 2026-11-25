@@ -50,9 +50,8 @@ function ReSquish.run(player: Player): boolean
 	local st = State.get(player)
 	st.epoch += 1
 	st.readyAt = {}
-	st.fullQueue = {}
-	Net.fire(player, "ShelfFull", nil, nil, 0) -- close an open Shelf Full prompt
 	Shelf.send(player)
+	Shelf.sendInv(player)
 	Economy.refresh(player)
 	Plots.publishShelf(player)
 	Analytics.custom(player, "ReSquish", n)

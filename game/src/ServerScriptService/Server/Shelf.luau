@@ -1,6 +1,7 @@
 --!strict
--- The shelf (DESIGN 4.4-4.6): arrivals, auto-merge, manual merge, release, the Shelf Full choice,
--- and SQUEEZE. The save holds the shelf; squeeze cooldowns live in State (not saved).
+-- The shelf and inventory (DESIGN 4.4-4.6, 22): arrivals, auto-merge, manual merge, sell, the
+-- inventory (overflow when the shelf is full), equip / store / Equip Best, and SQUEEZE. The save
+-- holds both lists; squeeze cooldowns live in State (not saved) and follow a squishy between them.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -74,12 +75,8 @@ local function uidsOf(shelf: { any }): { string }
 	return out
 end
 
-local drainQueue: (Player) -> boolean
-
 -- full shelf for the owner, with squeeze readiness (server time)
 function Shelf.send(player: Player)
-	-- space may have freed up (release, merge, slot purchase): shelve waiting arrivals first
-	drainQueue(player)
 	local data = Data.get(player)
 	if not data then
 		return
@@ -158,93 +155,56 @@ local function lowestIndex(player: Player, data: any): number?
 	end)
 end
 
-local function showNextFull(player: Player)
-	local st = State.get(player)
-	local p = st.fullQueue[1]
+local function wire(e: any): any
+	return { uid = e.uid, s = e.s, size = e.z, glitter = e.g, mod = e.m }
+end
+
+-- the inventory list for the owner (only sent when it changes)
+function Shelf.sendInv(player: Player)
 	local data = Data.get(player)
-	if not p or not data then
+	if not data then
 		return
 	end
-	local low = lowestIndex(player, data)
-	local lowEntry = low and data.shelf[low]
-	p.deadline = os.clock() + G.ShelfFullAutoSeconds
-	Net.fire(player, "ShelfFull", { uid = p.entry.uid, s = p.entry.s, size = 1, glitter = p.entry.g, mod = p.entry.m }, lowEntry and { uid = lowEntry.uid, s = lowEntry.s, size = lowEntry.z, glitter = lowEntry.g, mod = lowEntry.m }, G.ShelfFullAutoSeconds)
-	local mine = p
-	task.delay(G.ShelfFullAutoSeconds + 0.25, function()
-		if st.fullQueue[1] == mine then
-			-- auto-choice: keep the higher income
-			local d = Data.get(player)
-			if not d then
-				return
+	local out = table.create(#data.inv)
+	for _, e in data.inv do
+		table.insert(out, wire(e))
+	end
+	player:SetAttribute("InvCount", #data.inv)
+	Net.fire(player, "InvUpdate", out)
+end
+
+local function sellValue(player: Player, data: any, e: any): number
+	return Economy.incomeOf(player, data, e) * G.ReleaseSeconds
+end
+
+-- overflow: the squishy goes to the inventory (and merges there); a full inventory sells it
+local function toInventory(player: Player, entry: any)
+	local data = Data.get(player)
+	if not data then
+		return
+	end
+	if #data.inv >= G.InventoryCap then
+		local pay = sellValue(player, data, entry)
+		Economy.add(player, pay, "Release")
+		Net.fire(player, "ToInventory", entry.s, entry.g, entry.m or "", pay)
+		return
+	end
+	local merged: { any } = {}
+	Data.update(player, function(d)
+		table.insert(d.inv, entry)
+		if d.autoMerge then
+			merged = L.autoMerge(d.inv, entry.s, 1, entry.g, uidFrom(d), entry.m)
+			d.stats.merges += #merged
+			for _, m in merged do
+				recordDex(d, m.s, m.z, m.g, m.m)
 			end
-			local li = lowestIndex(player, d)
-			local newIncome = Economy.incomeOf(player, d, mine.entry)
-			local lowIncome = if li then Economy.incomeOf(player, d, d.shelf[li]) else math.huge
-			Shelf.resolveFull(player, newIncome > lowIncome)
 		end
 	end)
-end
-
--- queued arrivals that fit now (a slot bought, a release, a merge) go straight on the shelf.
--- Returns true if the front of the queue changed.
-function drainQueue(player: Player): boolean
-	local st = State.get(player)
-	local changed = false
-	while st.fullQueue[1] do
-		local data = Data.get(player)
-		local e = st.fullQueue[1].entry
-		if not data or not L.fits(data.shelf, E.slotCount(data.slotUpgrades), e.s, e.g, data.autoMerge, e.m) then
-			break
-		end
-		table.remove(st.fullQueue, 1)
-		insert(player, e)
-		changed = true
+	for _, m in merged do
+		announceMerge(player, m)
 	end
-	if changed then
-		if st.fullQueue[1] then
-			showNextFull(player)
-		else
-			Net.fire(player, "ShelfFull", nil, nil, 0) -- closes the prompt
-		end
-	end
-	return changed
-end
-
--- keepNew: release the lowest-income squishy and shelve the new one; else release the new one.
--- uid (from the client) must name the prompt being answered.
-function Shelf.resolveFull(player: Player, keepNew: boolean, uid: string?)
-	local st = State.get(player)
-	local front = st.fullQueue[1]
-	if not front or (uid ~= nil and front.entry.uid ~= uid) then
-		return
-	end
-	if drainQueue(player) then
-		Shelf.send(player)
-		return
-	end
-	local p = table.remove(st.fullQueue, 1)
-	local data = Data.get(player)
-	if not p or not data then
-		return
-	end
-	if keepNew then
-		local li = lowestIndex(player, data)
-		if li then
-			local old = data.shelf[li]
-			local pay = Economy.incomeOf(player, data, old) * G.ReleaseSeconds
-			Data.update(player, function(d)
-				table.remove(d.shelf, li)
-			end)
-			st.readyAt[old.uid] = nil
-			Economy.add(player, pay, "Release")
-		end
-		insert(player, p.entry)
-	else
-		local pay = Economy.incomeOf(player, data, p.entry) * G.ReleaseSeconds
-		Economy.add(player, pay, "Release")
-	end
-	Shelf.send(player)
-	showNextFull(player)
+	Net.fire(player, "ToInventory", entry.s, entry.g, entry.m or "", 0)
+	Shelf.sendInv(player)
 end
 
 -- a squishy reached the shelf (called by Fling at arriveAt); m = modifier id or nil
@@ -271,11 +231,7 @@ function Shelf.arrive(player: Player, s: string, g: boolean, m: string?)
 	if L.fits(data.shelf, slots, s, g, data.autoMerge, m) then
 		insert(player, entry)
 	else
-		local st = State.get(player)
-		table.insert(st.fullQueue, { entry = entry, deadline = 0 })
-		if #st.fullQueue == 1 then
-			showNextFull(player)
-		end
+		toInventory(player, entry)
 	end
 	Shelf.send(player)
 end
@@ -317,7 +273,7 @@ function Shelf.squeeze(player: Player): (number, number)
 end
 
 function Shelf.start()
-	Net.declare({ "ShelfUpdate", "ShelfFull", "Squeezed", "Merged", "Arrived", "Announce", "DexState" })
+	Net.declare({ "ShelfUpdate", "InvUpdate", "ToInventory", "Sold", "Squeezed", "Merged", "Arrived", "Announce", "DexState" })
 
 	-- the Squishydex panel asks when it opens: { [speciesId] = { n, best, glitter } }
 	Net.on("DexRequest", { rate = 2, burst = 4 }, function(player)
@@ -331,14 +287,27 @@ function Shelf.start()
 		Shelf.squeeze(player)
 	end)
 
-	Net.on("ShelfFullChoice", { args = { "boolean", "string" }, rate = 4, maxString = 16 }, function(player, keepNew, uid)
-		Shelf.resolveFull(player, keepNew, uid)
-	end)
-
-	Net.on("MergeRequest", { args = { "string", "int", "boolean", "string" }, rate = 6, maxString = 24 }, function(player, s, z, g, modStr)
+	-- inInv: merge three in the inventory instead of on the shelf
+	Net.on("MergeRequest", { args = { "string", "int", "boolean", "string", "boolean" }, rate = 6, maxString = 24 }, function(player, s, z, g, modStr, inInv)
 		local mod = Mod.clean(Config.Zones, modStr)
 		local data = Data.get(player)
-		if not data or not S.ById[s] or z < 1 or z >= L.MAX_SIZE or not L.canMerge(data.shelf, s, z, g, mod) then
+		local list = data and (if inInv then data.inv else data.shelf)
+		if not data or not list or not S.ById[s] or z < 1 or z >= L.MAX_SIZE or not L.canMerge(list, s, z, g, mod) then
+			return
+		end
+		if inInv then
+			local made
+			Data.update(player, function(d)
+				made = L.merge(d.inv, s, z, g, uidFrom(d), mod)
+				if made then
+					d.stats.merges += 1
+					recordDex(d, made.s, made.z, made.g, made.m)
+				end
+			end)
+			if made then
+				announceMerge(player, made)
+				Shelf.sendInv(player)
+			end
 			return
 		end
 		local m
@@ -361,18 +330,89 @@ function Shelf.start()
 		end
 	end)
 
-	Net.on("ReleaseSquishy", { args = { "string" }, rate = 6, maxString = 16 }, function(player, uid)
+	-- sell one squishy (shelf or inventory); all = every inventory squishy like it
+	Net.on("SellSquishy", { args = { "string", "boolean" }, rate = 8, maxString = 16 }, function(player, uid, all)
+		local data = Data.get(player)
+		if not data then
+			return
+		end
+		local si = L.find(data.shelf, uid)
+		local ii = if si then nil else L.find(data.inv, uid)
+		if not si and not ii then
+			return
+		end
+		local pay = 0
+		if si then
+			pay = sellValue(player, data, data.shelf[si])
+			Data.update(player, function(d)
+				table.remove(d.shelf, si)
+			end)
+			State.get(player).readyAt[uid] = nil
+		else
+			local like = data.inv[ii :: number]
+			Data.update(player, function(d)
+				for k = #d.inv, 1, -1 do
+					local e = d.inv[k]
+					if e.uid == uid or (all and e.s == like.s and e.z == like.z and (e.g == true) == (like.g == true) and e.m == like.m) then
+						pay += sellValue(player, d, e)
+						State.get(player).readyAt[e.uid] = nil
+						table.remove(d.inv, k)
+					end
+				end
+			end)
+			Shelf.sendInv(player)
+		end
+		Economy.add(player, pay, "Release")
+		Net.fire(player, "Sold", pay)
+		Shelf.send(player)
+	end)
+
+	-- shelf -> inventory
+	Net.on("StoreSquishy", { args = { "string" }, rate = 8, maxString = 16 }, function(player, uid)
 		local data = Data.get(player)
 		local i = data and L.find(data.shelf, uid)
+		if not data or not i or #data.inv >= G.InventoryCap then
+			return
+		end
+		Data.update(player, function(d)
+			table.insert(d.inv, table.remove(d.shelf, i))
+		end)
+		Shelf.sendInv(player)
+		Shelf.send(player)
+	end)
+
+	-- inventory -> shelf; a full shelf swaps out its lowest earner
+	Net.on("EquipSquishy", { args = { "string" }, rate = 8, maxString = 16 }, function(player, uid)
+		local data = Data.get(player)
+		local i = data and L.find(data.inv, uid)
 		if not data or not i then
 			return
 		end
-		local pay = Economy.incomeOf(player, data, data.shelf[i]) * G.ReleaseSeconds
+		local slots = E.slotCount(data.slotUpgrades)
+		local low = if #data.shelf >= slots then lowestIndex(player, data) else nil
 		Data.update(player, function(d)
-			table.remove(d.shelf, i)
+			local e = table.remove(d.inv, i)
+			if low then
+				table.insert(d.inv, table.remove(d.shelf, low))
+			end
+			table.insert(d.shelf, e)
 		end)
-		State.get(player).readyAt[uid] = nil
-		Economy.add(player, pay, "Release")
+		Shelf.sendInv(player)
+		Shelf.send(player)
+	end)
+
+	Net.on("EquipBest", { rate = 2, burst = 3 }, function(player)
+		local data = Data.get(player)
+		if not data then
+			return
+		end
+		local slots = E.slotCount(data.slotUpgrades)
+		Data.update(player, function(d)
+			d.shelf, d.inv = L.equipBest(d.shelf, d.inv, slots, function(e)
+				return Economy.incomeOf(player, d, e)
+			end)
+		end)
+		Shelf.sendInv(player)
 		Shelf.send(player)
 	end)
 
@@ -397,9 +437,12 @@ function Shelf.start()
 	end)
 
 	Data.onLoaded(function(player)
+		Data.update(player, function(d)
+			d.inv = d.inv or {}
+		end)
 		Shelf.send(player)
+		Shelf.sendInv(player)
 	end)
-	-- unanswered Shelf Full prompts are forfeited on leave: Kit.Data is already saving by then
 end
 
 return Shelf
