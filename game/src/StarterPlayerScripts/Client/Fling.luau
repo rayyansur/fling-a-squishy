@@ -133,7 +133,9 @@ local function updatePreview()
 	local zone = T.zoneOf(path.distance, Z.List)
 	local info = Z.List[zone]
 	landRing.CFrame = CFrame.new(path.final + Vector3.new(0, 0.15, 0)) * CFrame.Angles(0, 0, math.rad(90))
-	landRing.Color = if path.bounces > 0 then GOLD else Color3.fromHex(info.color)
+	-- white reads on every zone's ground (the meadow is green like its zone colour); gold = bounce
+	landRing.Color = if path.bounces > 0 then GOLD else WHITE
+	landLabel.TextColor3 = if path.bounces > 0 then GOLD else Color3.fromHex(info.color)
 	landLabel.Text = if path.bounces > 0 then ("%s  ·  BOING ×%d"):format(info.name, path.bounces) else info.name
 end
 
