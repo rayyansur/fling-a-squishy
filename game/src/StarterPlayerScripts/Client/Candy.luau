@@ -275,6 +275,7 @@ function Candy.modal(name: string, title: string, w: number?, h: number?, onClos
 		Size = UDim2.fromOffset(W, H),
 		BackgroundColor3 = Theme.Panel.bg,
 		BorderSizePixel = 0,
+		Active = true, -- clicks on the panel's empty space must not reach the world (a throw)
 		Parent = modalGui,
 	})
 	-- fit the modal to the screen on its own (HANDBOOK 5: modals on phones)

@@ -1,15 +1,13 @@
 --!strict
--- Per-player runtime state that isn't saved: plot, hops in flight, squeeze cooldowns, the Shelf
--- Full queue. Cleared on leave.
+-- Per-player runtime state that isn't saved: plot, hops in flight, squeeze cooldowns. Cleared on
+-- leave.
 local Players = game:GetService("Players")
 
-export type Pending = { entry: any, deadline: number }
 export type PlayerState = {
 	plot: number?,
 	hopping: number,
 	lastFling: number,
 	readyAt: { [string]: number }, -- uid -> server time the squishy can be squeezed again
-	fullQueue: { Pending },
 	incomePerSec: number,
 	flingsThisSession: number,
 	chargeStart: number?, -- os.clock() of the last ChargeBegin
@@ -29,7 +27,6 @@ function State.get(player: Player): PlayerState
 			hopping = 0,
 			lastFling = -math.huge,
 			readyAt = {},
-			fullQueue = {},
 			incomePerSec = 0,
 			flingsThisSession = 0,
 			chargeStart = nil,

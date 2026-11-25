@@ -35,6 +35,7 @@ function ReSquish.apply(d: any)
 	d.gloves = 1
 	d.sling = 1
 	d.shelf = {}
+	d.inv = {}
 	d.slotUpgrades = 0
 	d.shelfLevel = 1
 end

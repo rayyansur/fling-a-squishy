@@ -22,6 +22,8 @@ local player = Players.LocalPlayer
 
 local ShelfView = {}
 ShelfView.entries = {} :: { any } -- own shelf: { uid, s, size, glitter, mod, readyAt }
+ShelfView.inv = {} :: { any } -- own inventory: { uid, s, size, glitter, mod }
+ShelfView.onChanged = nil :: (() -> ())? -- the Shelf panel redraws on shelf / inventory changes
 
 -- shelf geometry (matches art/models/shelf_l1.py): tier surfaces above the plot floor,
 -- forward offset (+Z) per tier, gentle forward curve at the ends
@@ -196,6 +198,9 @@ local function onUpdate(list: { any })
 		end)
 	end
 	Hud.setSqueeze(readyCount())
+	if ShelfView.onChanged then
+		ShelfView.onChanged()
+	end
 end
 
 local function screenPoint(p: Vector3): Vector2
@@ -295,6 +300,12 @@ function ShelfView.start()
 	folder.Parent = workspace
 
 	Net.listen("ShelfUpdate", onUpdate)
+	Net.listen("InvUpdate", function(list: { any })
+		ShelfView.inv = list
+		if ShelfView.onChanged then
+			ShelfView.onChanged()
+		end
+	end)
 	Net.listen("Squeezed", onSqueezed)
 	Net.listen("Merged", onMerged)
 

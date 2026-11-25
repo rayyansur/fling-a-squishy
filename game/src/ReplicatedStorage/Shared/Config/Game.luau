@@ -22,8 +22,8 @@ return {
 	SqueezeSeconds = 5,
 	SqueezeRate = 4, -- requests/s
 	FlingRate = 4, -- requests/s
-	ShelfFullAutoSeconds = 6,
-	ReleaseSeconds = 30, -- release pays this many seconds of the squishy's income
+	InventoryCap = 200, -- squishies held off the shelf; past this, new overflow is sold
+	ReleaseSeconds = 30, -- selling pays this many seconds of the squishy's income
 	TutorialFlings = 10,
 	IncomeTick = 1,
 }

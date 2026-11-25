@@ -79,7 +79,7 @@ The valley floor extends from Z = 0 to Z = +950 across X −240 to +240. **Dista
 6. **Splat (server, at the final landing):** zone → rarity roll (zone odds × bounce luck × Goo Rain luck) → species uniform within the rarity → **Glitter** variant roll (1%).
 7. **Pop-out:** a splat decal-disc in the goo color, then the squishy pops up (scale 0 → 1.3 → 1.0 over 0.35 s), with a sparkle burst. Rare+ gets a rarity-colored burst; Legendary/Mythic get a beam and a server announcement (section 7.4).
 8. **Hop home:** the squishy bounces back toward the owner's Shelf in big arcs at **70 studs/s** horizontal (Goo Rain: 140), each hop squashing on landing. The server arrival time = `distanceToShelf / speed + 0.6` s.
-9. **Arrive:** the squishy is added to the Shelf if there's a free slot (section 4.6; otherwise the Shelf Full flow runs), auto-merges if enabled (section 4.5), and records a Squishydex entry.
+9. **Arrive:** the squishy is added to the Shelf if there's a free slot (section 4.6; otherwise it goes to the Inventory, section 22), auto-merges if enabled (section 4.5), and records a Squishydex entry.
 10. **Earn:** every shelved squishy adds coins **directly to the player's coins every second** (no collection step).
 11. **Squeeze:** press SQUEEZE (section 4.4) for an instant burst.
 12. **Spend** on Goo, Gloves, Shelf slots and Shelf level → fling farther → rarer → more coins → **Re-Squish**.
@@ -149,7 +149,7 @@ All goo uses one low-poly blob mesh (≤ 80 tris), recolored.
 
 ### 4.6 Shelf (capacity and level)
 - **Slots:** start **8**; each upgrade +2, up to **40** (16 upgrades). Cost: `floor(120 * 2.1^k)` (k = upgrades bought).
-- **Shelf Full flow:** if a squishy arrives with no free slot and it can't merge, a modal shows: "Shelf full!" with the new squishy card and your lowest-income squishy card, plus **[Keep new]** / **[Release new]**. Releasing pays **30 s of the released squishy's income**. Auto-choice after **6 s**: keep the higher income. Multiple arrivals queue.
+- **Shelf full:** a squishy that arrives with no free slot (and can't merge) goes to the **Inventory** (section 22) with a toast. Selling pays **30 s of the squishy's income**.
 - **Manual release** from the Shelf panel pays 30 s of income (confirm for Epic+ or Chonky+).
 - **Shelf Level** (income multiplier + visuals):
   | Level | Cost | shelfMult | Visual |
@@ -280,7 +280,7 @@ StarterPlayer/StarterPlayerScripts/
 | FlingVisual | S→All | ownerUserId, startPos, segments {endPos, time, apex}, gooTier, perfect | — |
 | SquishySpawned | S→All | ownerUserId, uid, speciesId, glitter, landPos, arriveAt | — |
 | ShelfUpdate | S→C | full shelf array {uid, s, size, glitter, readyAt} | on change |
-| ShelfFullChoice | C→S | keepNew | pending choice exists |
+| SellSquishy / StoreSquishy / EquipSquishy / EquipBest | C→S | uid (+ all) | uid on the shelf / in the inventory |
 | SqueezeRequest | C→S | — | ≤ 4/s; squeezes ready squishies only |
 | MergeRequest | C→S | speciesId, size, glitter | ≥ 3 matching; size < Mega |
 | ReleaseSquishy | C→S | uid | owned |
@@ -363,7 +363,7 @@ UIScale from viewport (base 1920×1080; clamp 0.6–1.2; mobile touch targets +1
 ### 7.4 Pop-ups
 - **Catch reveal card** (Rare+; top-center; 2 s; non-blocking): rarity banner, name, income/s, "NEW!" if first.
 - **Merge celebration** (Chonky/Mega; 1.5 s): the card grows with a star burst.
-- **Shelf Full** (4.6), **Welcome back** (4.11), **Re-Squish confirm** (4.9).
+**Welcome back** (4.11), **Re-Squish confirm** (4.9).
 - **Server announcement** (Legendary/Mythic catch, and any Mega merge of a Legendary+): top banner 4 s "⭐ [Name] flung a MYTHIC Golden Bao!" in the rarity color; Mythics also play a global fanfare.
 
 ---
@@ -659,3 +659,18 @@ Rayyan: the throw felt odd, spamming won, aim and power didn't work. Changes:
 - Odds panel lists modifier chances. No Robux purchase changes them.
 - Studio test hooks: Dev `grant` takes `species:modifier`, Dev `nextmod` forces the next manual throw's
   modifier (Dev remotes only exist in Studio).
+
+## 22. Inventory (2026-11-25)
+
+- A saved `inv` list (same entries as the shelf, cap `Game.InventoryCap` = 200). Replaces the Shelf Full
+  prompt: a squishy that doesn't fit on the shelf goes to the inventory (toast "Shelf full: X went to your
+  Inventory") and auto-merges there when Auto-Merge is on. A full inventory sells the newcomer (toast).
+- Inventory squishies earn nothing. The Shelf panel ("MY SQUISHIES") has **Shelf | Inventory (n)** tabs, a
+  sort button (Income / Rarity / Newest) and **Equip Best**, which puts the top earners of shelf + inventory
+  on the shelf (ties keep what's already there).
+- Shelf cards: Store (to inventory), Merge (Auto-Merge off), Sell. Inventory cards: Equip (swaps out the
+  lowest earner when the shelf is full), Merge, Sell, Sell ×n. Rare/big/modified sells and every Sell ×n
+  ask "Sure?" first.
+- Squeeze cooldowns follow the squishy between shelf and inventory, so swapping can't skip a cooldown.
+- Re-Squish clears the inventory with the shelf.
+- Panels now block clicks on their empty space (before, a click there started a throw).
