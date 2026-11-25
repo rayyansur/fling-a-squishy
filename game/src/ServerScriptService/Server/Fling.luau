@@ -113,7 +113,8 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 		local pad = T.lanePad(start, M.JellyPads, 2)
 		path = T.rigged(start, M.JellyPads, pad :: number, rules)
 	else
-		local len = T.power(data.sp, E.Goo[data.goo].mult, data.reSquishes, gooRain, E) * curve
+		local mult = E.Goo[data.goo].mult * (E.Slingshots[data.sling or 1] or E.Slingshots[1]).mult
+		local len = T.power(data.sp, mult, data.reSquishes, gooRain, E) * curve
 		if perfect then
 			len *= T.streakMult(streak, G.PerfectStreakDist)
 		end

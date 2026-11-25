@@ -122,6 +122,7 @@ function Plots.publishShelf(player: Player)
 		plot:SetAttribute("Shelf", Plots.encodeShelf(data.shelf))
 		plot:SetAttribute("Slots", Config.Economy.slotCount(data.slotUpgrades))
 		plot:SetAttribute("ShelfLevel", data.shelfLevel)
+		plot:SetAttribute("Sling", data.sling or 1)
 	end
 end
 
@@ -165,6 +166,7 @@ local function release(player: Player)
 		plot:SetAttribute("OwnerUserId", 0)
 		plot:SetAttribute("Shelf", "")
 		plot:SetAttribute("Slots", nil)
+		plot:SetAttribute("Sling", nil)
 		plot:SetAttribute("ShelfLevel", nil)
 	end
 	Plots.setSign(i, "Free plot", "", "")

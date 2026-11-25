@@ -35,7 +35,6 @@ local aimYaw = 0
 local atSling = false
 local state = "loading"
 local stretch: Sound? = nil
-local armKick = 0 -- seconds left of the release swing
 
 -- who is holding: "mouse" | "touch" | "space" | "pad"; a touch hold is tied to its InputObject
 local holding: string? = nil
@@ -45,6 +44,13 @@ local holdStartYaw = 0
 local savedWalk: number? = nil
 local lastMouse = Vector2.new(-1, -1)
 local loadedShown = true
+
+-- the pull: you stand STAND studs behind the pouch, facing the aim; the pouch comes back up to
+-- PULL studs towards your face and both arms reach for it
+local STAND, PULL = 5.2, 3.0
+local releaseT = 0 -- seconds left of the release follow-through
+local pouchPos: Vector3? = nil -- where the pouch is while pulled (world)
+local loadBall: Part
 
 local DOTS = 32
 local preview: { BasePart } = {}
@@ -88,7 +94,8 @@ local function currentLength(c: number): number
 	local re = (player:GetAttribute("reSquishes") :: number?) or 0
 	local rain = workspace:GetAttribute("GooRain") == true
 	local curve, perfect = T.chargeCurve(c, G.SweetSpot, E.ChargeFloor, E.PerfectMult)
-	local len = T.power(sp, E.Goo[goo].mult, re, rain, E) * curve
+	local sling = E.Slingshots[(player:GetAttribute("sling") :: number?) or 1] or E.Slingshots[1]
+	local len = T.power(sp, E.Goo[goo].mult * sling.mult, re, rain, E) * curve
 	if perfect then
 		local streak = math.min(G.PerfectStreakMax, ((player:GetAttribute("PerfectStreak") :: number?) or 0) + 1)
 		len *= T.streakMult(streak, G.PerfectStreakDist)
@@ -151,10 +158,24 @@ local function freeze(on: boolean)
 	if on and savedWalk == nil then
 		savedWalk = hum.WalkSpeed
 		hum.WalkSpeed = 0
+		hum.AutoRotate = false
 	elseif not on and savedWalk ~= nil then
 		hum.WalkSpeed = savedWalk
+		hum.AutoRotate = true
 		savedWalk = nil
 	end
+end
+
+-- stand behind the pouch facing the aim, stepping back as the pull grows
+local function placeBody(fp: Vector3, dir: Vector3)
+	local char = player.Character
+	local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not root then
+		return
+	end
+	local at = Vector3.new(fp.X, root.Position.Y, fp.Z) - dir * (STAND + 0.8 * charge)
+	root.CFrame = CFrame.lookAt(at, at + dir)
+	root.AssemblyLinearVelocity = Vector3.zero
 end
 
 local function setFov(fov: number)
@@ -190,7 +211,7 @@ local function snapPouch()
 		return
 	end
 	local rest = CFrame.new(fp)
-	local over = TweenService:Create(pouch, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { CFrame = rest * CFrame.new(0, 0, 1) })
+	local over = TweenService:Create(pouch, TweenInfo.new(0.07, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { CFrame = rest + T.direction(aimYaw) * 1.6 })
 	over.Completed:Once(function()
 		TweenService:Create(pouch, TweenInfo.new(0.2, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), { CFrame = rest }):Play()
 	end)
@@ -204,6 +225,7 @@ local function stopCharge()
 	end
 	Fling.charging = false
 	charge = 0
+	pouchPos = nil
 	showPreview(false)
 	freeze(false)
 	setFov(70)
@@ -245,7 +267,7 @@ local function release(kind: string, input: InputObject?)
 	if not canFling() then
 		return
 	end
-	armKick = 0.25
+	releaseT = 0.35
 	Fling.lastSend = os.clock()
 	loadedShown = false
 	Sound.play("sling_release", 0.95 + math.random() * 0.1)
@@ -286,21 +308,6 @@ local function mouseAim()
 	if dz > 4 then
 		aimYaw = math.clamp(math.deg(math.atan2(dx, dz)), -G.AimClampDeg, G.AimClampDeg)
 	end
-end
-
--- right shoulder joint (Motor6D or AnimationConstraint, HANDBOOK 7)
-local function shoulder(): Instance?
-	local char = player.Character
-	local arm = char and char:FindFirstChild("RightUpperArm")
-	if not arm then
-		return nil
-	end
-	for _, d in arm:GetChildren() do
-		if (d:IsA("Motor6D") or d:IsA("AnimationConstraint")) and d.Name == "RightShoulder" then
-			return d
-		end
-	end
-	return arm:FindFirstChild("RightShoulder")
 end
 
 local function updateState()
@@ -350,6 +357,17 @@ local function makePreview()
 		d.Parent = previewFolder
 		table.insert(preview, d)
 	end
+	loadBall = Instance.new("Part")
+	loadBall.Name = "LoadedGoo"
+	loadBall.Shape = Enum.PartType.Ball
+	loadBall.Size = Vector3.new(1.4, 1.4, 1.4)
+	loadBall.Material = Enum.Material.SmoothPlastic
+	loadBall.Anchored = true
+	loadBall.CanCollide = false
+	loadBall.CanQuery = false
+	loadBall.CanTouch = false
+	loadBall.Transparency = 1
+	loadBall.Parent = previewFolder
 	landRing = Instance.new("Part")
 	landRing.Name = "LandRing"
 	landRing.Shape = Enum.PartType.Cylinder
@@ -481,6 +499,8 @@ function Fling.start()
 		if atSling then
 			mouseAim()
 		end
+		local pp = plot()
+		local pouch = pp and pp:FindFirstChild("Pouch") :: BasePart?
 		if Fling.charging then
 			-- keyboard / thumbstick steering
 			local mv: Vector3 = if controls then controls:GetMoveVector() else Vector3.zero
@@ -493,31 +513,69 @@ function Fling.start()
 			if stretch then
 				stretch.PlaybackSpeed = 0.9 + 0.5 * charge
 			end
-			local p = plot()
-			local pouch = p and p:FindFirstChild("Pouch") :: BasePart?
 			local fp = flingPoint()
-			if pouch and fp then
-				pouch.CFrame = CFrame.new(fp - T.direction(aimYaw) * 4 * charge)
+			if fp then
+				local dir = T.direction(aimYaw)
+				-- ease-out pull: quick at first, heavy near full stretch
+				local k = 1 - (1 - charge) ^ 2
+				pouchPos = fp - dir * PULL * k - Vector3.new(0, 0.9 * k, 0)
+				placeBody(fp, dir)
+				if pouch then
+					pouch.CFrame = CFrame.lookAt(pouchPos :: Vector3, (pouchPos :: Vector3) + dir)
+				end
 			end
 		end
-		if armKick > 0 then
-			armKick = math.max(0, armKick - dt)
+		if releaseT > 0 then
+			releaseT = math.max(0, releaseT - dt)
+		end
+		-- the loaded goo sits in the pouch until it's thrown, then reloads
+		local loaded = atSling and state == "ready" and left <= 0
+		if loaded and pouch then
+			local goo = E.Goo[(player:GetAttribute("goo") :: number?) or 1] or E.Goo[1]
+			loadBall.Color = Color3.fromHex(goo.color)
+			loadBall.CFrame = pouch.CFrame * CFrame.new(0, 0.45, 0)
+			loadBall.Transparency = 0
+		else
+			loadBall.Transparency = 1
 		end
 	end)
-	-- arm pose: back up to 60° while charging, a -30° swing on release
+	-- arms: while charging both arms point at the pouch (aim the hanging arm along shoulder ->
+	-- pouch in the torso's space); on release they follow through forward and settle
 	RunService.Stepped:Connect(function()
-		local j = shoulder()
-		if not j then
+		local char = player.Character
+		local torso = char and char:FindFirstChild("UpperTorso") :: BasePart?
+		if not torso then
 			return
 		end
-		local angle = 0
-		if Fling.charging then
-			angle = 60 * charge
-		elseif armKick > 0 then
-			angle = -30 * math.sin(armKick / 0.25 * math.pi)
+		local fp = flingPoint()
+		local target: Vector3? = nil
+		local weight = 0
+		if Fling.charging and pouchPos then
+			target, weight = pouchPos, 1
+		elseif releaseT > 0 and fp then
+			target, weight = fp + T.direction(aimYaw) * 6, releaseT / 0.35
 		end
-		if angle ~= 0 then
-			(j :: any).Transform = CFrame.Angles(math.rad(angle), 0, 0)
+		if not target then
+			return
+		end
+		for _, side in { "Right", "Left" } do
+			local arm = char:FindFirstChild(side .. "UpperArm")
+			local joint = arm and arm:FindFirstChild(side .. "Shoulder")
+			if joint and (joint:IsA("Motor6D") or joint:IsA("AnimationConstraint")) then
+				local c0 = if joint:IsA("Motor6D") then joint.C0 else CFrame.new()
+				local shoulderWorld = torso.CFrame * c0
+				local want = shoulderWorld:VectorToObjectSpace(((target :: Vector3) - shoulderWorld.Position).Unit)
+				local down = Vector3.new(0, -1, 0)
+				local axis = down:Cross(want)
+				local rot = if axis.Magnitude > 1e-4 then CFrame.fromAxisAngle(axis.Unit, math.acos(math.clamp(down:Dot(want), -1, 1)) * weight) else CFrame.new()
+				local j: any = joint
+				j.Transform = rot
+			end
+			local fore = char:FindFirstChild(side .. "LowerArm")
+			local elbow = fore and fore:FindFirstChild(side .. "Elbow")
+			if elbow and elbow:IsA("Motor6D") then
+				elbow.Transform = CFrame.Angles(math.rad(25 * charge * weight), 0, 0)
+			end
 		end
 	end)
 	-- respawn mid-charge: drop the hold so the old WalkSpeed isn't put on the new character

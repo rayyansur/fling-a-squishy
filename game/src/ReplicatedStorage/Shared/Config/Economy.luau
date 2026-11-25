@@ -23,6 +23,15 @@ E.Gloves = {
 	{ name = "Rainbow Gloves", cost = 80000000, sp = 12, color = "#FF4FA3", rainbow = true },
 }
 
+-- Slingshots (bought with coins, reset by Re-Squish): throw distance x mult, own model each
+E.Slingshots = {
+	{ name = "Candy Cane Slingshot", cost = 0, mult = 1.00 },
+	{ name = "Gummy Slingshot", cost = 8000, mult = 1.05 },
+	{ name = "Lollipop Slingshot", cost = 400000, mult = 1.10 },
+	{ name = "Choco-Cherry Slingshot", cost = 6000000, mult = 1.16 },
+	{ name = "Rock Candy Slingshot", cost = 60000000, mult = 1.23 },
+	{ name = "Rainbow Star Slingshot", cost = 400000000, mult = 1.30 },
+}
 E.ShelfLevels = {
 	{ cost = 0, mult = 1.00, visual = "plain candy shelf" },
 	{ cost = 40000, mult = 1.10, visual = "+ gumdrop lights" },

@@ -60,7 +60,7 @@ return function(t)
 
 	local function run(seed: number)
 		local rng = Random.new(seed)
-		local d = { coins = 0, sp = 1, goo = 1, gloves = 1, slotUpgrades = 0, shelfLevel = 1, reSquishes = 0, shelf = {} }
+		local d = { coins = 0, sp = 1, goo = 1, gloves = 1, sling = 1, slotUpgrades = 0, shelfLevel = 1, reSquishes = 0, shelf = {} }
 		local rules = T.rulesFrom(M)
 		local fp = M.flingPoint(6)
 		local start = Vector3.new(fp[1], fp[2], fp[3])
@@ -89,7 +89,7 @@ return function(t)
 			local curve
 			curve, perfect = T.chargeCurve(c, G.SweetSpot, E.ChargeFloor, E.PerfectMult)
 			streak = if perfect then math.min(G.PerfectStreakMax, streak + 1) else 0
-			local len = T.power(d.sp, E.Goo[d.goo].mult, d.reSquishes, false, E) * curve
+			local len = T.power(d.sp, E.Goo[d.goo].mult * E.Slingshots[d.sling].mult, d.reSquishes, false, E) * curve
 			if perfect then
 				len *= T.streakMult(streak, G.PerfectStreakDist)
 			end
@@ -132,6 +132,9 @@ return function(t)
 				local opts = {}
 				if E.Goo[d.goo + 1] then
 					table.insert(opts, { E.Goo[d.goo + 1].cost, function() d.goo += 1; mark("goo " .. d.goo) end })
+				end
+				if E.Slingshots[d.sling + 1] then
+					table.insert(opts, { E.Slingshots[d.sling + 1].cost, function() d.sling += 1; mark("sling " .. d.sling) end })
 				end
 				if E.Gloves[d.gloves + 1] then
 					table.insert(opts, { E.Gloves[d.gloves + 1].cost, function() d.gloves += 1; mark("gloves " .. d.gloves) end })

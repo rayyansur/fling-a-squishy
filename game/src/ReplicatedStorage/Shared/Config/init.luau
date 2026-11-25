@@ -24,6 +24,7 @@ Config.Data = {
 		sp = 1,
 		goo = 1,
 		gloves = 1,
+		sling = 1,
 		slotUpgrades = 0,
 		shelfLevel = 1,
 		reSquishes = 0,
@@ -52,7 +53,7 @@ Config.Data = {
 		uidSeq = 0,
 	},
 	-- copied to Player attributes for the HUD
-	mirror = { "coins", "sp", "goo", "gloves", "slotUpgrades", "shelfLevel", "reSquishes", "autoMerge", "tutorialDone" },
+	mirror = { "coins", "sp", "goo", "gloves", "sling", "slotUpgrades", "shelfLevel", "reSquishes", "autoMerge", "tutorialDone" },
 	leaderstats = {}, -- Squishies + Coins are made by the Economy module (Coins is abbreviated text)
 }
 
