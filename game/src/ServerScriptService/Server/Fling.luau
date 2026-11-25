@@ -8,6 +8,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Config = require(ReplicatedStorage.Shared.Config)
 local T = require(ReplicatedStorage.Shared.Util.Trajectory)
 local Rarity = require(ReplicatedStorage.Shared.Util.Rarity)
+local Mod = require(ReplicatedStorage.Shared.Util.Modifier)
 local Net = require(ReplicatedStorage.Kit.Net)
 local Data = require(ServerScriptService.Kit.Data)
 local State = require(script.Parent.State)
@@ -22,6 +23,8 @@ local rules = T.rulesFrom(M)
 local rng = Random.new()
 
 local Fling = {}
+-- Studio-only test override from Dev "nextmod" (never set in a live server)
+Fling.forceNext = {} :: { [Player]: { mod: string, shiny: boolean } }
 -- Goo Rain hooks (the GooRain module sets this; false until it exists)
 Fling.gooRain = function(): boolean
 	return false
@@ -123,14 +126,23 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 
 	local zone = T.zoneOf(path.distance, Z.List)
 	local s, g, rarity = Fling.roll(zone, path.bounces, gooRain, rng:NextNumber(), rng:NextNumber(), rng:NextNumber())
+	local mod = Mod.roll(Z, rng:NextNumber(), path.bounces)
+	local forced = Fling.forceNext[player]
+	if forced and not auto then
+		Fling.forceNext[player] = nil
+		mod = Mod.clean(Z, forced.mod)
+		g = g or forced.shiny
+	end
 	if rigFirst then
 		local pool = S.ByRarity.Uncommon
 		s, g, rarity = pool[rng:NextInteger(1, #pool)].id, false, "Uncommon"
+		mod = nil
 	elseif Tutorial.rigThird(player) and #data.shelf > 0 then
 		local owned = data.shelf[rng:NextInteger(1, #data.shelf)]
 		local known = S.ById[owned.s]
 		s, rarity = owned.s, if known then known.rarity else rarity
 		g = false
+		mod = owned.m
 	end
 
 	-- stats + Sling Power
@@ -180,14 +192,15 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 	player:SetAttribute("Hopping", st.hopping)
 	local uid = ("%d-%d"):format(player.UserId, flings)
 	Net.fireAll("FlingVisual", player.UserId, start, wire(path), data.goo, perfect, t0, path.bounces, streak)
-	Net.fireAll("SquishySpawned", player.UserId, uid, s, g, path.final, landAt, arriveAt, zone)
+	Net.fireAll("SquishySpawned", player.UserId, uid, s, g, path.final, landAt, arriveAt, zone, mod or "")
 
 	-- big catches: everyone hears about it at the splat
 	local ri = RARITY_INDEX[rarity]
-	if ri >= 5 then
+	if ri >= 5 or mod == "giant" or mod == "galactic" then
 		task.delay(math.max(0, landAt - workspace:GetServerTimeNow()), function()
-			local sp = S.ById[s]
-			Net.fireAll("Announce", ("⭐ %s threw a %s %s!"):format(player.DisplayName, string.upper(rarity), sp.name), rarity)
+			local title = Mod.title(Z, S, s, 1, g, mod)
+			local article = if string.find(rarity, "^[AEIOU]") then "an" else "a"
+			Net.fireAll("Announce", ("⭐ %s threw %s %s %s!"):format(player.DisplayName, article, string.upper(rarity), title), rarity)
 		end)
 	end
 
@@ -199,7 +212,7 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 			if st.epoch ~= epoch then
 				return -- flung before a Re-Squish: it went into the machine too
 			end
-			Shelf.arrive(player, s, g)
+			Shelf.arrive(player, s, g, mod)
 			Progress.emit(player, "catch", ri, g)
 			if ri >= 3 then
 				Progress.emit(player, "rare", 1)

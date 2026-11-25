@@ -16,6 +16,7 @@ local Sound = require(script.Parent.Sound)
 local JellyPads = require(script.Parent.JellyPads)
 local SquishyModel = require(script.Parent.SquishyModel)
 local Store = require(script.Parent.Store)
+local Reveal = require(script.Parent.Reveal)
 local Palette = require(ReplicatedStorage.Shared.Theme).Palette
 
 local G, M, E, S, Z = Config.Game, Config.Map, Config.Economy, Config.Squishies, Config.Zones
@@ -25,7 +26,7 @@ local MAX_GOO, MAX_HOP = 72, 72
 local Flight = {}
 
 type Goo = { parts: { BasePart }, blob: Model, segs: { any }, starts: { number }, t0: number, total: number, owner: number, seg: number, color: Color3, rainbow: boolean, perfect: boolean, bounces: number }
-type Hop = { model: Model?, from: Vector3, to: Vector3, landAt: number, arriveAt: number, owner: number, s: string, g: boolean, popped: boolean, hops: number, lastHop: number, size: number }
+type Hop = { model: Model?, from: Vector3, to: Vector3, landAt: number, arriveAt: number, owner: number, s: string, g: boolean, mod: string?, popped: boolean, hops: number, lastHop: number, size: number }
 
 local goos: { Goo } = {}
 local hops: { Hop } = {}
@@ -244,17 +245,17 @@ local function stepGoo(t: number)
 end
 
 ------------------------------------------------------------------ squishies
-local function onSpawned(owner: number, _uid: string, s: string, g: boolean, landPos: Vector3, landAt: number, arriveAt: number, _zone: number)
+local function onSpawned(owner: number, _uid: string, s: string, g: boolean, landPos: Vector3, landAt: number, arriveAt: number, _zone: number, mod: string?)
 	local to = shelfPoint(owner)
 	if not to or #hops >= MAX_HOP then
 		return
 	end
-	table.insert(hops, { model = nil, from = landPos, to = to, landAt = landAt, arriveAt = arriveAt - G.ArrivalPad, owner = owner, s = s, g = g, popped = false, hops = 0, lastHop = 0, size = 1 })
+	table.insert(hops, { model = nil, from = landPos, to = to, landAt = landAt, arriveAt = arriveAt - G.ArrivalPad, owner = owner, s = s, g = g, mod = if mod ~= "" then mod else nil, popped = false, hops = 0, lastHop = 0, size = 1 })
 end
 
 local function popOut(h: Hop)
 	h.popped = true
-	local m = SquishyModel.build(h.s, 1, h.g)
+	local m = SquishyModel.build(h.s, 1, h.g, h.mod)
 	m.Parent = folder
 	m:PivotTo(CFrame.new(h.from) * CFrame.Angles(0, math.atan2(h.to.X - h.from.X, h.to.Z - h.from.Z) + math.pi, 0))
 	h.model = m
@@ -277,18 +278,18 @@ local function popOut(h: Hop)
 	end)
 	burst(h.from + Vector3.new(0, 1.5, 0), if ri >= 3 then rarityColor else Color3.new(1, 1, 1), if ri >= 3 then 40 else 14)
 	Sound.play("pop_out", 1, 6, 0.2)
-	if ri >= 5 then
+	local modDef = h.mod and Z.ModifierById[h.mod]
+	if h.mod == "giant" or h.mod == "galactic" then
+		beam(h.from, Color3.fromHex(modDef.color))
+		burst(h.from + Vector3.new(0, 2, 0), Color3.fromHex(modDef.color), 50)
+	elseif ri >= 5 then
 		beam(h.from, rarityColor)
 	end
 	if h.owner == player.UserId then
-		if ri >= 5 then
-			Sound.play("legendary_fanfare")
-		elseif ri >= 3 then
+		if ri >= 3 or h.mod or h.g then
 			Sound.play("rare_reveal")
 		end
-		if ri >= 3 then
-			Flight.revealCard(h.s, h.g)
-		end
+		Reveal.show(h.s, h.g, h.mod)
 	end
 end
 
@@ -336,34 +337,12 @@ local function stepHops(t: number)
 	end
 end
 
--- top-centre card for Rare+ catches (2 s, non-blocking); set up in start()
-Flight.revealCard = function(_s: string, _g: boolean) end
-
 function Flight.start()
 	folder = Instance.new("Folder")
 	folder.Name = "Flights"
 	folder.Parent = workspace
 	local assets = ReplicatedStorage:WaitForChild("Assets")
 	blobTemplate = assets:FindFirstChild("goo_blob") :: Model?
-
-	local cardGui = Candy.screen("RevealCard", 12)
-	Flight.revealCard = function(s: string, g: boolean)
-		local sp = S.ById[s]
-		local color = Color3.fromHex(Z.RarityColors[sp.rarity])
-		local card = Candy.pill(cardGui, UDim2.fromOffset(440, 120), Color3.new(1, 1, 1), { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 240) })
-		local band = Candy.pill(card, UDim2.fromOffset(440, 40), color, { Position = UDim2.fromOffset(0, 0) })
-		local r = Candy.label(band, string.upper(sp.rarity) .. (if g then " ✨ GLITTER" else ""), { Font = Enum.Font.FredokaOne, TextColor3 = Color3.new(1, 1, 1), Size = UDim2.new(1, -20, 1, -8), Position = UDim2.fromOffset(10, 4) })
-		Candy.textStroke(r, 2)
-		Candy.label(card, sp.name, { Font = Enum.Font.FredokaOne, Size = UDim2.new(1, -20, 0, 44), Position = UDim2.fromOffset(10, 42) })
-		Candy.label(card, Format.abbrev(sp.income * (if g then Z.GlitterMult else 1)) .. " coins/s", { Font = Enum.Font.GothamBold, TextColor3 = Color3.fromHex("#4DB52E"), Size = UDim2.new(1, -20, 0, 26), Position = UDim2.fromOffset(10, 88) })
-		local sc = Instance.new("UIScale")
-		sc.Scale = 0.5
-		sc.Parent = card
-		TweenService:Create(sc, Candy.POP, { Scale = 1 }):Play()
-		task.delay(2, function()
-			card:Destroy()
-		end)
-	end
 
 	Net.listen("FlingVisual", onFling)
 	Net.listen("SquishySpawned", onSpawned)

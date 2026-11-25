@@ -13,13 +13,14 @@ function Income.mults(data: any, E: any, hasCoinsPass: boolean, party: boolean, 
 	}
 end
 
--- one shelf entry { s, z, g }
+-- one shelf entry { s, z, g, m }: g = Shiny, m = Big / Giant / Galactic (DESIGN 21)
 function Income.of(entry: any, S: any, Z: any, m: Mults): number
 	local sp = S.ById[entry.s]
 	if not sp then
 		return 0
 	end
-	return sp.income * S.SizeMult[entry.z or 1] * (if entry.g then Z.GlitterMult else 1) * m.shelf * m.reSquish * m.pass * m.party
+	local mod = entry.m and Z.ModifierById and Z.ModifierById[entry.m]
+	return sp.income * S.SizeMult[entry.z or 1] * (if entry.g then Z.GlitterMult else 1) * (if mod then mod.mult else 1) * m.shelf * m.reSquish * m.pass * m.party
 end
 
 function Income.total(shelf: { any }, S: any, Z: any, m: Mults): number

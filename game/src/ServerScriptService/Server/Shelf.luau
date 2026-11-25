@@ -7,6 +7,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local L = require(ReplicatedStorage.Shared.Util.ShelfLogic)
+local Mod = require(ReplicatedStorage.Shared.Util.Modifier)
 local Net = require(ReplicatedStorage.Kit.Net)
 local Data = require(ServerScriptService.Kit.Data)
 local State = require(script.Parent.State)
@@ -86,14 +87,14 @@ function Shelf.send(player: Player)
 	local ready = State.get(player).readyAt
 	local out = table.create(#data.shelf)
 	for _, e in data.shelf do
-		table.insert(out, { uid = e.uid, s = e.s, size = e.z, glitter = e.g, readyAt = ready[e.uid] or 0 })
+		table.insert(out, { uid = e.uid, s = e.s, size = e.z, glitter = e.g, mod = e.m, readyAt = ready[e.uid] or 0 })
 	end
 	Net.fire(player, "ShelfUpdate", out)
 	Plots.publishShelf(player)
 	Economy.refresh(player)
 end
 
-local function recordDex(d: any, s: string, z: number, g: boolean): boolean
+local function recordDex(d: any, s: string, z: number, g: boolean, m: string?): boolean
 	local entry = d.dex[s]
 	local isNew = entry == nil
 	if not entry then
@@ -102,12 +103,16 @@ local function recordDex(d: any, s: string, z: number, g: boolean): boolean
 	end
 	entry.best = math.max(entry.best, z)
 	entry.glitter = entry.glitter or g
+	if m then
+		entry.mods = entry.mods or {}
+		entry.mods[m] = true
+	end
 	return isNew
 end
 
 local function announceMerge(player: Player, m: any)
 	local sp = S.ById[m.s]
-	Net.fire(player, "Merged", m.uid, m.s, m.z, m.g)
+	Net.fire(player, "Merged", m.uid, m.s, m.z, m.g, m.m or "")
 	Tutorial.onMerge(player)
 	Progress.emit(player, "merge", m.z)
 	Analytics.custom(player, "MergeSize", m.z)
@@ -116,15 +121,15 @@ local function announceMerge(player: Player, m: any)
 	end
 end
 
-local function doAutoMerge(player: Player, s: string, z: number, g: boolean)
+local function doAutoMerge(player: Player, s: string, z: number, g: boolean, mod: string?)
 	local merged: { any } = {}
 	local before: { string } = {}
 	Data.update(player, function(d)
 		before = uidsOf(d.shelf)
-		merged = L.autoMerge(d.shelf, s, z, g, uidFrom(d))
+		merged = L.autoMerge(d.shelf, s, z, g, uidFrom(d), mod)
 		d.stats.merges += #merged
 		for _, m in merged do
-			recordDex(d, m.s, m.z, m.g)
+			recordDex(d, m.s, m.z, m.g, m.m)
 		end
 	end)
 	local data = Data.get(player)
@@ -143,7 +148,7 @@ local function insert(player: Player, entry: any)
 	State.get(player).readyAt[entry.uid] = 0
 	local data = Data.get(player)
 	if data and data.autoMerge then
-		doAutoMerge(player, entry.s, 1, entry.g)
+		doAutoMerge(player, entry.s, 1, entry.g, entry.m)
 	end
 end
 
@@ -163,7 +168,7 @@ local function showNextFull(player: Player)
 	local low = lowestIndex(player, data)
 	local lowEntry = low and data.shelf[low]
 	p.deadline = os.clock() + G.ShelfFullAutoSeconds
-	Net.fire(player, "ShelfFull", { uid = p.entry.uid, s = p.entry.s, size = 1, glitter = p.entry.g }, lowEntry and { uid = lowEntry.uid, s = lowEntry.s, size = lowEntry.z, glitter = lowEntry.g }, G.ShelfFullAutoSeconds)
+	Net.fire(player, "ShelfFull", { uid = p.entry.uid, s = p.entry.s, size = 1, glitter = p.entry.g, mod = p.entry.m }, lowEntry and { uid = lowEntry.uid, s = lowEntry.s, size = lowEntry.z, glitter = lowEntry.g, mod = lowEntry.m }, G.ShelfFullAutoSeconds)
 	local mine = p
 	task.delay(G.ShelfFullAutoSeconds + 0.25, function()
 		if st.fullQueue[1] == mine then
@@ -188,7 +193,7 @@ function drainQueue(player: Player): boolean
 	while st.fullQueue[1] do
 		local data = Data.get(player)
 		local e = st.fullQueue[1].entry
-		if not data or not L.fits(data.shelf, E.slotCount(data.slotUpgrades), e.s, e.g, data.autoMerge) then
+		if not data or not L.fits(data.shelf, E.slotCount(data.slotUpgrades), e.s, e.g, data.autoMerge, e.m) then
 			break
 		end
 		table.remove(st.fullQueue, 1)
@@ -242,15 +247,15 @@ function Shelf.resolveFull(player: Player, keepNew: boolean, uid: string?)
 	showNextFull(player)
 end
 
--- a squishy reached the shelf (called by Fling at arriveAt)
-function Shelf.arrive(player: Player, s: string, g: boolean)
+-- a squishy reached the shelf (called by Fling at arriveAt); m = modifier id or nil
+function Shelf.arrive(player: Player, s: string, g: boolean, m: string?)
 	local data = Data.get(player)
 	if not data or not player.Parent then
 		return
 	end
 	local isNew = false
 	Data.update(player, function(d)
-		isNew = recordDex(d, s, 1, g)
+		isNew = recordDex(d, s, 1, g, m)
 		d.dex[s].n += 1
 		d.stats.caught += 1
 	end)
@@ -259,11 +264,11 @@ function Shelf.arrive(player: Player, s: string, g: boolean)
 		caught += 1
 	end
 	Progress.emit(player, "dex", caught)
-	local entry = { uid = newUid(player)(), s = s, z = 1, g = g }
+	local entry = { uid = newUid(player)(), s = s, z = 1, g = g, m = m }
 	local slots = E.slotCount(data.slotUpgrades)
 	Tutorial.onArrive(player)
-	Net.fire(player, "Arrived", entry.uid, s, g, isNew)
-	if L.fits(data.shelf, slots, s, g, data.autoMerge) then
+	Net.fire(player, "Arrived", entry.uid, s, g, isNew, m or "")
+	if L.fits(data.shelf, slots, s, g, data.autoMerge, m) then
 		insert(player, entry)
 	else
 		local st = State.get(player)
@@ -276,8 +281,8 @@ function Shelf.arrive(player: Player, s: string, g: boolean)
 end
 
 -- grant a squishy straight onto the shelf (daily rewards); same path as an arrival
-function Shelf.grant(player: Player, s: string, g: boolean)
-	Shelf.arrive(player, s, g)
+function Shelf.grant(player: Player, s: string, g: boolean, m: string?)
+	Shelf.arrive(player, s, g, Mod.clean(Config.Zones, m))
 end
 
 function Shelf.squeeze(player: Player): (number, number)
@@ -330,19 +335,20 @@ function Shelf.start()
 		Shelf.resolveFull(player, keepNew, uid)
 	end)
 
-	Net.on("MergeRequest", { args = { "string", "int", "boolean" }, rate = 6 }, function(player, s, z, g)
+	Net.on("MergeRequest", { args = { "string", "int", "boolean", "string" }, rate = 6, maxString = 24 }, function(player, s, z, g, modStr)
+		local mod = Mod.clean(Config.Zones, modStr)
 		local data = Data.get(player)
-		if not data or not S.ById[s] or z < 1 or z >= L.MAX_SIZE or not L.canMerge(data.shelf, s, z, g) then
+		if not data or not S.ById[s] or z < 1 or z >= L.MAX_SIZE or not L.canMerge(data.shelf, s, z, g, mod) then
 			return
 		end
 		local m
 		local before: { string } = {}
 		Data.update(player, function(d)
 			before = uidsOf(d.shelf)
-			m = L.merge(d.shelf, s, z, g, uidFrom(d))
+			m = L.merge(d.shelf, s, z, g, uidFrom(d), mod)
 			if m then
 				d.stats.merges += 1
-				recordDex(d, m.s, m.z, m.g)
+				recordDex(d, m.s, m.z, m.g, m.m)
 			end
 		end)
 		if m then
@@ -380,10 +386,10 @@ function Shelf.start()
 			if data then
 				local groups = {}
 				for _, e in data.shelf do
-					groups[("%s|%d|%s"):format(e.s, e.z, tostring(e.g))] = e
+					groups[("%s|%d|%s|%s"):format(e.s, e.z, tostring(e.g), tostring(e.m))] = e
 				end
 				for _, e in groups do
-					doAutoMerge(player, e.s, e.z, e.g == true)
+					doAutoMerge(player, e.s, e.z, e.g == true, e.m)
 				end
 			end
 			Shelf.send(player)

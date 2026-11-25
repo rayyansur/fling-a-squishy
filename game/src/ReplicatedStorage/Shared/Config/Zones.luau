@@ -23,7 +23,21 @@ Zones.List = {
 }
 
 Zones.GooRainLuck = 2
-Zones.GlitterChance = 0.01
+-- Shiny (saved as `g`, called Glitter before 2026-11-25): stacks with a size modifier
+Zones.GlitterChance = 0.015
 Zones.GlitterMult = 3
+
+-- Rare modifiers (DESIGN 21), one per catch, rolled rarest first. Each Jelly Pad bounce adds
+-- +25% to every chance. They multiply income, change the look, and only merge with the same one.
+Zones.Modifiers = {
+	{ id = "galactic", name = "Galactic", chance = 0.003, mult = 12, scale = 1.15, color = "#7B5CFF" },
+	{ id = "giant", name = "Giant", chance = 0.012, mult = 4, scale = 1.7, color = "#FF8A3D" },
+	{ id = "big", name = "Big", chance = 0.06, mult = 1.5, scale = 1.3, color = "#3EC5FF" },
+}
+Zones.ModifierBounceLuck = 0.25
+Zones.ModifierById = {} :: { [string]: any }
+for _, m in Zones.Modifiers do
+	Zones.ModifierById[m.id] = m
+end
 
 return Zones
