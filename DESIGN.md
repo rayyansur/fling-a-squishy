@@ -73,7 +73,7 @@ The valley floor extends from Z = 0 to Z = +950 across X −240 to +240. **Dista
 
 1. Player stands at their Slingshot (HRP within 8 studs of the Fling Point).
 2. **Pull back:** hold FLING (HUD button, mouse left / Space when at the slingshot, gamepad ButtonR2). The pouch pulls back visibly and a **power meter** fills 0 → 1 → 0 on a **0.9 s** cycle (triangle wave). The **sweet spot** is 0.88–1.00 (gold segment).
-3. **Aim:** camera look direction projected to XZ, clamped to **±30°** from +Z. A dotted arc preview shows the predicted first landing point (no bounce prediction).
+3. **Aim:** the mouse cursor on the valley (or A/D / thumbstick while charging, or dragging the THROW finger), clamped to **±30°** from +Z. The preview shows the whole path with bounces and a landing ring (§19).
 4. **Release:** the client sends `FlingRequest(charge, yawDeg)`. The server validates (section 6.3), computes the full path including bounces, and broadcasts `FlingVisual`.
 5. **Flight:** a goo blob (colored by goo tier) flies a parabola. Segment flight time = `0.35 + segmentLength / 600` s; first apex height = `8 + distance × 0.15`. On each pad hit: a squash, "BOING!" and the next segment.
 6. **Splat (server, at the final landing):** zone → rarity roll (zone odds × bounce luck × Goo Rain luck) → species uniform within the rarity → **Glitter** variant roll (1%).
@@ -84,7 +84,7 @@ The valley floor extends from Z = 0 to Z = +950 across X −240 to +240. **Dista
 11. **Squeeze:** press SQUEEZE (section 4.4) for an instant burst.
 12. **Spend** on Goo, Gloves, Shelf slots and Shelf level → fling farther → rarer → more coins → **Re-Squish**.
 
-- **Fling cooldown:** **0.5 s** after release (server-enforced).
+- **Reload:** **0.8 s** after release (server-enforced), §19.
 - **Max squishies hopping home per player:** 6. When it's reached, the FLING button greys out with "Squishies incoming…".
 - **Sling Power (SP):** a persistent stat; each fling grants `+SPPerFling` (base 1; Gloves raise it). Shown on the HUD.
 
@@ -611,3 +611,20 @@ Where the spec is silent or conflicts with the template; Rayyan can overrule any
   (`Fling` modules, `FlingRequest`, `auto_fling`, save field `flings`, analytics `FirstFling`) stay,
   so saves, pass ids and dashboards carry over. The rest of this document still says "fling"; read
   it as "throw".
+
+## 19. Throw feel rework (2026-11-25)
+Rayyan: the throw felt odd, spamming won, aim and power didn't work. Changes:
+- **No spam:** a press under `MinHold` 0.2 s throws nothing ("Hold to charge!"); a 0.8 s reload
+  after each throw (the ring refills in grape, "LOADING"), and holding through the reload starts
+  the charge the moment the squishy loads. The server checks both.
+- **Power matters:** meter cycle 0.9 → 1.6 s (0.24 s PERFECT window), floor 0.35 → 0.2, PERFECT
+  = ×1.1 distance (past a full charge) and **×2 Sling Power**. The label says "NOW!" in the band.
+- **PERFECT streak:** consecutive PERFECTs (cap 5) add +5% distance each after the first;
+  toast "PERFECT ×3!" with a chime that climbs. A non-perfect manual throw resets it; Auto-Throw
+  leaves it alone and is never PERFECT.
+- **Aim:** the mouse cursor on the valley; A/D, arrows or the thumbstick steer while charging
+  (the player stands still while charging); on phones, drag the THROW finger sideways. Only the
+  finger that pressed THROW releases it (lifting the move thumb no longer throws).
+- **Preview:** the whole path including pad bounces, plus a landing ring in the zone colour (gold
+  when it bounces) labelled with the zone name and "BOING ×n".
+- Per-throw time goes from ~0.9 s to ~1.5 s; the balance sim still lands every milestone in range.

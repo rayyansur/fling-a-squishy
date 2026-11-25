@@ -162,7 +162,7 @@ local function groundY(p: Vector3): number
 end
 
 ------------------------------------------------------------------ goo
-local function onFling(owner: number, start: Vector3, segs: { any }, gooTier: number, perfect: boolean, t0: number, bounces: number)
+local function onFling(owner: number, start: Vector3, segs: { any }, gooTier: number, perfect: boolean, t0: number, bounces: number, streak: number?)
 	if #goos >= MAX_GOO then
 		return
 	end
@@ -187,8 +187,9 @@ local function onFling(owner: number, start: Vector3, segs: { any }, gooTier: nu
 	table.insert(goos, { parts = parts, blob = blob, segs = segs, starts = starts, t0 = t0, total = total, owner = owner, seg = 1, color = color, rainbow = tier.rainbow == true, perfect = perfect, bounces = bounces })
 	if owner == player.UserId then
 		if perfect then
-			Candy.toast("PERFECT!", Palette.lemon)
-			Sound.play("perfect")
+			local n = streak or 1
+			Candy.toast(if n >= 2 then ("PERFECT ×%d!"):format(n) else "PERFECT!", Palette.lemon)
+			Sound.play("perfect", 1 + 0.06 * (math.min(n, G.PerfectStreakMax) - 1))
 		end
 	end
 end

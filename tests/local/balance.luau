@@ -1,5 +1,5 @@
 --!nocheck
--- DESIGN 14 balance sim: one player, a fling every 0.9 s, 60% perfect, random aim within the
+-- DESIGN 14 balance sim: one player, hold + reload per throw (DESIGN 19), 60% perfect, random aim within the
 -- clamp (the real pad layout decides bounces), squeeze every 10 s, Auto-Merge on, greedy
 -- cheapest-first purchases. Prints when each milestone lands vs the spec target.
 --   lune run tests/local/run.luau balance
@@ -79,18 +79,26 @@ return function(t)
 				seen[key] = now
 			end
 		end
+		local streak = 0
 		while now < 4 * 3600 do
-			now += 0.9
-			-- fling
-			local c = if rng:NextNumber() < 0.6 then G.SweetSpot else rng:NextNumber(E.ChargeFloor, 1)
-			local curve = T.chargeCurve(c, G.SweetSpot, E.ChargeFloor)
+			-- throw (DESIGN 19): hold to the sweet spot (60%) or release early, then the reload
+			local perfect = rng:NextNumber() < 0.6
+			local hold = if perfect then G.SweetSpot * G.ChargeCycle / 2 + 0.08 else rng:NextNumber(G.MinHold, G.SweetSpot * G.ChargeCycle / 2)
+			now += hold + G.FlingCooldown + 0.1
+			local c = T.chargeAt(hold, G.ChargeCycle)
+			local curve
+			curve, perfect = T.chargeCurve(c, G.SweetSpot, E.ChargeFloor, E.PerfectMult)
+			streak = if perfect then math.min(G.PerfectStreakMax, streak + 1) else 0
 			local len = T.power(d.sp, E.Goo[d.goo].mult, d.reSquishes, false, E) * curve
+			if perfect then
+				len *= T.streakMult(streak, G.PerfectStreakDist)
+			end
 			local path = T.compute(start, T.direction(rng:NextNumber(-G.AimClampDeg, G.AimClampDeg)), len, M.JellyPads, rules)
 			local zone = T.zoneOf(path.distance, Z.List)
 			if zone >= 6 then
 				mark("Rainbow Rim")
 			end
-			d.sp += E.Gloves[d.gloves].sp
+			d.sp += E.Gloves[d.gloves].sp * (if perfect then E.PerfectSP else 1)
 			local rarity = Rarity.pick(Rarity.weights(Z, zone, path.bounces, false, M.BounceLuckPerBounce), Z.Rarities, rng:NextNumber())
 			local pool = S.ByRarity[rarity]
 			local s = pool[rng:NextInteger(1, #pool)].id

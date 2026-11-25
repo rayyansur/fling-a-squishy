@@ -43,7 +43,9 @@ E.MaxSlotUpgrades = (E.Slots.max - E.Slots.start) // E.Slots.step
 -- distance formula (DESIGN 4.1)
 E.DistBase = 25
 E.DistPerRootSP = 1.2
-E.ChargeFloor = 0.35
+E.ChargeFloor = 0.2 -- a weak throw really is weak
+E.PerfectMult = 1.1 -- PERFECT goes past a full charge
+E.PerfectSP = 2 -- PERFECT doubles the Sling Power gained
 
 E.ReSquish = { base = 2.5e9, growth = 4, incomePer = 0.5, distPer = 0.10 }
 function E.reSquishCost(n: number): number
