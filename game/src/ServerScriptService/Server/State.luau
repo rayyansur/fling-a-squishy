@@ -13,6 +13,7 @@ export type PlayerState = {
 	incomePerSec: number,
 	flingsThisSession: number,
 	chargeStart: number?, -- os.clock() of the last ChargeBegin
+	streak: number, -- PERFECT throws in a row (Config.Game.PerfectStreakMax cap)
 	incomeAcc: number, -- fractional coins carried between income ticks
 	epoch: number, -- bumped by Re-Squish: squishies still hopping from before it are dropped
 }
@@ -32,6 +33,7 @@ function State.get(player: Player): PlayerState
 			incomePerSec = 0,
 			flingsThisSession = 0,
 			chargeStart = nil,
+			streak = 0,
 			incomeAcc = 0,
 			epoch = 0,
 		}

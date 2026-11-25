@@ -78,33 +78,45 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 	if not atSlingshot(player, i) then
 		return false
 	end
-	st.lastFling = now
 	charge = math.clamp(charge, 0, 1)
 	if not auto then
-		-- the charge must match how long the player actually held (server clock)
+		-- the charge must match how long the player actually held (server clock), and a tap
+		-- shorter than MinHold throws nothing
 		local began = st.chargeStart
 		st.chargeStart = nil
-		if not began or now - began > 30 then
+		if not began or now - began > 30 or now - began < G.MinHold - ChargeSlack then
 			return false
 		end
 		charge = T.verifyCharge(charge, now - began, G.ChargeCycle, ChargeSlack)
 	end
+	st.lastFling = now
 	yawDeg = math.clamp(yawDeg, -G.AimClampDeg, G.AimClampDeg)
 
 	local start = Plots.flingPoint(i)
 	local gooRain = Fling.gooRain()
 	local rigFirst = Tutorial.rigFirst(player)
-	local curve, perfect = T.chargeCurve(charge, G.SweetSpot, E.ChargeFloor)
+	local curve, perfect = T.chargeCurve(charge, G.SweetSpot, E.ChargeFloor, E.PerfectMult)
 	if auto then
-		perfect = false -- Auto-Fling never counts as PERFECT
+		perfect = false -- Auto-Fling never counts as PERFECT (and leaves the streak alone)
+		curve = math.min(curve, 1)
 	end
-	local path: T.Path
 	if rigFirst then
 		perfect = true
+	end
+	if not auto then
+		st.streak = if perfect then math.min(G.PerfectStreakMax, st.streak + 1) else 0
+		player:SetAttribute("PerfectStreak", st.streak)
+	end
+	local streak = if perfect then st.streak else 0
+	local path: T.Path
+	if rigFirst then
 		local pad = T.lanePad(start, M.JellyPads, 2)
 		path = T.rigged(start, M.JellyPads, pad :: number, rules)
 	else
 		local len = T.power(data.sp, E.Goo[data.goo].mult, data.reSquishes, gooRain, E) * curve
+		if perfect then
+			len *= T.streakMult(streak, G.PerfectStreakDist)
+		end
 		path = T.compute(start, T.direction(yawDeg), len, M.JellyPads, rules)
 	end
 
@@ -121,7 +133,7 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 	end
 
 	-- stats + Sling Power
-	local spGain = E.Gloves[data.gloves].sp
+	local spGain = E.Gloves[data.gloves].sp * (if perfect then E.PerfectSP else 1)
 	local flings = 0
 	Data.update(player, function(d)
 		d.sp += spGain
@@ -166,7 +178,7 @@ function Fling.request(player: Player, charge: number, yawDeg: number, auto: boo
 	st.hopping += 1
 	player:SetAttribute("Hopping", st.hopping)
 	local uid = ("%d-%d"):format(player.UserId, flings)
-	Net.fireAll("FlingVisual", player.UserId, start, wire(path), data.goo, perfect, t0, path.bounces)
+	Net.fireAll("FlingVisual", player.UserId, start, wire(path), data.goo, perfect, t0, path.bounces, streak)
 	Net.fireAll("SquishySpawned", player.UserId, uid, s, g, path.final, landAt, arriveAt, zone)
 
 	-- big catches: everyone hears about it at the splat

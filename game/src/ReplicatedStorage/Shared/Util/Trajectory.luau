@@ -34,7 +34,6 @@ function Trajectory.rulesFrom(Map: any): Rules
 	}
 end
 
--- charge curve: 0.35 + 0.65c, or 1 (PERFECT) at the sweet spot
 -- the charge meter: a triangle wave 0 -> 1 -> 0 over `cycle` seconds of holding
 function Trajectory.chargeAt(held: number, cycle: number): number
 	local phase = (math.max(0, held) % cycle) / cycle
@@ -57,12 +56,18 @@ function Trajectory.verifyCharge(claimed: number, held: number, cycle: number, s
 	return Trajectory.chargeAt(held, cycle)
 end
 
-function Trajectory.chargeCurve(c: number, sweet: number, floor: number): (number, boolean)
+-- charge curve: floor + (1 - floor)c, or `perfectMult` (default 1) and PERFECT at the sweet spot
+function Trajectory.chargeCurve(c: number, sweet: number, floor: number, perfectMult: number?): (number, boolean)
 	c = math.clamp(c, 0, 1)
 	if c >= sweet then
-		return 1, true
+		return perfectMult or 1, true
 	end
 	return floor + (1 - floor) * c, false
+end
+
+-- extra distance for a PERFECT streak: the first PERFECT is x1, each one after adds `per`
+function Trajectory.streakMult(streak: number, per: number): number
+	return 1 + per * math.max(0, streak - 1)
 end
 
 -- first segment length (DESIGN 4.1) before the charge curve

@@ -67,8 +67,15 @@ local function chargeColor(f: number): Color3
 	return P.lemon:Lerp(P.pink, (f - 0.5) / 0.5)
 end
 
+local flingState = "loading"
+local reloading = false
+
 -- fill the FLING ring to `charge` (0..1); the sweet spot segments are always gold
 function Hud.setCharge(charge: number)
+	reloading = false
+	if flingLabel and flingState == "ready" then
+		flingLabel.Text = if charge >= Config.Game.SweetSpot then "NOW!" else "THROW"
+	end
 	for i, seg in flingRing do
 		local f = (i - 0.5) / RING
 		local sweet = f >= Config.Game.SweetSpot
@@ -82,8 +89,33 @@ function Hud.setCharge(charge: number)
 	end
 end
 
+-- the next squishy loading after a throw: the ring refills in grape (`frac` 0..1)
+function Hud.setReload(frac: number)
+	reloading = true
+	if flingLabel and flingState == "ready" then
+		flingLabel.Text = "LOADING"
+	end
+	for i, seg in flingRing do
+		local f = (i - 0.5) / RING
+		seg.BackgroundColor3 = if f <= frac then P.grape else Color3.fromHex("#E8E1F5")
+		seg.BackgroundTransparency = 0
+	end
+end
+
+-- a little pop when the next squishy is loaded
+function Hud.popFling()
+	local btn = Hud.buttons.Fling
+	if not btn then
+		return
+	end
+	local s = btn:FindFirstChildOfClass("UIScale") or Candy.make("UIScale", { Parent = btn })
+	s.Scale = 1.08
+	TweenService:Create(s, Candy.POP, { Scale = 1 }):Play()
+end
+
 -- "ready" | "away" | "busy" | "loading"
 function Hud.setFlingState(state: string)
+	flingState = state
 	local fling = Hud.buttons.Fling
 	if not fling then
 		return
@@ -97,7 +129,7 @@ function Hud.setFlingState(state: string)
 		face.BackgroundColor3 = kind[1]
 		lip.BackgroundColor3 = kind[2]
 	end
-	flingLabel.Text = if state == "busy" then "Squishies incoming…" elseif state == "loading" then "Loading…" else "THROW"
+	flingLabel.Text = if state == "busy" then "Squishies incoming…" elseif state == "loading" then "Loading…" elseif reloading then "LOADING" else "THROW"
 	flingLabel.TextScaled = true
 end
 
