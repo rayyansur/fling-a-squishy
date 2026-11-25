@@ -29,6 +29,66 @@
   "imageId": "75026505019221",
   "sha256": "7a484a348061769141d4883853c1b945ca0d0c2e2d7cb5de2c2d53f216f8740f"
  },
+ "gloves_1": {
+  "assetId": "108139837174825",
+  "imageId": "108139837174825",
+  "sha256": "9e511270c173b37636e5573441974b6af3df2ffe306e7800fb406609f711acd0"
+ },
+ "gloves_2": {
+  "assetId": "112110999747514",
+  "imageId": "112110999747514",
+  "sha256": "6055f88268adabad407b01f09cc8d3e0f9bc634fd410cb61ec2038c9bdc19663"
+ },
+ "gloves_3": {
+  "assetId": "136308001154688",
+  "imageId": "136308001154688",
+  "sha256": "8c0cdba48c1a35b8d13aa8e955fc31f6759d41d9e3de024e64e0bd8390a10952"
+ },
+ "gloves_4": {
+  "assetId": "105236930691524",
+  "imageId": "105236930691524",
+  "sha256": "72596bd899e4842ae596b6f04a98e80ce18d589a567f58b07230f431fceb32e5"
+ },
+ "gloves_5": {
+  "assetId": "117629297728850",
+  "imageId": "117629297728850",
+  "sha256": "418838e0b9d83130c411cf105f72102330beef4a9add78d7e261e75b8cae0850"
+ },
+ "gloves_6": {
+  "assetId": "75724181229809",
+  "imageId": "75724181229809",
+  "sha256": "935e115633a690b46203ed6fdd97be54debaef50db692b501883fe727c19ef04"
+ },
+ "goo_1": {
+  "assetId": "95020738478777",
+  "imageId": "95020738478777",
+  "sha256": "485379f449606ff658e8732e5c7267d10b7de2821cb0c2047f3fbac77f795390"
+ },
+ "goo_2": {
+  "assetId": "77357419626661",
+  "imageId": "77357419626661",
+  "sha256": "a0fb2cba472fde8d93e1021017a5bf1c6873672d131b2dbbc0e5f02b63542e94"
+ },
+ "goo_3": {
+  "assetId": "124770436268765",
+  "imageId": "124770436268765",
+  "sha256": "0400f94af342096dd93290e8718959f10c7fed211ce3013303097fee761df18a"
+ },
+ "goo_4": {
+  "assetId": "93071721472233",
+  "imageId": "93071721472233",
+  "sha256": "c9073bc84a966b19e4354a01cc8e0c7ac7cd0129f33056a0c3f4af5af428d1a7"
+ },
+ "goo_5": {
+  "assetId": "124439338665631",
+  "imageId": "124439338665631",
+  "sha256": "33287b20f7df59e78f5fd9417d1858e17eca986c1fc4d903f23186ebdf4d5b3f"
+ },
+ "goo_6": {
+  "assetId": "87165741395826",
+  "imageId": "87165741395826",
+  "sha256": "134d0b27494a844134a638c0bc1a46e05de6a7747522e1b7f88d05f5e16ef941"
+ },
  "party": {
   "assetId": "105408778464435",
   "imageId": "105408778464435",
@@ -69,10 +129,65 @@
   "imageId": "72223686276680",
   "sha256": "a569d0f2a57ef541649342fba2e0387d7a15a78d5ab72e399296a3b706221a29"
  },
+ "shelf_2": {
+  "assetId": "76461071807074",
+  "imageId": "76461071807074",
+  "sha256": "dbe54c0eb70a31816c39c32919d0e4980c953cec3dea1a6d2b2a512310a87c49"
+ },
+ "shelf_3": {
+  "assetId": "131069941893184",
+  "imageId": "131069941893184",
+  "sha256": "ad07a1709e248acc7d060dca3095e0c7e6f0d593c48e96154599c3dff8fd4d11"
+ },
+ "shelf_4": {
+  "assetId": "89789802176572",
+  "imageId": "89789802176572",
+  "sha256": "aa5af4896137fcc4b33dccdc8c4f755f256b48cc7e2cd6f46193688e8c488f45"
+ },
+ "shelf_5": {
+  "assetId": "126984069860295",
+  "imageId": "126984069860295",
+  "sha256": "4f173e78d1b80dd3892db1b615bb85c2e9e999113a52608c2543bace848efc3f"
+ },
  "shop": {
   "assetId": "91413246057663",
   "imageId": "91413246057663",
   "sha256": "211521c8bc7134cf7809e6f1ded7263237775c26d6144323fcb33620aa6d50c2"
+ },
+ "sling_1": {
+  "assetId": "112216779712451",
+  "imageId": "112216779712451",
+  "sha256": "4d388f54ba7c20e161f08b4455b385e9b4bd88a5e4b6ad981d9de4afa4467943"
+ },
+ "sling_2": {
+  "assetId": "84232964100329",
+  "imageId": "84232964100329",
+  "sha256": "41fcb167ef6b35fe0d3edd2f608bd82fb556e152b8ac285332d17d93830e9593"
+ },
+ "sling_3": {
+  "assetId": "89783197496982",
+  "imageId": "89783197496982",
+  "sha256": "cb090c73eef9c2b42ea3d1a667165e9c9bdd760da959d04a13669efc046d45e2"
+ },
+ "sling_4": {
+  "assetId": "71117681199939",
+  "imageId": "71117681199939",
+  "sha256": "8436d8beb7fe1d356ea997b53ca53dd4b12d3be1d55fd680ccbbc5b2a33e5fcb"
+ },
+ "sling_5": {
+  "assetId": "92685803998735",
+  "imageId": "92685803998735",
+  "sha256": "48e43c103fc3b59910940e58d5a6dc3368eeef0e25dd6540ffb481d0fd7c6b86"
+ },
+ "sling_6": {
+  "assetId": "105310166621497",
+  "imageId": "105310166621497",
+  "sha256": "a8b1a320298b8d5fce2fab6b065c7818282dc9e0896563144004469d7765c264"
+ },
+ "slots": {
+  "assetId": "82615988580745",
+  "imageId": "82615988580745",
+  "sha256": "a86fb91bcf35e84a6c69b82c04801f493f03893f0bb7fe99efb32168d98197aa"
  },
  "sp": {
   "assetId": "94163678844910",
